@@ -5,16 +5,22 @@ export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
-const CATEGORY_CARDS = [
-  { label: 'A Glimpse of RI Dist. 3170', bgColor: '#372616', to: undefined as any },
-  { label: 'DG Family & Friends', bgColor: '#2F4366', to: undefined as any },
-  { label: 'Profile & Messages', bgColor: '#E59E2C', to: undefined as any },
-  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C', to: undefined as any },
-  { label: 'Digital Directory 2026-27', bgColor: '#372616', to: '/directory' as any },
-  { label: 'Zone 7 Regional Leaders', bgColor: '#2F4366', to: undefined as any },
-  { label: 'DCC', bgColor: '#2F4366', to: undefined as any },
-  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C', to: undefined as any },
-  { label: 'District Events', bgColor: '#372616', to: undefined as any },
+type CategoryCard = {
+  label: string
+  bgColor: string
+  to?: '/directory' | '/about' | '/bod' | '/executive-committee' | '/sub-committee' | '/committee-details' | '/club-details' | '/digital'
+}
+
+const CATEGORY_CARDS: CategoryCard[] = [
+  { label: 'A Glimpse of RI Dist. 3170', bgColor: '#372616' },
+  { label: 'DG Family & Friends', bgColor: '#2F4366' },
+  { label: 'Profile & Messages', bgColor: '#E59E2C' },
+  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C' },
+  { label: 'Digital Directory 2026-27', bgColor: '#372616', to: '/directory' },
+  { label: 'Zone 7 Regional Leaders', bgColor: '#2F4366' },
+  { label: 'DCC', bgColor: '#2F4366' },
+  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C' },
+  { label: 'District Events', bgColor: '#372616' },
 ]
 
 function HomePage() {
@@ -49,7 +55,7 @@ function HomePage() {
                 Find details of every club, members, and leadership designed with clarity and simplicity for all Rotarians.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Link to={'/directory' as any} className="yellow-btn">Explore Directory</Link>
+                <Link to="/directory" className="yellow-btn">Explore Directory</Link>
                 <a href="#" className="white-btn">View Upcoming Events</a>
               </div>
             </div>
