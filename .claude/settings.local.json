@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir E:\\\\websites\\\\directory\\\\3055 *)",
+      "PowerShell(Get-ChildItem \"E:\\\\websites\\\\directory\\\\3055\" | ForEach-Object { \"$\\($_.PSIsContainer\\) - $\\($_.Name\\)\" })",
+      "Bash(Get-ChildItem -Path \"E:\\\\websites\\\\directory\\\\3055\\\\old\" -Recurse -Force)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Sort-Object FullName)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(grep -E \"\\\\.d\\\\.ts$|config\")",
+      "Bash(Test-Path \"src/routes\" -PathType Container)",
+      "Bash(npm install *)",
+      "Bash(npx tailwindcss *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+@font-face {
+    font-family: "flaticon";
+    src: url("../fonts/flaticon681a.ttf?1df927c4626e072d7cc017c3d3023445") format("truetype"),
+url("../fonts/flaticon681a.woff?1df927c4626e072d7cc017c3d3023445") format("woff"),
+url("../fonts/flaticon681a.woff2?1df927c4626e072d7cc017c3d3023445") format("woff2"),
+url("../fonts/flaticon681a.eot?1df927c4626e072d7cc017c3d3023445#iefix") format("embedded-opentype"),
+url("../fonts/flaticon681a.svg?1df927c4626e072d7cc017c3d3023445#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.flaticon-chat:before {
+    content: "\f101";
+}
+.flaticon-magnifying-glass:before {
+    content: "\f102";
+}
+.flaticon-shopping-cart:before {
+    content: "\f103";
+}
+.flaticon-camping:before {
+    content: "\f104";
+}
+.flaticon-climbing:before {
+    content: "\f105";
+}
+.flaticon-adventurer:before {
+    content: "\f106";
+}
+.flaticon-tent:before {
+    content: "\f107";
+}
+.flaticon-quote:before {
+    content: "\f108";
+}
+.flaticon-cottage:before {
+    content: "\f109";
+}
+.flaticon-tent-1:before {
+    content: "\f10a";
+}
+.flaticon-military:before {
+    content: "\f10b";
+}
+.flaticon-fire:before {
+    content: "\f10c";
+}
+.flaticon-plus:before {
+    content: "\f10d";
+}
+.flaticon-dive:before {
+    content: "\f10e";
+}
+.flaticon-parachute:before {
+    content: "\f10f";
+}
+.flaticon-axes:before {
+    content: "\f110";
+}
+.flaticon-phone-call:before {
+    content: "\f111";
+}
+.flaticon-open-envelope:before {
+    content: "\f112";
+}
+.flaticon-phone:before {
+    content: "\f113";
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>3020 - Directory</title>
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/fontawesome.min.css" integrity="sha512-v8QQ0YQ3H4K6Ic3PJkym91KoeNT5S3PnDKvqnwqFD1oiqIl653crGZplPdU5KKtHjO0QKcQ2aUlQZYjHczkmGw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="assets/css/font-awesome-all.css" rel="stylesheet">
+    <link href="assets/css/flaticon.css" rel="stylesheet">
+    <link href="assets/css/owl.css" rel="stylesheet">
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/jquery.fancybox.min.css" rel="stylesheet">
+    <link href="assets/css/animate.css" rel="stylesheet">
+    <link href="assets/css/color.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/responsive.css" rel="stylesheet">
+    <style>
+        .page-title {
+            position: relative;
+            padding: 30px 0px 30px 0px;
+            background-color: #9EDFFD;
+        }
+
+        .page-title .title h1 {
+            font-size: 40px;
+            line-height: 62px;
+            color: #000000;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .section-divider {
+            margin: 40px 0 30px 0;
+            text-align: center;
+        }
+
+        .section-divider h2 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #2E5339;
+            display: inline-block;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .section-divider h2:before,
+        .section-divider h2:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #2E5339);
+        }
+
+        .section-divider h2:before {
+            right: 100%;
+            background: linear-gradient(to left, #2E5339, transparent);
+        }
+
+        .section-divider h2:after {
+            left: 100%;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .page-title .title h1 {
+                font-size: 20px;
+                line-height: 24px;
+            }
+            .section-divider h2 {
+                font-size: 24px;
+            }
+            .section-divider h2:before,
+            .section-divider h2:after {
+                width: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="boxed_wrapper">
+        <!-- Preloader -->
+        <div class="preloader">
+            <div class="boxes">
+                <div class="box"><div></div><div></div><div></div><div></div></div>
+                <div class="box"><div></div><div></div><div></div><div></div></div>
+                <div class="box"><div></div><div></div><div></div><div></div></div>
+                <div class="box"><div></div><div></div><div></div><div></div></div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="main-header header-style-one">
+            <div class="header-lower">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="logo-box">
+                        <figure class="logo">
+                            <a href="https://3020.rotaryindia.org/" target="_blank">
+                                <img src="assets/images/logo1.png" alt="Logo">
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="menu-area d-flex align-items-center">
+                        <div class="mobile-nav-toggler">
+                            <i class="icon-bar"></i>
+                            <i class="icon-bar"></i>
+                            <i class="icon-bar"></i>
+                        </div>
+                        <nav class="main-menu navbar-expand-md navbar-light">
+                            <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
+                                <ul class="navigation clearfix">
+                                    <li><a href="https://3020.rotaryindia.org/" target="_blank">HOME</a></li>
+                                    <li><a href="https://3020calendar.rotaryindia.org/" target="_blank">CALENDAR</a></li>
+                                    <li><a href="https://rid3020.rotaryindia.org/" target="_blank">DISTRICT WEBSITE</a></li>
+                                    <li class="current"><a href="index.html">DIGITAL DIRECTORY</a></li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="sticky-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="logo-box">
+                        <figure class="logo">
+                            <a href="https://3020.rotaryindia.org/" target="_blank">
+                                <img src="assets/images/logo1.png" alt="Logo">
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="menu-area">
+                        <nav class="main-menu clearfix"></nav>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <div class="menu-backdrop"></div>
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <nav class="menu-box">
+                <div class="nav-logo">
+                    <a href="https://3020.rotaryindia.org/" target="_blank">
+                        <img src="assets/images/logo-2.png" alt="" title="">
+                    </a>
+                </div>
+                <div class="menu-outer"></div>
+            </nav>
+        </div>
+
+        <!-- Page Title -->
+        <section class="page-title centred">
+            <div class="auto-container">
+                <div class="content-box">
+                    <div class="title">
+                        <h1 id="dynamic-title"></h1>
+                    </div>
+                    <div class="btn-box">
+                        <a href="index.html" class="theme-btn btn-one dist-btn">Back</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Members Section -->
+        <section class="about-style-three">
+            <div class="auto-container">
+                <div id="members-section">
+                    <div class="row clearfix justify-content-center" id="cards-container">
+                        <!-- Member cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider (only shown when both members and sub-committees exist) -->
+        <div class="section-divider" id="section-divider" style="display: none;">
+            <h2>Sub Committees</h2>
+        </div>
+
+        <!-- Sub-committees Section -->
+        <section class="chooseus-section bg-color-1" id="sub-committees-section" style="display: none;">
+            <div class="auto-container">
+                <div class="row justify-content-center align-items-center mb-5" id="sub-committees-container">
+                    <!-- Sub-committee cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="auto-container">
+                <div class="footer-top">
+                    <div class="top-inner">
+                        <figure class="footer-logo"><a href="https://3020.rotaryindia.org/" target="_blank"><img src="assets/images/footer-logo.png" alt=""></a></figure>
+                        <figure class="footer-logo"><a href="https://3020.rotaryindia.org/" target="_blank"><img src="assets/images/rllogo.png" alt=""></a></figure>
+                        <figure class="footer-logo"><a href="https://3020.rotaryindia.org/" target="_blank"><img src="assets/images/kaizenlogo.png" alt=""></a></figure>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom centred">
+                <div class="auto-container">
+                    <div class="copyright">
+                        <p>&copy; 2025 Developed and maintained by <a href="https://kaizeninfotech.com/" target="_blank">Kaizen Infotech Solutions Pvt. Ltd.</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <button class="scroll-top scroll-to-target" data-target="html">
+            <i class="fal fa-long-arrow-up"></i>
+        </button>
+    </div>
+
+    <script>
+        const headerColors = ['#f97316', '#2563eb', '#16a34a', '#facc15'];
+        const bodyColors = ['#FFCD9E', '#dbeafe', '#d1fae5', '#fef9c3'];
+        const categoryColors = ['#372616', '#2F4366', '#E59E2C', '#17458F'];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const committeeID = urlParams.get('committeeID');
+        const title_str = urlParams.get('title');
+        const subCommitteeID = urlParams.get('subCommitteeID');
+        const subCommitteeName = urlParams.get('subCommitteeName');
+
+        const titleElem = document.getElementById('dynamic-title');
+        if (titleElem) {
+            titleElem.textContent = subCommitteeName || title_str || 'District Committee Members';
+        }
+
+        
+
+        function formatDayMonth(dateStr) {
+            if (!dateStr) return '';
+            dateStr = dateStr.trim();
+            const parts = dateStr.split('/');
+            if (parts.length < 2) return '';
+            const day = parts[0].padStart(2, '0');
+            const month = parts[1].padStart(2, '0');
+            return `${day}/${month}`;
+        }
+
+        function displaySubCommittees(subCommittees) {
+            const container = document.getElementById('sub-committees-container');
+            const section = document.getElementById('sub-committees-section');
+
+            if (!subCommittees || subCommittees.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            container.innerHTML = '';
+
+            subCommittees.forEach((subCommittee, index) => {
+                const color = categoryColors[index % categoryColors.length];
+
+                const card = document.createElement('div');
+                card.classList.add('col-md-4', 'col-12');
+
+                card.innerHTML = `
+                    <a href="committee-details.html?committeeID=${committeeID}&title=${encodeURIComponent(title_str)}&subCommitteeID=${subCommittee.pk_District_sub_Committee_id}&subCommitteeName=${encodeURIComponent(subCommittee.name)}" class="avenu-crd" style="background-color: ${color}; display: flex;">
+                        <div class="cat-text">${subCommittee.name}</div>
+                    </a>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function displayMembers(records) {
+            const container = document.getElementById('cards-container');
+            const section = document.getElementById('members-section');
+            
+            if (records.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+
+            // Sort records alphabetically by club name
+            records.sort((a, b) => {
+                const clubA = (a.ClubName || '').toLowerCase();
+                const clubB = (b.ClubName || '').toLowerCase();
+                return clubA.localeCompare(clubB);
+            });
+
+            container.innerHTML = '';
+
+            records.forEach((record, index) => {
+                const headerColor = headerColors[index % headerColors.length];
+                const bodyColor = bodyColors[index % bodyColors.length];
+
+                const cardData = {
+                    name: record.name || '',
+                    mobileNumber: record.MobileNumber || '',
+                    email: record.MailID || '',
+                    districtDesignation: record.DistrictDesignation || '',
+                    clubName: record.ClubName || '',
+                    img: record.img || '../assets/images/dummy.jpg',
+                };
+
+                const fullDesignationMap = {
+                    'ZAC': 'Zonal Avenue Chair',
+                    'GAH': 'Group Avenue Head',
+                    'ZCC': 'Zonal Co-Chair',
+                    'ZDC': 'Zonal District Chair'
+                };
+
+                const designationKey = (cardData.districtDesignation || '').substring(0, 3);
+                if (fullDesignationMap[designationKey]) {
+                    cardData.districtDesignation = `${fullDesignationMap[designationKey]} (${designationKey})`;
+                }
+
+                const address = record.Address?.trim() || '';
+                const Keywords = record.Keywords?.trim() || '';
+                const doa = formatDayMonth(record.DOA);
+                const dob = formatDayMonth(record.DOB);
+                const RotaryID = record.RotaryID?.trim() || '';
+                const Bloodgrp = record.Bloodgrp || '';
+
+                const card = document.createElement('div');
+                card.classList.add('col-xxl-6', 'col-xl-6', 'col-md-6', 'col-12');
+
+                card.innerHTML = `
+                    <div class="executive-card" style="background-color: ${bodyColor}; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                        <div class="card-header" style="background-color: ${headerColor}; color: white; text-align: center; padding: 10px; font-weight: bold; border-radius: 10px 10px 0 0; font-size: 18px;">
+                            ${cardData.districtDesignation}
+                        </div>
+                        <div class="card-body p-3 m-2">
+                            <div class="row align-items-center">
+                                <div class="col-md-4 col-12 text-center mb-2">
+                                    <img src="${cardData.img}" onerror="this.onerror=null;this.src='../assets/images/dummy.jpg';" alt="Profile Image" class="pro-img" />
+                                </div>
+                                <div class="col-md-8 p-0">
+                                    <div class="pro-name filed"><span>Name:</span> ${cardData.name}</div>
+                                    <div class="pro-name filed"><span>Club:</span> ${cardData.clubName}</div>
+                                    <div class="pro-name filed"><span>Classification:</span> ${Keywords}</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6 pro-name filed"><span>M:</span> ${cardData.mobileNumber}</div>
+                                <div class="col-6 pro-name filed"><span>Blood Group:</span> ${Bloodgrp}</div>
+                                <div class="col-12 pro-name filed"><span>Email:</span> ${cardData.email}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6 pro-name filed"><span>DOB:</span> ${dob}</div>
+                                <div class="col-6 pro-name filed"><span>RI:</span> ${RotaryID}</div>
+                                <div class="col-12 pro-name filed"><span>Address:</span> ${address}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Fetch and display data
+        fetch('https://rotaryindiaapi.rosteronwheels.com/api/DistrictCommittee/districtCommitteeDetails/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                DistrictCommitteID: committeeID,
+                groupID: '31685',
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const result = data.TBDistrictCommitteeDetailsResult?.Result;
+            const subCommittees = result?.district_sub_Committee || [];
+            const subCommitteeDetailsList = result?.district_sub_Committee_Details_list || [];
+            const directMembers = result?.districtCommitteeWithoutCatList || [];
+
+            // If viewing a specific sub-committee - ONLY SHOW MEMBERS
+            if (subCommitteeID) {
+                const filteredMembers = subCommitteeDetailsList.filter(
+                    member => member.fk_District_sub_Committee_id === subCommitteeID
+                );
+                
+                // HIDE sub-committees section completely
+                document.getElementById('section-divider').style.display = 'none';
+                document.getElementById('sub-committees-section').style.display = 'none';
+                
+                // ONLY show members
+                displayMembers(filteredMembers);
+            }
+            // If committee has both direct members and sub-committees
+            else if (directMembers.length > 0 && subCommittees.length > 0) {
+                displayMembers(directMembers);
+                document.getElementById('section-divider').style.display = 'block';
+                displaySubCommittees(subCommittees);
+            }
+            // If committee has only sub-committees
+            else if (subCommittees.length > 0) {
+                displaySubCommittees(subCommittees);
+            }
+            // If committee has only direct members
+            else {
+                displayMembers(directMembers);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            const container = document.getElementById('cards-container');
+            if (container) {
+                container.innerHTML = "<p class='text-danger text-center'>Failed to load data.</p>";
+            }
+        });
+    </script>
+
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/owl.js"></script>
+    <script src="assets/js/wow.js"></script>
+    <script src="assets/js/validation.js"></script>
+    <script src="assets/js/jquery.fancybox.js"></script>
+    <script src="assets/js/appear.js"></script>
+    <script src="assets/js/scrollbar.js"></script>
+    <script src="assets/js/parallax-scroll.js"></script>
+    <script src="assets/js/isotope.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
