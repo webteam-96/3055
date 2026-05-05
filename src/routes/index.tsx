@@ -6,15 +6,15 @@ export const Route = createFileRoute('/')({
 })
 
 const CATEGORY_CARDS = [
-  { label: 'A Glimpse of RI Dist. 3170', bgColor: '#372616', to: undefined as string | undefined },
-  { label: 'DG Family & Friends', bgColor: '#2F4366', to: undefined as string | undefined },
-  { label: 'Profile & Messages', bgColor: '#E59E2C', to: undefined as string | undefined },
-  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C', to: undefined as string | undefined },
-  { label: 'Digital Directory 2026-27', bgColor: '#372616', to: '/directory' as string | undefined },
-  { label: 'Zone 7 Regional Leaders', bgColor: '#2F4366', to: undefined as string | undefined },
-  { label: 'DCC', bgColor: '#2F4366', to: undefined as string | undefined },
-  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C', to: undefined as string | undefined },
-  { label: 'District Events', bgColor: '#372616', to: undefined as string | undefined },
+  { label: 'A Glimpse of RI Dist. 3170', bgColor: '#372616', to: undefined as any },
+  { label: 'DG Family & Friends', bgColor: '#2F4366', to: undefined as any },
+  { label: 'Profile & Messages', bgColor: '#E59E2C', to: undefined as any },
+  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C', to: undefined as any },
+  { label: 'Digital Directory 2026-27', bgColor: '#372616', to: '/directory' as any },
+  { label: 'Zone 7 Regional Leaders', bgColor: '#2F4366', to: undefined as any },
+  { label: 'DCC', bgColor: '#2F4366', to: undefined as any },
+  { label: 'Major, Endowment Donors & PHS Members', bgColor: '#E59E2C', to: undefined as any },
+  { label: 'District Events', bgColor: '#372616', to: undefined as any },
 ]
 
 function HomePage() {
