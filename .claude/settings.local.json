@@ -12,7 +12,12 @@
       "Bash(npm install *)",
       "Bash(npx tailwindcss *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npm run *)",
+      "Bash(Find-Item *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Copy-Item *)",
+      "PowerShell(Get-ChildItem *)"
     ]
   }
 }
