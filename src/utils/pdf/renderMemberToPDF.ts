@@ -13,7 +13,7 @@ import { fetchImageAsBase64 } from './fetchImageAsBase64'
 import { formatDayMonth } from '../formatDate'
 
 const CARD_WIDTH_PX = 469 // container width; HTML2CANVAS_SCALE assumes this exact rendered width
-const RENDER_SETTLE_MS = 150 // time for React to commit + browser to apply styles
+const RENDER_SETTLE_MS = 300 // time for React to commit + fonts to load + Tailwind to apply styles
 const HTML2CANVAS_SCALE = 6.243  // 186mm / 25.4 * 400 DPI / 469px ≈ 400 DPI
 export const PDF_PAGE_W_MM = 186
 export const PDF_PAGE_H_MM = 246
@@ -31,8 +31,10 @@ export async function renderMemberToCanvas(
     ? await fetchImageAsBase64(member.SpousePhoto)
     : undefined
 
+  // Position off-screen but visible so Tailwind JIT applies all CSS classes
+  // and the browser loads web fonts (opacity:0 keeps it invisible to the user)
   const container = document.createElement('div')
-  container.style.cssText = `position:absolute;left:-9999px;top:0;width:${CARD_WIDTH_PX}px;`
+  container.style.cssText = `position:fixed;left:0;top:0;width:${CARD_WIDTH_PX}px;opacity:0;pointer-events:none;z-index:-1;`
   document.body.appendChild(container)
 
   const root = createRoot(container)
@@ -56,7 +58,11 @@ export async function renderMemberToCanvas(
         bodyColor: colors.body,
       })
     )
-    setTimeout(resolve, RENDER_SETTLE_MS)
+    // Wait for React to commit, Tailwind to apply classes, and fonts to load
+    Promise.all([
+      document.fonts.ready,
+      new Promise(r => setTimeout(r, RENDER_SETTLE_MS)),
+    ]).then(() => resolve())
   })
 
   const cardEl = container.firstElementChild as HTMLElement | null
