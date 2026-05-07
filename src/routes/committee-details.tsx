@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useCommitteeDetails } from '../api/useCommitteeDetails'
 import { MemberCard } from '../components/MemberCard'
@@ -6,7 +5,6 @@ import { PdfDownloadButtons } from '../components/PdfDownloadButtons'
 import { Preloader } from '../components/Preloader'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS, COMMITTEE_COLORS } from '../types/api'
 import { formatDayMonth, expandDesignation } from '../utils/formatDate'
-import { downloadSinglePDF } from '../utils/pdf/downloadSinglePDF'
 
 // @ts-ignore
 export const Route = createFileRoute('/committee-details')({
@@ -35,7 +33,6 @@ function CommitteeDetailsPage() {
   const subCommitteeId = search?.subCommitteeId ?? ''
   const subCommitteeName = search?.subCommitteeName ?? ''
   const { data, isLoading, isError } = useCommitteeDetails(committeeId, GROUP_ID)
-  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null)
 
   if (isLoading) return <Preloader isLoading />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
@@ -67,7 +64,6 @@ function CommitteeDetailsPage() {
                 title={displayTitle}
                 getColors={(i) => ({ header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] })}
                 getDesignation={(m) => expandDesignation(m.DistrictDesignation || '')}
-                externalBusy={downloadingIndex !== null}
               />
             )}
             <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
@@ -92,19 +88,6 @@ function CommitteeDetailsPage() {
                 spouseDob={record.SpouseDOB || record.Spouse_DOB || ''}
                 headerColor={CARD_HEADER_COLORS[i % 4]}
                 bodyColor={CARD_BODY_COLORS[i % 4]}
-                onDownloadPdf={async () => {
-                  setDownloadingIndex(i)
-                  try {
-                    await downloadSinglePDF(
-                      record,
-                      { header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] },
-                      expandDesignation(record.DistrictDesignation || ''),
-                    )
-                  } finally {
-                    setDownloadingIndex(null)
-                  }
-                }}
-                isDownloading={downloadingIndex === i}
               />
             ))}
           </div>

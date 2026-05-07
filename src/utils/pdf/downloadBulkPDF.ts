@@ -1,8 +1,9 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { renderMemberToPDF } from './renderMemberToPDF'
-import { toSafeFilename } from './pdfUtils'
+import { jsPDF } from 'jspdf'
+import { renderMemberToCanvas, PDF_PAGE_W_MM, PDF_PAGE_H_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM } from './renderMemberToPDF'
 import type { DistrictCommitteeMember } from '../../types/api'
+import { toSafeFilename } from './pdfUtils'
 
 export async function downloadBulkPDF(
   members: DistrictCommitteeMember[],
@@ -19,11 +20,12 @@ export async function downloadBulkPDF(
     onProgress(i + 1, members.length)
     const member = members[i]
     const designation = getDesignation(member)
-    const doc = await renderMemberToPDF(member, getColors(i), designation)
-    const pdfBuffer = doc.output('arraybuffer')
+    const canvas = await renderMemberToCanvas(member, getColors(i), designation)
+    const doc = new jsPDF({ unit: 'mm', format: [PDF_PAGE_W_MM, PDF_PAGE_H_MM], orientation: 'portrait' })
+    doc.addImage(canvas.toDataURL('image/png'), 'PNG', PDF_BLEED_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM)
     const name = toSafeFilename(member.name || 'Member')
     const desig = toSafeFilename(designation || 'Member')
-    zip.file(`${i + 1}_${name}_${desig}.pdf`, pdfBuffer)
+    zip.file(`${i + 1}_${name}_${desig}.pdf`, doc.output('arraybuffer'))
   }
 
   const blob = await zip.generateAsync({ type: 'blob' })

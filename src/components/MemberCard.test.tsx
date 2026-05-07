@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
 import { MemberCard } from './MemberCard'
 
 const baseProps = {
@@ -14,34 +14,24 @@ const baseProps = {
   bodyColor: '#372616',
 }
 
-describe('MemberCard — PDF download button', () => {
-  it('does not render download button when onDownloadPdf is not provided', () => {
+describe('MemberCard', () => {
+  it('renders designation in the header', () => {
     render(<MemberCard {...baseProps} />)
-    expect(screen.queryByRole('button', { name: /↓ PDF/i })).toBeNull()
+    expect(screen.getByText('Zone Chair')).toBeDefined()
   })
 
-  it('renders download button when onDownloadPdf is provided', () => {
-    render(<MemberCard {...baseProps} onDownloadPdf={vi.fn()} />)
-    expect(screen.getByRole('button', { name: /↓ PDF/i })).toBeDefined()
+  it('renders member name', () => {
+    render(<MemberCard {...baseProps} />)
+    expect(screen.getByText('John Doe')).toBeDefined()
   })
 
-  it('shows "Generating…" and disables button when isDownloading is true', () => {
-    render(<MemberCard {...baseProps} onDownloadPdf={vi.fn()} isDownloading={true} />)
-    const btn = screen.getByRole('button', { name: /Generating/i }) as HTMLButtonElement
-    expect(btn).toBeDefined()
-    expect(btn.disabled).toBe(true)
+  it('renders club when provided', () => {
+    render(<MemberCard {...baseProps} club="Rotary Club" />)
+    expect(screen.getByText('Rotary Club')).toBeDefined()
   })
 
-  it('button is enabled when isDownloading is false', () => {
-    render(<MemberCard {...baseProps} onDownloadPdf={vi.fn()} isDownloading={false} />)
-    const btn = screen.getByRole('button', { name: /↓ PDF/i }) as HTMLButtonElement
-    expect(btn.disabled).toBe(false)
-  })
-
-  it('calls onDownloadPdf when button is clicked', () => {
-    const onDownloadPdf = vi.fn()
-    render(<MemberCard {...baseProps} onDownloadPdf={onDownloadPdf} />)
-    fireEvent.click(screen.getByRole('button', { name: /↓ PDF/i }))
-    expect(onDownloadPdf).toHaveBeenCalledTimes(1)
+  it('renders spouse fields when spouseName is provided', () => {
+    render(<MemberCard {...baseProps} spouseName="Jane Doe" spouseDob="02/06" />)
+    expect(screen.getByText('Jane Doe')).toBeDefined()
   })
 })

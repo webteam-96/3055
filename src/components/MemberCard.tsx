@@ -15,8 +15,6 @@ interface MemberCardProps {
   spouseName?: string
   spouseDob?: string
   spousePhoto?: string
-  onDownloadPdf?: () => void
-  isDownloading?: boolean
 }
 
 const Field = ({ label, value }: { label: string; value: string | undefined }) => (
@@ -28,7 +26,6 @@ const Field = ({ label, value }: { label: string; value: string | undefined }) =
 export function MemberCard({
   designation, name, club, mobile, email, dob, doa, photo,
   headerColor, bodyColor, classification, spouseName, spouseDob, spousePhoto,
-  onDownloadPdf, isDownloading,
 }: MemberCardProps) {
   const hasSpouse = spouseName !== undefined
 
@@ -85,20 +82,6 @@ export function MemberCard({
                 <Field label="Spouse DOB" value={spouseDob} />
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Per-card PDF download button */}
-        {onDownloadPdf !== undefined && (
-          <div style={{ textAlign: 'center', marginTop: '12px', paddingBottom: '4px' }}>
-            <button
-              onClick={onDownloadPdf}
-              disabled={isDownloading}
-              className="theme-btn"
-              style={{ fontSize: '13px', padding: '6px 16px' }}
-            >
-              {isDownloading ? 'Generating…' : '↓ PDF'}
-            </button>
           </div>
         )}
       </div>
