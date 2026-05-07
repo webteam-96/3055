@@ -29,13 +29,11 @@ export const PDF_LIVE_W = PDF_W_MM - 2 * PDF_BLEED   // 180
 export const PDF_LIVE_H = PDF_H_MM - 2 * PDF_BLEED   // 240
 export const PAGE_CANVAS_H = Math.round(PDF_LIVE_H / 25.4 * 300)  // ≈ 2835px
 
-// Rewrite external image URLs to go through the Vite dev-server proxy.
-// Same pattern as the 3170 project's /api/proxy-image route.
+// Rewrite any external image URL through the local /api/proxy-image endpoint.
+// Identical pattern to proxyImg() in the 3170 Next.js project.
 function proxyImgUrl(url: string): string {
   if (!url || url === 'null' || url === 'undefined') return ''
-  if (url.startsWith('https://rotaryindiaapi.rosteronwheels.com')) {
-    return '/img-proxy' + url.slice('https://rotaryindiaapi.rosteronwheels.com'.length)
-  }
+  if (url.startsWith('http')) return `/api/proxy-image?url=${encodeURIComponent(url)}`
   return url
 }
 
