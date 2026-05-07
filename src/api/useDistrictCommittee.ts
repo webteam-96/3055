@@ -3,7 +3,7 @@ import type { DistrictCommitteeResult } from '../types/api'
 
 const API_BASE = 'https://rotaryindiaapi.rosteronwheels.com/api'
 
-async function fetchDistrictCommittee(groupID: string, yearfilter: string): Promise<DistrictCommitteeResult> {
+export async function fetchDistrictCommittee(groupID: string, yearfilter: string): Promise<DistrictCommitteeResult> {
   const res = await fetch(`${API_BASE}/DistrictCommittee/districtCommitteeList`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

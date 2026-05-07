@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { DistrictCommitteeMember } from '../types/api'
 import { downloadCommitteePDF } from '../utils/pdf/downloadCommitteePDF'
-import { downloadBulkPDF } from '../utils/pdf/downloadBulkPDF'
 
 interface PdfDownloadButtonsProps {
   members: DistrictCommitteeMember[]
@@ -10,50 +9,28 @@ interface PdfDownloadButtonsProps {
   getDesignation: (member: DistrictCommitteeMember) => string
 }
 
-type ActiveDownload = 'committee' | 'bulk' | null
-
 export function PdfDownloadButtons({
   members, title, getColors, getDesignation,
 }: PdfDownloadButtonsProps) {
-  const [active, setActive] = useState<ActiveDownload>(null)
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null)
-  const isBusy = active !== null
 
   if (members.length === 0) return null
 
-  async function handleCommitteeDownload() {
-    setActive('committee')
+  async function handleDownload() {
     setProgress({ current: 0, total: members.length })
     try {
       await downloadCommitteePDF(members, title, getColors, getDesignation, (current, total) => {
         setProgress({ current, total })
       })
     } finally {
-      setActive(null)
-      setProgress(null)
-    }
-  }
-
-  async function handleBulkDownload() {
-    setActive('bulk')
-    setProgress({ current: 0, total: members.length })
-    try {
-      await downloadBulkPDF(members, title, getColors, getDesignation, (current, total) => {
-        setProgress({ current, total })
-      })
-    } finally {
-      setActive(null)
       setProgress(null)
     }
   }
 
   return (
     <>
-      <button onClick={handleCommitteeDownload} disabled={isBusy} className="theme-btn">
-        {active === 'committee' ? '…' : '↓ PDF'}
-      </button>
-      <button onClick={handleBulkDownload} disabled={isBusy} className="theme-btn">
-        {active === 'bulk' ? '…' : '↓ All as ZIP'}
+      <button onClick={handleDownload} disabled={progress !== null} className="theme-btn">
+        {progress !== null ? '…' : '↓ PDF'}
       </button>
 
       {progress !== null && (
@@ -67,7 +44,7 @@ export function PdfDownloadButtons({
             textAlign: 'center',
           }}>
             <div style={{ fontSize: '18px', fontWeight: 600, color: '#3b251a', marginBottom: '8px' }}>
-              {active === 'committee' ? 'Generating PDF…' : 'Generating ZIP…'}
+              Generating PDF…
             </div>
             <div style={{ color: '#7c6f68', fontSize: '14px' }}>
               {progress.current} of {progress.total}

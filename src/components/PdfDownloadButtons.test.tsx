@@ -42,17 +42,14 @@ describe('PdfDownloadButtons', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders both PDF and ZIP buttons when members are present', () => {
+  it('renders PDF download button when members are present', () => {
     render(<PdfDownloadButtons {...defaultProps} />)
     expect(screen.getByRole('button', { name: /↓ PDF/i })).toBeDefined()
-    expect(screen.getByRole('button', { name: /↓ All as ZIP/i })).toBeDefined()
   })
 
-  it('both buttons are enabled initially', () => {
+  it('PDF button is enabled initially', () => {
     render(<PdfDownloadButtons {...defaultProps} />)
-    const pdfBtn = screen.getByRole('button', { name: /↓ PDF/i }) as HTMLButtonElement
-    const zipBtn = screen.getByRole('button', { name: /↓ All as ZIP/i }) as HTMLButtonElement
-    expect(pdfBtn.disabled).toBe(false)
-    expect(zipBtn.disabled).toBe(false)
+    const btn = screen.getByRole('button', { name: /↓ PDF/i }) as HTMLButtonElement
+    expect(btn.disabled).toBe(false)
   })
 })

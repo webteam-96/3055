@@ -9,7 +9,7 @@ export interface CommitteeDetailsData {
   directMembers: DistrictCommitteeMember[]
 }
 
-async function fetchCommitteeDetails(committeeId: string, groupID: string): Promise<CommitteeDetailsData> {
+export async function fetchCommitteeDetails(committeeId: string, groupID: string): Promise<CommitteeDetailsData> {
   const res = await fetch(`${API_BASE}/DistrictCommittee/districtCommitteeDetails/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

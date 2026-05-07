@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useDistrictCommittee } from '../api/useDistrictCommittee'
+import { DirectoryZipButton } from '../components/DirectoryZipButton'
 import { Preloader } from '../components/Preloader'
 import { COMMITTEE_COLORS } from '../types/api'
 
@@ -19,7 +20,10 @@ function DirectoryPage() {
   return (
     <section className="py-12 bg-gray-50 min-h-screen">
       <div className="auto-container">
-        <h1 className="text-3xl font-bold text-[#3b251a] mb-8">Rotary District 3055</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-[#3b251a]">Rotary District 3055</h1>
+          <DirectoryZipButton />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/executive-committee" className="avenu-crd" style={{ backgroundColor: '#2F4366' }}>
             <div className="cat-text">Executive Committee</div>
