@@ -27,4 +27,14 @@ describe('fetchImageAsBase64', () => {
     const result = await fetchImageAsBase64('https://example.com/photo.jpg')
     expect(result).toBe('')
   })
+
+  it('returns a data URL when fetch succeeds', async () => {
+    const fakeBlob = new Blob(['fake-image-data'], { type: 'image/jpeg' })
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      blob: () => Promise.resolve(fakeBlob),
+    }))
+    const result = await fetchImageAsBase64('https://example.com/photo.jpg')
+    expect(result).toMatch(/^data:image\/jpeg;base64,/)
+  })
 })
