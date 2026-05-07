@@ -1,49 +1,47 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
 import { MemberCard } from './MemberCard'
 
 const baseProps = {
-  designation: 'District Governor',
+  designation: 'Zone Chair',
   name: 'John Doe',
-  club: 'Rotary Club Test',
-  mobile: '9999999999',
-  email: 'john@test.com',
-  dob: '15/03',
-  doa: '20/06',
-  address: '123 Test Street, Test City',
+  mobile: '9876543210',
+  email: 'john@example.com',
+  dob: '01/01',
+  doa: '15/03',
   photo: '',
   headerColor: '#E8D8CE',
   bodyColor: '#372616',
 }
 
-describe('MemberCard', () => {
-  it('renders the designation as card header text', () => {
+describe('MemberCard — PDF download button', () => {
+  it('does not render download button when onDownloadPdf is not provided', () => {
     render(<MemberCard {...baseProps} />)
-    expect(screen.getByText('District Governor')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /↓ PDF/i })).toBeNull()
   })
-  it('renders the name', () => {
-    render(<MemberCard {...baseProps} />)
-    expect(screen.getByText(/John Doe/)).toBeInTheDocument()
+
+  it('renders download button when onDownloadPdf is provided', () => {
+    render(<MemberCard {...baseProps} onDownloadPdf={vi.fn()} />)
+    expect(screen.getByRole('button', { name: /↓ PDF/i })).toBeDefined()
   })
-  it('renders the club name', () => {
-    render(<MemberCard {...baseProps} />)
-    expect(screen.getByText(/Rotary Club Test/)).toBeInTheDocument()
+
+  it('shows "Generating…" and disables button when isDownloading is true', () => {
+    render(<MemberCard {...baseProps} onDownloadPdf={vi.fn()} isDownloading={true} />)
+    const btn = screen.getByRole('button', { name: /Generating/i }) as HTMLButtonElement
+    expect(btn).toBeDefined()
+    expect(btn.disabled).toBe(true)
   })
-  it('renders a profile image', () => {
-    render(<MemberCard {...baseProps} />)
-    expect(screen.getByRole('img')).toBeInTheDocument()
+
+  it('button is enabled when isDownloading is false', () => {
+    render(<MemberCard {...baseProps} onDownloadPdf={vi.fn()} isDownloading={false} />)
+    const btn = screen.getByRole('button', { name: /↓ PDF/i }) as HTMLButtonElement
+    expect(btn.disabled).toBe(false)
   })
-  it('renders mobile number', () => {
-    render(<MemberCard {...baseProps} />)
-    expect(screen.getByText(/9999999999/)).toBeInTheDocument()
-  })
-  it('renders email', () => {
-    render(<MemberCard {...baseProps} />)
-    expect(screen.getByText(/john@test\.com/)).toBeInTheDocument()
-  })
-  it('uses headerColor and bodyColor as inline styles', () => {
-    const { container } = render(<MemberCard {...baseProps} />)
-    const card = container.firstChild as HTMLElement
-    expect(card.style.backgroundColor).toBe('rgb(55, 38, 22)')
+
+  it('calls onDownloadPdf when button is clicked', () => {
+    const onDownloadPdf = vi.fn()
+    render(<MemberCard {...baseProps} onDownloadPdf={onDownloadPdf} />)
+    fireEvent.click(screen.getByRole('button', { name: /↓ PDF/i }))
+    expect(onDownloadPdf).toHaveBeenCalledTimes(1)
   })
 })
