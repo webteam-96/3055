@@ -7,6 +7,18 @@ export default defineConfig({
     TanStackRouterVite({ routesDirectory: './src/routes' }),
     react(),
   ],
+  server: {
+    proxy: {
+      // Proxy image requests through the dev server so fetch() has no CORS issues.
+      // Usage: fetch('/img-proxy/uploads/photo.jpg')
+      //   → proxied to: https://rotaryindiaapi.rosteronwheels.com/uploads/photo.jpg
+      '/img-proxy': {
+        target: 'https://rotaryindiaapi.rosteronwheels.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/img-proxy/, ''),
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

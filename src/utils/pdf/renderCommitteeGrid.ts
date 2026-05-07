@@ -20,6 +20,17 @@ const GAP_PX = 16
 const IMAGE_FETCH_TIMEOUT_MS = 8000
 const RENDER_SETTLE_MS = 400
 
+// Rewrite external image URLs to go through the Vite dev-server proxy at /img-proxy.
+// The proxy forwards the request server-side so fetch() has no CORS restrictions.
+// Mirrors the /api/proxy-image pattern from the 3170 Next.js project.
+function proxyImgUrl(url: string): string {
+  if (!url) return ''
+  const API_HOST = 'https://rotaryindiaapi.rosteronwheels.com'
+  if (url.startsWith(API_HOST)) return '/img-proxy' + url.slice(API_HOST.length)
+  if (url.startsWith('http')) return '/img-proxy-ext?url=' + encodeURIComponent(url)
+  return url
+}
+
 export const GRID_SCALE = (180 / 25.4 * 300) / GRID_WIDTH_PX  // ≈ 1.518 → 300 DPI
 export const PDF_W_MM = 186
 export const PDF_H_MM = 246
@@ -28,14 +39,14 @@ export const PDF_LIVE_W = PDF_W_MM - 2 * PDF_BLEED   // 180
 export const PDF_LIVE_H = PDF_H_MM - 2 * PDF_BLEED   // 240
 export const PAGE_CANVAS_H = Math.round(PDF_LIVE_H / 25.4 * 300)  // ≈ 2835px
 
-// Fetch one image URL → base64 data URL.
-// Uses a timed fetch so a slow/dead URL doesn't block the whole render.
+// Fetch one image URL → base64 data URL via the local proxy (bypasses CORS).
 async function fetchBase64(url: string): Promise<string> {
   if (!url) return ''
   try {
+    const proxied = proxyImgUrl(url)
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), IMAGE_FETCH_TIMEOUT_MS)
-    const res = await fetch(url, { signal: ctrl.signal })
+    const res = await fetch(proxied, { signal: ctrl.signal })
     clearTimeout(timer)
     if (!res.ok) return ''
     const blob = await res.blob()
