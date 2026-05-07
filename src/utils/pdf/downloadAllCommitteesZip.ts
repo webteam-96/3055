@@ -1,7 +1,6 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { jsPDF } from 'jspdf'
-import { renderMemberToCanvas, PDF_PAGE_W_MM, PDF_PAGE_H_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM } from './renderMemberToPDF'
+import { renderCommitteeGridToCanvas, gridCanvasToJsPDF } from './renderCommitteeGrid'
 import { fetchDistrictCommittee } from '../../api/useDistrictCommittee'
 import { fetchCommitteeDetails } from '../../api/useCommitteeDetails'
 import { expandDesignation } from '../formatDate'
@@ -19,26 +18,20 @@ async function buildCommitteePdfBuffer(
   getDesignation: (m: DistrictCommitteeMember) => string,
 ): Promise<ArrayBuffer | null> {
   if (members.length === 0) return null
-
-  const doc = new jsPDF({ unit: 'mm', format: [PDF_PAGE_W_MM, PDF_PAGE_H_MM], orientation: 'portrait' })
-
-  for (let i = 0; i < members.length; i++) {
-    if (i > 0) doc.addPage([PDF_PAGE_W_MM, PDF_PAGE_H_MM])
-    const colors = { header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] }
-    const canvas = await renderMemberToCanvas(members[i], colors, getDesignation(members[i]))
-    doc.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', PDF_BLEED_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM)
-  }
-
-  return doc.output('arraybuffer')
+  const canvas = await renderCommitteeGridToCanvas(
+    members,
+    (i) => ({ header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] }),
+    getDesignation,
+  )
+  return gridCanvasToJsPDF(canvas).output('arraybuffer')
 }
 
 export async function downloadAllCommitteesZip(onProgress: ProgressCallback): Promise<void> {
-  // Fetch the top-level directory: exec members + committee categories
   const directory = await fetchDistrictCommittee(GROUP_ID, YEAR)
   const execMembers = directory.members
   const categories = directory.categories
 
-  const totalCommittees = 1 + categories.length // exec + each category
+  const totalCommittees = 1 + categories.length
   const zip = new JSZip()
   let current = 0
 
@@ -58,8 +51,6 @@ export async function downloadAllCommitteesZip(onProgress: ProgressCallback): Pr
     onProgress(category.name, current, totalCommittees)
 
     const details = await fetchCommitteeDetails(category.Fk_DistrictCommitteeID, GROUP_ID)
-
-    // Combine direct members + sub-committee members (deduplicated by name)
     const allMembers = [
       ...details.directMembers,
       ...details.subCommitteeMembers,
@@ -69,10 +60,8 @@ export async function downloadAllCommitteesZip(onProgress: ProgressCallback): Pr
       allMembers,
       (m) => expandDesignation(m.DistrictDesignation || ''),
     )
-
     if (buffer) {
-      const safeName = toSafeFilename(category.name)
-      zip.file(`${String(current).padStart(2, '0')}_${safeName}.pdf`, buffer)
+      zip.file(`${String(current).padStart(2, '0')}_${toSafeFilename(category.name)}.pdf`, buffer)
     }
   }
 
