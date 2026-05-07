@@ -1,11 +1,14 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useCommitteeDetails } from '../api/useCommitteeDetails'
 import { MemberCard } from '../components/MemberCard'
+import { PdfDownloadButtons } from '../components/PdfDownloadButtons'
 import { Preloader } from '../components/Preloader'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS, COMMITTEE_COLORS } from '../types/api'
 import { formatDayMonth, expandDesignation } from '../utils/formatDate'
+import { downloadSinglePDF } from '../utils/pdf/downloadSinglePDF'
 
-// @ts-ignore - TanStack Router types are generated during build
+// @ts-ignore
 export const Route = createFileRoute('/committee-details')({
   validateSearch: (search: Record<string, unknown>) => ({
     committeeId: (search.committeeId as string) ?? '',
@@ -32,6 +35,7 @@ function CommitteeDetailsPage() {
   const subCommitteeId = search?.subCommitteeId ?? ''
   const subCommitteeName = search?.subCommitteeName ?? ''
   const { data, isLoading, isError } = useCommitteeDetails(committeeId, GROUP_ID)
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null)
 
   if (isLoading) return <Preloader isLoading />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
@@ -52,70 +56,85 @@ function CommitteeDetailsPage() {
   const showDivider = !subCommitteeId && showMembers && showSubCommittees
 
   return (
-    <>
-      <section className="py-6 bg-[#9EDFFD]">
-        <div className="auto-container flex justify-between items-center flex-wrap gap-4">
-          <h1 className="text-3xl font-medium text-black">{displayTitle}</h1>
-          <button
-            onClick={() => window.history.back()}
-            className="theme-btn"
-          >
-            Back
-          </button>
+    <section className="py-10">
+      <div className="auto-container">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-[#3b251a]">{displayTitle}</h2>
+          <div className="flex items-center gap-2">
+            {showMembers && (
+              <PdfDownloadButtons
+                members={displayMembers}
+                title={displayTitle}
+                getColors={(i) => ({ header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] })}
+                getDesignation={(m) => expandDesignation(m.DistrictDesignation || '')}
+                externalBusy={downloadingIndex !== null}
+              />
+            )}
+            <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
+          </div>
         </div>
-      </section>
 
-      <section className="py-10">
-        <div className="auto-container">
-          {showMembers && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              {displayMembers.map((record, i) => (
-                <MemberCard
-                  key={i}
-                  designation={expandDesignation(record.DistrictDesignation || '')}
-                  name={record.name || ''}
-                  club={record.ClubName || ''}
-                  mobile={record.MobileNumber || ''}
-                  email={record.MailID || ''}
-                  dob={formatDayMonth(record.DOB)}
-                  doa={formatDayMonth(record.DOA)}
-                  address={record.Address || ''}
-                  photo={record.img || ''}
-                  headerColor={CARD_HEADER_COLORS[i % 4]}
-                  bodyColor={CARD_BODY_COLORS[i % 4]}
-                />
-              ))}
-            </div>
-          )}
+        {showMembers && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            {displayMembers.map((record, i) => (
+              <MemberCard
+                key={i}
+                designation={expandDesignation(record.DistrictDesignation || '')}
+                name={record.name || ''}
+                club={record.ClubName || ''}
+                mobile={record.MobileNumber || ''}
+                email={record.MailID || ''}
+                dob={formatDayMonth(record.DOB)}
+                doa={formatDayMonth(record.DOA)}
+                photo={record.img || ''}
+                classification={record.classification || record.Keywords || ''}
+                spouseName={record.SpouseName || ''}
+                spouseDob={record.SpouseDOB || record.Spouse_DOB || ''}
+                headerColor={CARD_HEADER_COLORS[i % 4]}
+                bodyColor={CARD_BODY_COLORS[i % 4]}
+                onDownloadPdf={async () => {
+                  setDownloadingIndex(i)
+                  try {
+                    await downloadSinglePDF(
+                      record,
+                      { header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] },
+                      expandDesignation(record.DistrictDesignation || ''),
+                    )
+                  } finally {
+                    setDownloadingIndex(null)
+                  }
+                }}
+                isDownloading={downloadingIndex === i}
+              />
+            ))}
+          </div>
+        )}
 
-          {showDivider && (
-            <div className="text-center my-10">
-              <h2 className="text-2xl font-semibold text-[#2E5339] inline-block px-5">
-                Sub Committees
-              </h2>
-            </div>
-          )}
+        {showDivider && (
+          <div className="text-center my-8">
+            <h2 className="text-2xl font-semibold text-[#2E5339]">Sub Committees</h2>
+          </div>
+        )}
 
-          {showSubCommittees && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {(data?.subCommittees ?? []).map((sub, i) => (
-                <a
-                  key={sub.pk_District_sub_Committee_id}
-                  href={`/committee-details?committeeId=${committeeId}&name=${encodeURIComponent(name)}&subCommitteeId=${sub.pk_District_sub_Committee_id}&subCommitteeName=${encodeURIComponent(sub.name)}`}
-                  className="avenu-crd"
-                  style={{ backgroundColor: COMMITTEE_COLORS[i % 4] }}
-                >
-                  {sub.name}
-                </a>
-              ))}
-            </div>
-          )}
+        {showSubCommittees && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {(data?.subCommittees ?? []).map((sub, i) => (
+              <a
+                key={sub.pk_District_sub_Committee_id}
+                href={`/committee-details?committeeId=${committeeId}&name=${encodeURIComponent(name)}&subCommitteeId=${sub.pk_District_sub_Committee_id}&subCommitteeName=${encodeURIComponent(sub.name)}`}
+                className="avenu-crd"
+                style={{ backgroundColor: COMMITTEE_COLORS[i % 4] }}
+              >
+                <div className="cat-text">{sub.name}</div>
+              </a>
+            ))}
+          </div>
+        )}
 
-          {!showMembers && !showSubCommittees && (
-            <p className="text-center text-gray-500">No data available.</p>
-          )}
-        </div>
-      </section>
-    </>
+        {!showMembers && !showSubCommittees && (
+          <p className="text-center text-gray-500">No data available.</p>
+        )}
+      </div>
+    </section>
   )
 }
