@@ -73,7 +73,7 @@ export async function renderMemberToCanvas(
     canvas = await html2canvas(cardEl, {
       scale: HTML2CANVAS_SCALE,
       useCORS: false, // photos are pre-fetched as base64 by fetchImageAsBase64; no cross-origin requests reach html2canvas
-      backgroundColor: null,
+      backgroundColor: '#ffffff', // JPEG format requires opaque background; white matches the page bg behind card corners
       logging: false,
     })
   } finally {
@@ -95,6 +95,6 @@ export async function renderMemberToPDF(
     format: [PDF_PAGE_W_MM, PDF_PAGE_H_MM],
     orientation: 'portrait',
   })
-  doc.addImage(canvas.toDataURL('image/png'), 'PNG', PDF_BLEED_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM)
+  doc.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', PDF_BLEED_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM)
   return doc
 }

@@ -26,7 +26,7 @@ async function buildCommitteePdfBuffer(
     if (i > 0) doc.addPage([PDF_PAGE_W_MM, PDF_PAGE_H_MM])
     const colors = { header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] }
     const canvas = await renderMemberToCanvas(members[i], colors, getDesignation(members[i]))
-    doc.addImage(canvas.toDataURL('image/png'), 'PNG', PDF_BLEED_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM)
+    doc.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', PDF_BLEED_MM, PDF_BLEED_MM, PDF_LIVE_W_MM, PDF_LIVE_H_MM)
   }
 
   return doc.output('arraybuffer')
