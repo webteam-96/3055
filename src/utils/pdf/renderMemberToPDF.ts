@@ -13,7 +13,7 @@ import { fetchImageAsBase64 } from './fetchImageAsBase64'
 import { formatDayMonth } from '../formatDate'
 
 const CARD_WIDTH_PX = 469 // container width; HTML2CANVAS_SCALE assumes this exact rendered width
-const RENDER_SETTLE_MS = 300 // time for React to commit + fonts to load + Tailwind to apply styles
+const RENDER_SETTLE_MS = 500 // time for React to commit + fonts to load + styles to paint
 const HTML2CANVAS_SCALE = 6.243  // 186mm / 25.4 * 400 DPI / 469px ≈ 400 DPI
 export const PDF_PAGE_W_MM = 186
 export const PDF_PAGE_H_MM = 246
@@ -31,10 +31,10 @@ export async function renderMemberToCanvas(
     ? await fetchImageAsBase64(member.SpousePhoto)
     : undefined
 
-  // Position off-screen but visible so Tailwind JIT applies all CSS classes
-  // and the browser loads web fonts (opacity:0 keeps it invisible to the user)
+  // Position just outside the left viewport edge so CSS and fonts apply
+  // normally. opacity/visibility tricks cause html2canvas to capture blank.
   const container = document.createElement('div')
-  container.style.cssText = `position:fixed;left:0;top:0;width:${CARD_WIDTH_PX}px;opacity:0;pointer-events:none;z-index:-1;`
+  container.style.cssText = `position:fixed;left:-${CARD_WIDTH_PX + 1}px;top:0;width:${CARD_WIDTH_PX}px;pointer-events:none;`
   document.body.appendChild(container)
 
   const root = createRoot(container)
