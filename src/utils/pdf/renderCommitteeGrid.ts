@@ -2,13 +2,16 @@
  * Renders all committee members in a 2-column grid (matching the web layout)
  * and paginates the result into a jsPDF document.
  *
- * Images are pre-fetched as base64 data URLs before mounting so html2canvas
- * never makes a cross-origin request — CORS is bypassed entirely.
- * Layout uses flexbox (not CSS Grid) because html2canvas has unreliable Grid support.
+ * Mirrors the approach in the 3170 project (pdfGenerators.tsx):
+ * - Images loaded via new Image() + canvas (not fetch) through the Vite proxy
+ * - flushSync + requestAnimationFrame for reliable DOM paint before capture
+ * - container at top:-99999px (not off-left) so CSS classes apply correctly
+ * - useCORS:true + allowTaint:true in html2canvas
  */
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
 import { createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
 import { createElement } from 'react'
 import { MemberCard } from '../../components/MemberCard'
 import type { DistrictCommitteeMember } from '../../types/api'
@@ -17,19 +20,6 @@ import { formatDayMonth } from '../formatDate'
 const GRID_WIDTH_PX = 1400
 const GRID_PADDING_PX = 16
 const GAP_PX = 16
-const IMAGE_FETCH_TIMEOUT_MS = 8000
-const RENDER_SETTLE_MS = 400
-
-// Rewrite external image URLs to go through the Vite dev-server proxy at /img-proxy.
-// The proxy forwards the request server-side so fetch() has no CORS restrictions.
-// Mirrors the /api/proxy-image pattern from the 3170 Next.js project.
-function proxyImgUrl(url: string): string {
-  if (!url) return ''
-  const API_HOST = 'https://rotaryindiaapi.rosteronwheels.com'
-  if (url.startsWith(API_HOST)) return '/img-proxy' + url.slice(API_HOST.length)
-  if (url.startsWith('http')) return '/img-proxy-ext?url=' + encodeURIComponent(url)
-  return url
-}
 
 export const GRID_SCALE = (180 / 25.4 * 300) / GRID_WIDTH_PX  // ≈ 1.518 → 300 DPI
 export const PDF_W_MM = 186
@@ -39,26 +29,48 @@ export const PDF_LIVE_W = PDF_W_MM - 2 * PDF_BLEED   // 180
 export const PDF_LIVE_H = PDF_H_MM - 2 * PDF_BLEED   // 240
 export const PAGE_CANVAS_H = Math.round(PDF_LIVE_H / 25.4 * 300)  // ≈ 2835px
 
-// Fetch one image URL → base64 data URL via the local proxy (bypasses CORS).
-async function fetchBase64(url: string): Promise<string> {
-  if (!url) return ''
-  try {
-    const proxied = proxyImgUrl(url)
-    const ctrl = new AbortController()
-    const timer = setTimeout(() => ctrl.abort(), IMAGE_FETCH_TIMEOUT_MS)
-    const res = await fetch(proxied, { signal: ctrl.signal })
-    clearTimeout(timer)
-    if (!res.ok) return ''
-    const blob = await res.blob()
-    return await new Promise<string>(resolve => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = () => resolve('')
-      reader.readAsDataURL(blob)
-    })
-  } catch {
-    return ''
+// Rewrite external image URLs to go through the Vite dev-server proxy.
+// Same pattern as the 3170 project's /api/proxy-image route.
+function proxyImgUrl(url: string): string {
+  if (!url || url === 'null' || url === 'undefined') return ''
+  if (url.startsWith('https://rotaryindiaapi.rosteronwheels.com')) {
+    return '/img-proxy' + url.slice('https://rotaryindiaapi.rosteronwheels.com'.length)
   }
+  return url
+}
+
+// Load one image URL → base64 JPEG data URL.
+// Uses new Image() + canvas (same pattern as imageToDataUrl in 3170).
+// The proxied URL is same-origin so crossOrigin='anonymous' works without taint.
+async function imageToDataUrl(url: string): Promise<string> {
+  const proxied = proxyImgUrl(url)
+  if (!proxied) return ''
+
+  return new Promise(resolve => {
+    const img = new window.Image()
+    img.crossOrigin = 'anonymous'
+    const timer = setTimeout(() => resolve(''), 8000)
+
+    img.onload = () => {
+      clearTimeout(timer)
+      try {
+        const w = img.naturalWidth || 150
+        const h = img.naturalHeight || 150
+        const canvas = document.createElement('canvas')
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')!
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, w, h)
+        ctx.drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.9))
+      } catch {
+        resolve('')
+      }
+    }
+    img.onerror = () => { clearTimeout(timer); resolve('') }
+    img.src = proxied
+  })
 }
 
 export async function renderCommitteeGridToCanvas(
@@ -66,23 +78,26 @@ export async function renderCommitteeGridToCanvas(
   getColors: (i: number) => { header: string; body: string },
   getDesignation: (m: DistrictCommitteeMember) => string,
 ): Promise<HTMLCanvasElement> {
-  // Pre-fetch all member + spouse photos in parallel as base64 data URLs.
-  // html2canvas sees data: src attributes — zero cross-origin requests.
+  // Pre-load all photos as base64 data URLs in parallel
   const [photos, spousePhotos] = await Promise.all([
-    Promise.all(members.map(m => fetchBase64(m.img))),
-    Promise.all(members.map(m => fetchBase64(m.SpousePhoto))),
+    Promise.all(members.map(m => imageToDataUrl(m.img))),
+    Promise.all(members.map(m => imageToDataUrl(m.SpousePhoto))),
   ])
 
   const contentWidth = GRID_WIDTH_PX - 2 * GRID_PADDING_PX   // 1368px
   const cardWidth = (contentWidth - GAP_PX) / 2               // 676px
 
+  // Position off the TOP (not off the left) — matches 3170 pattern.
+  // top:-99999px ensures the container is off-screen but CSS classes still apply.
   const container = document.createElement('div')
-  container.style.cssText = `position:fixed;left:-${GRID_WIDTH_PX + 1}px;top:0;width:${GRID_WIDTH_PX}px;pointer-events:none;`
+  container.style.cssText = `position:fixed;top:-99999px;left:0;width:${GRID_WIDTH_PX}px;pointer-events:none;background:#fff;`
   document.body.appendChild(container)
 
   const root = createRoot(container)
 
-  await new Promise<void>(resolve => {
+  // flushSync ensures React commits synchronously before we measure/capture.
+  // Two rAF calls give the browser time to paint styles and load images.
+  flushSync(() => {
     root.render(
       createElement(
         'div',
@@ -102,7 +117,7 @@ export async function renderCommitteeGridToCanvas(
                 email: member.MailID || '',
                 dob: formatDayMonth(member.DOB),
                 doa: formatDayMonth(member.DOA),
-                photo: photos[i],           // base64 data URL or '' → shows dummyImg
+                photo: photos[i],
                 classification: member.classification || member.Keywords || '',
                 spouseName: member.SpouseName || '',
                 spouseDob: member.SpouseDOB || member.Spouse_DOB || '',
@@ -115,16 +130,13 @@ export async function renderCommitteeGridToCanvas(
         )
       )
     )
-
-    // Wait for fonts + a settle period for React to paint
-    Promise.all([
-      document.fonts.ready,
-      new Promise(r => setTimeout(r, RENDER_SETTLE_MS)),
-    ]).then(() => resolve())
   })
 
-  // Wait for every img in the container to finish loading (or error out).
-  // This covers the dummyImg fallback and any data: URLs that take time to decode.
+  // Wait for two paint frames — same as 3170
+  await new Promise(r => requestAnimationFrame(r))
+  await new Promise(r => requestAnimationFrame(r))
+
+  // Also wait for all img elements to fire load/error
   const imgs = Array.from(container.querySelectorAll('img'))
   await Promise.allSettled(
     imgs.map(img =>
@@ -133,23 +145,25 @@ export async function renderCommitteeGridToCanvas(
         : new Promise<void>(res => {
             img.addEventListener('load', () => res(), { once: true })
             img.addEventListener('error', () => res(), { once: true })
-            setTimeout(() => res(), 5000)  // give up after 5s
+            setTimeout(res, 5000)
           })
     )
   )
 
-  const outerEl = container.firstElementChild as HTMLElement | null
-  if (!outerEl) throw new Error('renderCommitteeGridToCanvas: no element rendered')
+  const outerEl = container.firstElementChild as HTMLElement
+  const naturalW = container.scrollWidth
+  const naturalH = container.scrollHeight
 
   let canvas: HTMLCanvasElement
   try {
     canvas = await html2canvas(outerEl, {
       scale: GRID_SCALE,
-      useCORS: false,       // not needed — all images are base64 data URLs
-      allowTaint: false,
+      useCORS: true,
+      allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
-      imageTimeout: 0,      // images are already loaded; no timeout needed
+      width: naturalW,
+      height: naturalH,
     })
   } finally {
     root.unmount()

@@ -47,7 +47,8 @@
       "Bash(python3 -c \"import json,sys; print\\(json.dumps\\(json.load\\(sys.stdin\\), indent=2\\)\\)\")",
       "Bash(Get-Content \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--websites-directory-3055\\\\c522a570-91e7-4ee4-b8ff-6162338e66dc\\\\tasks\\\\b67hylxhu.output\" -Wait)",
       "Bash(Select-String -Pattern \"Local:|ready|error|VITE\" --SimpleMatch)",
-      "Bash(Get-Content *)"
+      "Bash(Get-Content *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{content_type}\" \"http://localhost:5174/img-proxy/api/DistrictCommittee/districtCommitteeList\" -X GET)"
     ]
   }
 }
