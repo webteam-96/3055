@@ -34,35 +34,112 @@
     @apply relative overflow-x-hidden mx-auto w-full min-w-[300px];
   }
   .executive-card {
-    @apply rounded-[10px] shadow-md mb-5;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
   }
-  .card-header-tab {
-    @apply text-center px-3 py-2.5 font-normal text-lg rounded-b-[10px] w-4/5 mx-auto;
+  .card-header {
+    color: #000000;
+    font-family: 'Geist', sans-serif;
+    text-align: center;
+    padding: 10px;
+    font-weight: 400;
+    border-radius: 0 0 10px 10px;
+    font-size: 18px;
+    width: 80%;
+    margin: auto;
+    text-transform: uppercase;
   }
   .pro-img {
-    @apply w-[120px] h-[120px] rounded-xl object-cover mx-auto;
+    width: 130px;
+    height: 130px;
+    border-radius: 12px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
   }
   .pro-img-lg {
-    @apply w-[150px] h-[150px] rounded-xl object-cover mx-auto;
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+  }
+  .pro-name {
+    color: #000;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 8px;
+  }
+  .pro-name span {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 400;
   }
   .filed {
-    @apply text-sm text-white mb-1;
-  }
-  .filed span {
-    @apply font-semibold;
+    display: block;
+    width: 100%;
+    padding: 7px 10px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 12px;
+    white-space: normal;
+    height: auto;
+    word-break: break-word;
+    margin-bottom: 8px;
   }
   .address-line {
     @apply block whitespace-nowrap overflow-hidden text-ellipsis;
   }
   .avenu-crd {
-    @apply flex items-center justify-center min-h-[80px] rounded-xl mb-4 cursor-pointer
-           text-white text-center font-semibold text-lg p-4 transition-transform
-           hover:scale-[1.02] hover:no-underline;
+    background-color: var(--accent-color);
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .avenu-crd:hover {
+    transform: scale(1.02);
+    text-decoration: none;
+  }
+  .cat-text {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
   }
   .club-crd {
-    @apply flex items-center justify-center min-h-[60px] rounded-xl mb-4 cursor-pointer
-           text-white text-center font-semibold text-base p-3 bg-[#2F4366]
-           transition-transform hover:scale-[1.02] hover:no-underline w-full;
+    background-color: #17458F;
+    border-radius: 12px;
+    padding: 50px 20px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.2s;
+  }
+  .club-crd:hover {
+    transform: scale(1.02);
+    text-decoration: none;
+  }
+  .club-crd .cat-text {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
   }
   .page-banner {
     @apply relative py-8;

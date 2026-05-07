@@ -13,8 +13,12 @@ export interface DistrictCommitteeMember {
   RotaryID: string
   img: string
   SpouseName: string
+  SpousePhoto: string
+  SpouseDOB: string
+  Spouse_DOB: string
   Spouse_Mobile_Number: string
   SpouseMobileNumber: string
+  SpouseMobile: string
   Keywords: string
   classification: string
   fk_District_sub_Committee_id?: string
@@ -48,6 +52,10 @@ export interface ClubBasicInfo {
   Club_ID: string
   Charter_Date: string
   Membership: string
+  Address?: string
+  Meeting_Time?: string
+  Meeting_Day?: string
+  Club_Address?: string
 }
 
 export interface ClubPresident {
@@ -59,6 +67,10 @@ export interface ClubPresident {
   DOA: string
   address: string
   RotaryID: string
+  Classification: string
+  President_spouse_name: string
+  President_spouse_DOB: string
+  President_photo_spouse: string
 }
 
 export interface ClubSecretary {
@@ -70,6 +82,10 @@ export interface ClubSecretary {
   DOA: string
   address: string
   RotaryID: string
+  Classification: string
+  Secretary_spouse_name: string
+  Secretary_spouse_DOB: string
+  Secretary_photo_spouse: string
 }
 
 export interface ClubBODMember {
@@ -90,6 +106,8 @@ export interface ClubAG {
   Mobile_number: string
   Emailid: string
   member_date_of_birth: string
+  Zone_No?: string
+  ZoneNo?: string
 }
 
 export interface ClubDetailsData {
@@ -115,11 +133,16 @@ export interface ClubMember {
   MemberDOA: string
   MemberEmail: string
   MemberAddress: string
+  SpouseName: string
+  SpouseDOB: string
+  SpousePhoto: string
+  SpouseMobile: string
 }
 
 // Clubs BOD API (Get_Clubs_BOD)
 export interface ClubBODSummary {
   grpID: string
+  clubId: string
   clubName: string
   AG_Name: string
   AG_MobileNumber: string
@@ -129,11 +152,19 @@ export interface ClubBODSummary {
   President_member_name: string
   President_member_email_id: string
   President_member_mobile_no: string
+  President_Classification: string
   President_Profile_Photo: string
+  President_Spouse_member_name: string
+  President_Spouse_DOB: string
+  President_Spouse_Profile_Photo: string
   Secreatary_member_name: string
   Secreatary_email_id: string
   Secreatary_mobile_no: string
+  Secreatary_Classification: string
   Secreatary_Profile_Photo: string
+  Secreatary_Spouse_member_name: string
+  Secreatary_Spouse_DOB: string
+  Secreatary_Spouse_Profile_Photo: string
 }
 
 // Color palettes (shared constants)

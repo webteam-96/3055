@@ -30,30 +30,16 @@ function ClubDetailsPage() {
 
   return (
     <>
-      {/* Page Title */}
-      <section className="py-6 bg-[#17458F]">
-        <div className="auto-container">
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white">{basicInfo.Club_Name}</h1>
-            <button
-              onClick={() => window.history.back()}
-              className="theme-btn bg-white hover:bg-gray-100"
-              style={{ color: 'black' }}
-            >
-              ← Back
-            </button>
-          </div>
+      {/* Club Title + Info */}
+      <div className="auto-container pt-8 pb-4">
+        <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
+          <h2 className="text-2xl font-bold text-[#3b251a]">{basicInfo.Club_Name}</h2>
+          <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
         </div>
-      </section>
-
-      {/* Club Info Bar */}
-      <div className="bg-[#C4D4EE] py-4">
-        <div className="auto-container">
-          <div className="flex flex-wrap gap-6 justify-center text-sm font-medium text-black">
-            <span><strong>Club ID:</strong> {basicInfo.Club_ID}</span>
-            <span><strong>Charter Date:</strong> {formatDateToDDMM(basicInfo.Charter_Date)}</span>
-            <span><strong>Membership:</strong> {basicInfo.Membership}</span>
-          </div>
+        <div className="flex flex-wrap gap-4 text-sm font-medium text-[#3b251a]">
+          <span><strong>Club ID:</strong> {basicInfo.Club_ID}</span>
+          <span><strong>Charter Date:</strong> {formatDateToDDMM(basicInfo.Charter_Date)}</span>
+          <span><strong>Membership:</strong> {basicInfo.Membership}</span>
         </div>
       </div>
 
@@ -61,24 +47,26 @@ function ClubDetailsPage() {
       {ag?.Name && (
         <div className="auto-container mt-6">
           <div className="executive-card" style={{ backgroundColor: '#2F4366' }}>
-            <div className="card-header-tab" style={{ backgroundColor: '#8D9FBE' }}>
+            <div className="card-header" style={{ backgroundColor: '#8D9FBE' }}>
               {ag.Designation || 'Assistant Governor'}
             </div>
-            <div className="p-3 m-2">
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="w-full md:w-1/4 text-center">
+            <div style={{ padding: '12px 8px 8px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+                <div>
                   <img
                     src={presidentPhoto || dummyImg}
                     alt="AG"
-                    className="pro-img-lg"
+                    className="pro-img"
                     onError={e => { (e.target as HTMLImageElement).src = dummyImg }}
                   />
                 </div>
-                <div className="flex-1">
-                  <div className="filed"><span>Name:</span> {ag.Name}</div>
-                  <div className="filed"><span>Mobile:</span> {ag.Mobile_number}</div>
-                  <div className="filed"><span>Email:</span> {ag.Emailid}</div>
-                  <div className="filed"><span>DOB:</span> {formatDateToDDMM(ag.member_date_of_birth)}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="pro-name filed"><span>Name:</span> {ag.Name}</div>
+                  <div className="pro-name filed"><span>Mobile:</span> {ag.Mobile_number}</div>
+                  <div className="pro-name filed"><span>Email:</span> {ag.Emailid}</div>
+                  {(ag.Zone_No || ag.ZoneNo) && (
+                    <div className="pro-name filed"><span>Zone No:</span> {ag.Zone_No || ag.ZoneNo}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -99,8 +87,11 @@ function ClubDetailsPage() {
                 email={president.President_EmialID || ''}
                 dob={formatDateToDDMM(president.President_DOB)}
                 doa={formatDateToDDMM(president.DOA)}
-                address={president.address || ''}
                 photo={president.President_photo || ''}
+                classification={president.Classification || ''}
+                spouseName={president.President_spouse_name || ''}
+                spouseDob={formatDateToDDMM(president.President_spouse_DOB)}
+                spousePhoto={president.President_photo_spouse || ''}
                 headerColor="#FFE8C4"
                 bodyColor="#E59E2C"
               />
@@ -114,8 +105,11 @@ function ClubDetailsPage() {
                 email={secretary.Secretary_EmialID || ''}
                 dob={formatDateToDDMM(secretary.Secretary_DOB)}
                 doa={formatDateToDDMM(secretary.DOA)}
-                address={secretary.address || ''}
                 photo={secretary.Secretary_photo || ''}
+                classification={secretary.Classification || ''}
+                spouseName={secretary.Secretary_spouse_name || ''}
+                spouseDob={formatDateToDDMM(secretary.Secretary_spouse_DOB)}
+                spousePhoto={secretary.Secretary_photo_spouse || ''}
                 headerColor="#FFE8C4"
                 bodyColor="#E59E2C"
               />
@@ -127,10 +121,7 @@ function ClubDetailsPage() {
       {/* BOD Accordion */}
       <div className="auto-container mb-6">
         <div className="flex justify-center">
-          <button
-            onClick={() => setBodOpen(v => !v)}
-            className="theme-btn px-8 py-4 text-center"
-          >
+          <button onClick={() => setBodOpen(v => !v)} className="theme-btn px-8 py-4 text-center">
             {bodOpen ? '▲' : '▼'} Board of Directors
           </button>
         </div>
@@ -146,8 +137,10 @@ function ClubDetailsPage() {
                 email={member.Emailid || ''}
                 dob={formatDateToDDMM(member.member_date_of_birth)}
                 doa={formatDateToDDMM(member.member_date_of_wedding)}
-                address={member.address || ''}
                 photo={member.member_profile_photo_path || ''}
+                classification=""
+                spouseName=""
+                spouseDob=""
                 headerColor={CARD_HEADER_COLORS[i % 4]}
                 bodyColor={CARD_BODY_COLORS[i % 4]}
               />
@@ -159,10 +152,7 @@ function ClubDetailsPage() {
       {/* Members Accordion */}
       <div className="auto-container mb-12">
         <div className="flex justify-center">
-          <button
-            onClick={() => setMembersOpen(v => !v)}
-            className="theme-btn px-8 py-4 text-center"
-          >
+          <button onClick={() => setMembersOpen(v => !v)} className="theme-btn px-8 py-4 text-center">
             {membersOpen ? '▲' : '▼'} Members
           </button>
         </div>
@@ -171,15 +161,16 @@ function ClubDetailsPage() {
             {(members ?? []).map((member, i) => (
               <MemberCard
                 key={i}
-                designation={member.designation || member.Designation || 'Rotarian'}
+                designation={member.Designation || member.designation || 'Rotarian'}
                 name={member.memberName || member.MemberName || ''}
-                club={member.groupName || ''}
                 mobile={member.membermobile || member.MemberMobile || ''}
                 email={member.MemberEmail || ''}
                 dob={formatDateToDDMM(member.MemberDOB)}
                 doa={formatDateToDDMM(member.MemberDOA)}
-                address={member.MemberAddress || ''}
                 photo={member.pic || ''}
+                spouseName={member.SpouseName || ''}
+                spouseDob={member.SpouseDOB || ''}
+                spousePhoto={member.SpousePhoto || ''}
                 headerColor={CARD_HEADER_COLORS[i % 4]}
                 bodyColor={CARD_BODY_COLORS[i % 4]}
               />

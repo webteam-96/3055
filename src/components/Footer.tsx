@@ -11,7 +11,7 @@ export function Footer() {
             <img src={rlLogo} alt="Rotary International" className="h-16 object-contain" />
           </a>
           <a href="/" className="block">
-            <img src={logo2} alt="District 3170" className="h-16 object-contain" />
+            <img src={logo2} alt="District 3055" className="h-16 object-contain" />
           </a>
           <div className="block">
             <img src={kaizenLogo} alt="Kaizen Infotech Logo" className="h-16 object-contain" />
