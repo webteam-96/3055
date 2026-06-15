@@ -1,21 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
-import type { ClubBODSummary } from '../types/api'
+import { useDistrictDirectory, selectClubsBOD } from './districtDirectory'
 
-const API_BASE = 'https://rotaryindiaapi.rosteronwheels.com/api'
-
-async function fetchClubsBOD(groupId: string, financialyear: string): Promise<ClubBODSummary[]> {
-  const res = await fetch(`${API_BASE}/District/Get_Clubs_BOD`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ groupId, financialyear }),
-  })
-  const data = await res.json()
-  return data?.ClubListResult?.Clubs ?? []
-}
-
-export function useClubsBOD(groupId: string, financialyear: string) {
-  return useQuery({
-    queryKey: ['clubsBOD', groupId, financialyear],
-    queryFn: () => fetchClubsBOD(groupId, financialyear),
-  })
+// All clubs (with AG/President/Secretary summary) from the unified API.
+// Params retained for call-site compatibility only.
+export function useClubsBOD(_groupId?: string, _financialyear?: string) {
+  return useDistrictDirectory(selectClubsBOD)
 }

@@ -3,19 +3,10 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import { useCommitteeDetails } from './useCommitteeDetails'
-
-const mockData = {
-  TBDistrictCommitteeDetailsResult: {
-    Result: {
-      district_sub_Committee: [{ pk_District_sub_Committee_id: '1', name: 'Zone A' }],
-      district_sub_Committee_Details_list: [],
-      districtCommitteeWithoutCatList: [{ name: 'Member A', DistrictDesignation: 'Chair', ClubName: '', MobileNumber: '', BloodGroup: '', Bloodgrp: '', MailID: '', Address: '', DOB: '', DOA: '', RotaryID: '', img: '', SpouseName: '', Spouse_Mobile_Number: '', SpouseMobileNumber: '', Keywords: '', classification: '' }],
-    },
-  },
-}
+import { directoryFixture } from '../test-fixtures/directoryResponse'
 
 beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => mockData } as Response)
+  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => directoryFixture } as Response)
 })
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -24,11 +15,11 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useCommitteeDetails', () => {
-  it('returns sub-committees and direct members', async () => {
-    const { result } = renderHook(() => useCommitteeDetails('42', '34307'), { wrapper })
+  it('returns sub-committees and direct members for the selected group', async () => {
+    const { result } = renderHook(() => useCommitteeDetails('100', '34307'), { wrapper })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.subCommittees[0].name).toBe('Zone A')
-    expect(result.current.data?.directMembers[0].name).toBe('Member A')
+    expect(result.current.data?.subCommittees[0].name).toBe('Alpha Sub')
+    expect(result.current.data?.directMembers[0].name).toBe('Direct Member')
   })
   it('is disabled when committeeId is empty', () => {
     const { result } = renderHook(() => useCommitteeDetails('', '34307'), { wrapper })

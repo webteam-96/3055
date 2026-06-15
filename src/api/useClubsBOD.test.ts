@@ -3,17 +3,10 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import { useClubsBOD } from './useClubsBOD'
-
-const mockData = {
-  ClubListResult: {
-    Clubs: [
-      { grpID: '1', clubName: 'RC Alpha', AG_Name: 'AG 1', AG_MobileNumber: '', AG_EmailID: '', AG_DOB: '', AG_Photo: '', President_member_name: 'Pres A', President_member_email_id: '', President_member_mobile_no: '', President_Profile_Photo: '', Secreatary_member_name: 'Sec A', Secreatary_email_id: '', Secreatary_mobile_no: '', Secreatary_Profile_Photo: '' }
-    ]
-  },
-}
+import { directoryFixture } from '../test-fixtures/directoryResponse'
 
 beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => mockData } as Response)
+  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => directoryFixture } as Response)
 })
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -22,10 +15,11 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useClubsBOD', () => {
-  it('returns array of clubs', async () => {
+  it('returns clubs with president/secretary summary', async () => {
     const { result } = renderHook(() => useClubsBOD('34307', '2026-2027'), { wrapper })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toHaveLength(1)
-    expect(result.current.data?.[0].clubName).toBe('RC Alpha')
+    expect(result.current.data?.[0].clubName).toBe('Aadarsh Ahmedabad')
+    expect(result.current.data?.[0].President_member_name).toBe('Pres Person')
   })
 })

@@ -48,7 +48,24 @@
       "Bash(Get-Content \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--websites-directory-3055\\\\c522a570-91e7-4ee4-b8ff-6162338e66dc\\\\tasks\\\\b67hylxhu.output\" -Wait)",
       "Bash(Select-String -Pattern \"Local:|ready|error|VITE\" --SimpleMatch)",
       "Bash(Get-Content *)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code} %{content_type}\" \"http://localhost:5174/img-proxy/api/DistrictCommittee/districtCommitteeList\" -X GET)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{content_type}\" \"http://localhost:5174/img-proxy/api/DistrictCommittee/districtCommitteeList\" -X GET)",
+      "Bash(curl *)",
+      "Bash(export RY_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6Ijg0MDUwMyIsIm5hbWUiOiJLYWxwZXNoIEEiLCJlbWFpbCI6IndlYkBrYWl6ZW5pbmZvdGVjaC5jb20iLCJyb2xlcyI6IkFkbWluLE1lbWJlciIsImxvZ2luVHlwZSI6Im1vYmlsZSIsIm1lbWJlclR5cGUiOiJtZW1iZXIiLCJpbWVpIjoiMWMxMTZjOTBjNTgzNjdiN2MzMjJmYzdkZDIyYmQ1YTMiLCJleHAiOjE3ODMxNjIxNjAsImlzcyI6Ikp3dElzc3VlciIsImF1ZCI6Ikp3dEF1ZGllbmNlIn0.EkKMZEHbNfTkwvVno70xb-m3Yu0ZSx_cHlws4a8dyH8\")",
+      "Bash(node -e ' *)",
+      "Bash(grep -vE \"^\\\\s*$\")",
+      "Skill(run)",
+      "Bash(timeout 8 sh -c 'until grep -q \"Local:\" \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--websites-directory-3055\\\\5993dba6-9458-410f-9a41-52cc0d47d629\\\\tasks\\\\bw0e51xyb.output\" 2>/dev/null; do sleep 0.5; done')",
+      "Bash(command -v chromium-cli)",
+      "Bash(command -v chromium)",
+      "Bash(node -e \"try{require.resolve\\('playwright'\\);console.log\\('playwright FOUND'\\)}catch{console.log\\('no playwright'\\)}\")",
+      "Bash(node -e \"try{require.resolve\\('@playwright/test'\\);console.log\\('playwright-test FOUND'\\)}catch{console.log\\('no playwright-test'\\)}\")",
+      "Bash(node *)",
+      "Bash(echo \"=== tsc exit: $? ===\")",
+      "Read(//tmp/**)",
+      "PowerShell(npm run *)",
+      "Read(//c/Users/Admin/.claude/skills/**)",
+      "Read(//c/Users/Admin/.claude/plugins/**)",
+      "Read(//c/Users/Admin/.claude/**)"
     ]
   }
 }

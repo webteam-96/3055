@@ -1,7 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useDistrictCommittee } from '../api/useDistrictCommittee'
-import { DirectoryZipButton } from '../components/DirectoryZipButton'
-import { Preloader } from '../components/Preloader'
 import { COMMITTEE_COLORS } from '../types/api'
 
 export const Route = createFileRoute('/directory')({
@@ -14,7 +12,7 @@ const YEAR = '2026-2027'
 function DirectoryPage() {
   const { data, isLoading, isError } = useDistrictCommittee(GROUP_ID, YEAR)
 
-  if (isLoading) return <Preloader isLoading />
+  if (isLoading) return null
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
 
   return (
@@ -22,7 +20,6 @@ function DirectoryPage() {
       <div className="auto-container">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-[#3b251a]">Rotary District 3055</h1>
-          <DirectoryZipButton />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/executive-committee" className="avenu-crd" style={{ backgroundColor: '#2F4366' }}>

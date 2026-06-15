@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useClubDetails } from '../api/useClubDetails'
 import { useClubMembers } from '../api/useClubMembers'
 import { MemberCard } from '../components/MemberCard'
-import { Preloader } from '../components/Preloader'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS } from '../types/api'
 import { formatDateToDDMM } from '../utils/formatDate'
 import dummyImg from '../assets/images/dummy.jpg'
@@ -23,7 +22,7 @@ function ClubDetailsPage() {
   const { data: club, isLoading: clubLoading, isError: clubError } = useClubDetails(groupId, YEAR)
   const { data: members, isLoading: membersLoading } = useClubMembers(groupId, YEAR)
 
-  if (clubLoading) return <Preloader isLoading />
+  if (clubLoading) return null
   if (clubError || !club) return <div className="p-8 text-center text-red-500">Failed to load club details.</div>
 
   const { basicInfo, ag, president, secretary, bod, presidentPhoto } = club

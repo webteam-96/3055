@@ -178,3 +178,100 @@ export const DESIGNATION_MAP: Record<string, string> = {
   ZCC: 'Zonal Co-Chair',
   ZDC: 'Zonal District Chair',
 }
+
+// ---------------------------------------------------------------------------
+// Unified District Directory API (single GET endpoint)
+// GET https://rizones45678.org/API/api/district-directory/{district}?rotaryYear={year}
+// One response carries the district committee, all committee groups, and all
+// clubs (with board of directors + members). Everything below mirrors that
+// payload; the selectors in api/districtDirectory.ts adapt it to the UI types
+// declared above so the page/component layer is unchanged.
+// ---------------------------------------------------------------------------
+
+/** A member/profile record as returned by the unified API. Many fields are
+ *  optional/nullable; only the ones the UI consumes are typed explicitly. */
+export interface RawMember {
+  // committee/group-member aliases
+  name?: string | null
+  mobile?: string | null
+  email?: string | null
+  district_designation?: string | null
+  committeeName?: string | null
+  committeeMobile?: string | null
+  committeeEmail?: string | null
+  districtDesignation?: string | null
+  committeePhoto?: string | null
+  profile_photo?: string | null
+  club_name?: string | null
+  fk_club_id?: number | null
+  // master-profile fields
+  pk_member_master_profile_id?: number | null
+  MemberName?: string | null
+  ProfilePhotoPath?: string | null
+  PrimaryMobileNumber?: string | null
+  EmailId?: string | null
+  BirthDate?: string | null
+  AnniversaryDate?: string | null
+  BloodGroup?: string | null
+  RotaryId?: string | null
+  MemberIntroduction?: string | null
+  ClubName?: string | null
+  [key: string]: unknown
+}
+
+export interface RawSubGroup {
+  id: number
+  subGroupName: string
+  sortOrder: number
+  isActive: boolean
+  members: RawMember[]
+}
+
+export interface RawGroup {
+  id: number
+  groupName: string
+  sortOrder: number
+  isActive: boolean
+  members: RawMember[]
+  subGroups: RawSubGroup[]
+}
+
+export interface RawBODMember extends RawMember {
+  id: number
+  designationId: number
+  designationName: string
+  designationSortOrder: number
+}
+
+export interface RawClubInfo {
+  pk_club_id: number
+  ClubRotaryId?: string | null
+  ClubName: string
+  ClubCharterDate?: string | null
+  ClubLogoPath?: string | null
+  ClubWebsite?: string | null
+  MeetingDay?: string | null
+  MeetingFromTime?: string | null
+  MeetingToTime?: string | null
+  MeetingAddress?: string | null
+  City?: string | null
+  State?: string | null
+  [key: string]: unknown
+}
+
+export interface RawClubEntry {
+  club: RawClubInfo
+  boardOfDirectors: RawBODMember[]
+  boardOfDirectorsYearId?: number | null
+  boardOfDirectorsYearLabel?: string | null
+  boardOfDirectorsIsFallback?: boolean
+  members: RawMember[]
+}
+
+export interface DistrictDirectoryResponse {
+  district: { DistrictNumber?: string; [key: string]: unknown }
+  rotaryYear: { id: number; yearLabel: string; [key: string]: unknown }
+  districtCommittee: RawMember[]
+  groups: RawGroup[]
+  clubs: RawClubEntry[]
+}

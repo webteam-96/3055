@@ -37,7 +37,7 @@ export function MemberCard({
       <div style={{ padding: '12px 8px 8px' }}>
 
         {/* Photo + primary fields */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
           <div style={{ flexShrink: 0 }}>
             <img
               src={photo || dummyImg}
@@ -50,23 +50,23 @@ export function MemberCard({
             <Field label="Name" value={name} />
             {club !== undefined && <Field label="Club" value={club} />}
             <Field label="Classification" value={classification} />
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <div style={{ flex: 1 }}><Field label="M" value={mobile} /></div>
-              <Field label="DOB" value={dob} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ flex: '7 1 0', minWidth: 0 }}><Field label="M" value={mobile} /></div>
+              <div style={{ flex: '5 1 0', minWidth: 0 }}><Field label="DOB" value={dob} /></div>
             </div>
           </div>
         </div>
 
         {/* Email + DOA */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
-          <div style={{ flex: 1, minWidth: 0 }}><Field label="Email" value={email} /></div>
-          <Field label="DOA" value={doa} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+          <div style={{ flex: '9 1 0', minWidth: 0 }}><Field label="Email" value={email} /></div>
+          <div style={{ flex: '3 1 0', minWidth: 0 }}><Field label="DOA" value={doa} /></div>
         </div>
 
         {/* Spouse section */}
         {hasSpouse && (
           <div style={{ marginTop: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
               {spousePhoto !== undefined && (
                 <div style={{ flexShrink: 0 }}>
                   <img
@@ -78,8 +78,10 @@ export function MemberCard({
                 </div>
               )}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <Field label="Spouse Name" value={spouseName} />
-                <Field label="Spouse DOB" value={spouseDob} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ flex: '7 1 0', minWidth: 0 }}><Field label="Spouse Name" value={spouseName} /></div>
+                  <div style={{ flex: '5 1 0', minWidth: 0 }}><Field label="Spouse DOB" value={spouseDob} /></div>
+                </div>
               </div>
             </div>
           </div>

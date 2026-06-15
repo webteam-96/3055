@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState, useMemo } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
 import { useClubsBOD } from '../api/useClubsBOD'
-import { Preloader } from '../components/Preloader'
 import { cleanText, formatDateToDDMM } from '../utils/formatDate'
 import type { ClubBODSummary } from '../types/api'
 import dummyImg from '../assets/images/dummy.jpg'
@@ -41,7 +40,8 @@ function ClubSection({ club }: { club: ClubBODSummary }) {
           </h2>
         </div>
 
-        {/* AG Card — full width */}
+        {/* AG Card — full width (only when AG data is available) */}
+        {get(club.AG_Name) && (
         <div style={{ marginBottom: '16px' }}>
           <div className="executive-card" style={{ backgroundColor: '#2F4366' }}>
             <div className="card-header" style={{ backgroundColor: '#8D9FBE' }}>
@@ -67,6 +67,7 @@ function ClubSection({ club }: { club: ClubBODSummary }) {
             </div>
           </div>
         </div>
+        )}
 
         {/* President | QR | Secretary — 3-column row */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'stretch', justifyContent: 'center' }}>
@@ -197,7 +198,7 @@ function BODPage() {
     )
   }, [clubs, search])
 
-  if (isLoading) return <Preloader isLoading />
+  if (isLoading) return null
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load clubs.</div>
 
   return (

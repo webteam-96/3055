@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useCommitteeDetails } from '../api/useCommitteeDetails'
 import { MemberCard } from '../components/MemberCard'
-import { PdfDownloadButtons } from '../components/PdfDownloadButtons'
-import { Preloader } from '../components/Preloader'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS, COMMITTEE_COLORS } from '../types/api'
 import { formatDayMonth, expandDesignation } from '../utils/formatDate'
 
@@ -34,7 +32,7 @@ function CommitteeDetailsPage() {
   const subCommitteeName = search?.subCommitteeName ?? ''
   const { data, isLoading, isError } = useCommitteeDetails(committeeId, GROUP_ID)
 
-  if (isLoading) return <Preloader isLoading />
+  if (isLoading) return null
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
 
   const displayTitle = subCommitteeName || name || 'Committee'
@@ -57,17 +55,7 @@ function CommitteeDetailsPage() {
       <div className="auto-container">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-[#3b251a]">{displayTitle}</h2>
-          <div className="flex items-center gap-2">
-            {showMembers && (
-              <PdfDownloadButtons
-                members={displayMembers}
-                title={displayTitle}
-                getColors={(i) => ({ header: CARD_HEADER_COLORS[i % 4], body: CARD_BODY_COLORS[i % 4] })}
-                getDesignation={(m) => expandDesignation(m.DistrictDesignation || '')}
-              />
-            )}
-            <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
-          </div>
+          <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
         </div>
 
         {showMembers && (

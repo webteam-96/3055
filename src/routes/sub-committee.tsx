@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useCommitteeDetails } from '../api/useCommitteeDetails'
 import { MemberCard } from '../components/MemberCard'
-import { Preloader } from '../components/Preloader'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS, COMMITTEE_COLORS } from '../types/api'
 import { formatDayMonth, expandDesignation } from '../utils/formatDate'
 
@@ -35,7 +34,7 @@ function SubCommitteePage() {
 
   const { data, isLoading, isError } = useCommitteeDetails(committeeId, GROUP_ID)
 
-  if (isLoading) return <Preloader isLoading />
+  if (isLoading) return null
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
 
   const displayTitle = subCommitteeName || name || 'Committee'
