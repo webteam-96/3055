@@ -143,7 +143,14 @@ export interface ClubMember {
 export interface ClubBODSummary {
   grpID: string
   clubId: string
+  clubRotaryId: string          // Rotary club number shown as "Club ID"
   clubName: string
+  // Club facts (info strip)
+  charterDate: string           // DD/MM/YYYY
+  memberCount: string
+  meeting: string               // "Friday, 01:30 PM"
+  venue: string
+  zoneNo: string                // not yet in unified API — populated later
   AG_Name: string
   AG_MobileNumber: string
   AG_EmailID: string
@@ -153,6 +160,8 @@ export interface ClubBODSummary {
   President_member_email_id: string
   President_member_mobile_no: string
   President_Classification: string
+  President_DOB: string         // DD/MM
+  President_DOA: string         // DD/MM
   President_Profile_Photo: string
   President_Spouse_member_name: string
   President_Spouse_DOB: string
@@ -161,6 +170,8 @@ export interface ClubBODSummary {
   Secreatary_email_id: string
   Secreatary_mobile_no: string
   Secreatary_Classification: string
+  Secreatary_DOB: string        // DD/MM
+  Secreatary_DOA: string        // DD/MM
   Secreatary_Profile_Photo: string
   Secreatary_Spouse_member_name: string
   Secreatary_Spouse_DOB: string

@@ -1,0 +1,12 @@
+[
+  {
+    "districtNo": "2981",
+    "dgThisYear": { "name": "Vaithianathan Krishnasamy", "contact": "9655008000", "email": "vaithianathank@gmail.com", "club": "Pondicherry Pride", "classification": "MD, Jothi Eye Care Centre", "dob": "26th May", "spouseName": "Dr. Vanaja", "spouseDob": "00/00", "doa": "08th July" },
+    "dgNextYear": { "name": "T. N. Jayakumar", "contact": "9842455016", "email": "jeykayar@gmail.com", "club": "Thanjavur Greenary", "classification": "Club Foundation Chair", "dob": "13th February", "spouseName": "Suganya", "spouseDob": "00/00", "doa": "15th September" }
+  },
+  {
+    "districtNo": "3000",
+    "dgThisYear": { "name": "R. Senthil Kumar", "contact": "9840000001", "email": "senthil.dg@gmail.com", "club": "Madurai Midtown", "classification": "Textile Manufacturer", "dob": "10th March", "spouseName": "Lakshmi", "spouseDob": "00/00", "doa": "21st November" },
+    "dgNextYear": { "name": "P. Anand Babu", "contact": "9840000002", "email": "anand.dge@gmail.com", "club": "Trichy Fort", "classification": "Civil Engineer", "dob": "02nd August", "spouseName": "Priya", "spouseDob": "00/00", "doa": "14th April" }
+  }
+]

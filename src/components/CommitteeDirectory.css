@@ -1,0 +1,199 @@
+/* Committee directory (Inner Pages Redo p3) — centered navy pill section title
+   + member cards (full-width navy header + orange role tab, photo + details).
+   cqw-scaled to the sheet (print) or .dir-web (web). */
+.cm-sheet {
+  /* Colours per Inner Pages Redo p3 (same family as the AG page). */
+  --navy: #1a2b5e;
+  --orange: #c8752f;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6cqw;
+}
+.cm-card,
+.cm-section {
+  flex: none;
+}
+
+/* Centered navy pill banner = committee name */
+.cm-section {
+  align-self: center;
+  max-width: 92%;
+  background: var(--navy, #1d2d6c);
+  color: #fff;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2.6cqw;
+  line-height: 1.15;
+  text-align: center;
+  padding: 0.85cqw 4cqw;
+  border-radius: 1.4cqw;
+  margin: 0.4cqw auto;
+}
+
+/* Member card — fully rounded; overflow clips the header top corners to match. */
+.cm-card {
+  border-radius: 2.4cqw;
+  overflow: hidden;
+  background: #ece5dc; /* muted cream, per the PDF (was near-white) */
+  border: 1px solid #e0d3c4;
+}
+.cm-head {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: var(--navy, #1d2d6c);
+  min-height: 4.6cqw;
+}
+.cm-name {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0.45cqw 2cqw;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2.45cqw;
+  color: #fff;
+  line-height: 1.1;
+}
+/* Orange role ribbon with a soft S-curved left edge (SVG, scales with the tab).
+   The right edge is clipped round by the card's overflow. */
+.cm-role {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* Solid orange tab; the curved navy "tail" is a FIXED-width overlay on the
+     left, so the gap between curve and text stays constant for any designation
+     length (long roles no longer crowd the curve). */
+  background: var(--orange, #e08a3c);
+  padding: 0 2.6cqw 0 6cqw;
+  white-space: nowrap;
+}
+.cm-role-shape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5cqw;
+  height: 100%;
+}
+.cm-role-shape path {
+  fill: var(--navy, #1d2d6c);
+}
+.cm-role-text {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2.08cqw;
+}
+
+.cm-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.6cqw;
+  padding: 1.2cqw 1.4cqw 1cqw;
+}
+.cm-photo {
+  width: 15cqw;
+  flex: none;
+  text-align: center;
+}
+/* Print sheets are a fixed B5 height: use a slightly smaller photo so the card
+   is short enough to fit at least 4 per page without crossing the page edge.
+   Web (.dir-web) keeps the larger 15cqw photo. */
+.dir-sheet .cm-photo {
+  width: 12cqw;
+}
+.cm-photo-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  background: #eef0f1;
+  border: 1px solid #d8d9dc;
+  border-radius: 0.5cqw;
+  overflow: hidden;
+}
+.cm-silhouette {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 94%;
+  height: 95%;
+  fill: #c2c4c8;
+}
+.cm-photo-box img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cm-cap {
+  margin-top: 0.4cqw;
+  font-weight: 700;
+  font-size: 2.2cqw;
+  line-height: 1.1;
+  color: var(--ink, #20242c);
+}
+
+.cm-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.32cqw;
+}
+.cm-line {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 2cqw;
+}
+/* Single-field rows (E-mail, Home Club, Classification) span the full width. */
+.cm-line > .cm-f:only-child {
+  grid-column: 1 / -1;
+}
+/* Contact + DOB row: Contact spans the first two columns, DOB sits in the 3rd
+   column so it lines up vertically with DOA on the Spouse row below. */
+.cm-line-2 .cm-f:first-child {
+  grid-column: 1 / 3;
+}
+.cm-line-2 .cm-f:last-child {
+  grid-column: 3;
+}
+/* Spouse / Spouse DOB / DOA auto-place one field per column. */
+.cm-f {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5cqw;
+  min-width: 0;
+  font-size: 2.08cqw;
+  line-height: 1.34;
+  color: var(--ink, #20242c);
+}
+.cm-lbl {
+  flex: none;
+  font-weight: 500;
+}
+.cm-val {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Classification can wrap to two lines, then clamp with an ellipsis. The label
+   sits at the top of the value rather than vertically centred. */
+.cm-f--multi {
+  align-items: flex-start;
+}
+.cm-f--multi .cm-val {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/* Each value sits right after its own label (natural label width), matching the
+   design — not forced into a shared column. */

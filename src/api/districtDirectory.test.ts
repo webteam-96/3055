@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
   resolveImg,
   isoToDayMonth,
+  isoToDMY,
+  to12Hour,
   selectExecutiveCommittee,
   selectCategories,
   selectCommitteeDetails,
@@ -37,6 +39,29 @@ describe('isoToDayMonth', () => {
   it('returns empty for null / unparseable', () => {
     expect(isoToDayMonth(null)).toBe('')
     expect(isoToDayMonth('')).toBe('')
+  })
+})
+
+describe('isoToDMY', () => {
+  it('extracts DD/MM/YYYY from an ISO datetime', () => {
+    expect(isoToDMY('2013-10-25T00:00:00')).toBe('25/10/2013')
+  })
+  it('returns empty for null / unparseable', () => {
+    expect(isoToDMY(null)).toBe('')
+    expect(isoToDMY('not-a-date')).toBe('')
+  })
+})
+
+describe('to12Hour', () => {
+  it('converts 24h time to 12h with AM/PM', () => {
+    expect(to12Hour('13:30:00')).toBe('01:30 PM')
+    expect(to12Hour('09:05')).toBe('09:05 AM')
+    expect(to12Hour('00:00')).toBe('12:00 AM')
+    expect(to12Hour('12:00')).toBe('12:00 PM')
+  })
+  it('returns empty for missing / unparseable', () => {
+    expect(to12Hour('')).toBe('')
+    expect(to12Hour(null)).toBe('')
   })
 })
 
@@ -92,6 +117,19 @@ describe('selectClubsBOD', () => {
     // No AG / spouse data in the unified API
     expect(c.AG_Name).toBe('')
     expect(c.President_Spouse_member_name).toBe('')
+  })
+
+  it('maps club facts and officer DOB/DOA for the card info strip', () => {
+    const [c] = selectClubsBOD(fx)
+    expect(c.clubRotaryId).toBe('85453')
+    expect(c.charterDate).toBe('25/10/2013')
+    expect(c.memberCount).toBe('2')
+    expect(c.meeting).toBe('Friday') // fixture has MeetingDay but no MeetingFromTime
+    expect(c.venue).toBe('Sports Club')
+    expect(c.President_DOB).toBe('02/01')
+    expect(c.President_DOA).toBe('') // no AnniversaryDate in fixture
+    expect(c.Secreatary_DOB).toBe('') // no BirthDate for the secretary
+    expect(c.zoneNo).toBe('') // not in the unified API yet
   })
 })
 

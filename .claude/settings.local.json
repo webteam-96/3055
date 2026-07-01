@@ -65,7 +65,8 @@
       "PowerShell(npm run *)",
       "Read(//c/Users/Admin/.claude/skills/**)",
       "Read(//c/Users/Admin/.claude/plugins/**)",
-      "Read(//c/Users/Admin/.claude/**)"
+      "Read(//c/Users/Admin/.claude/**)",
+      "Bash(echo \"started, pid $!\")"
     ]
   }
 }

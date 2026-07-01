@@ -1,0 +1,110 @@
+/* ============================================================
+   DirectorySheet — Border.svg page background + overlaid content.
+   Shared by all directory modules; screen == PDF (WYSIWYG).
+   ============================================================ */
+.dir-sheet {
+  --navy: #1d2d6c;
+  --gold: #c8862b;
+  --orange: #e08a3c;
+  --cream: #f5ebe8;
+  --ink: #20242c;
+
+  position: relative;
+  container-type: inline-size; /* children scale via cqw */
+  box-sizing: border-box;
+  overflow: hidden;
+  width: min(720px, 96vw);
+  aspect-ratio: 527.24 / 697.32; /* Border.svg artwork ≈ B5 */
+  margin: 22px auto;
+  background: #f8f5ef;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14);
+  color: var(--ink);
+  font-family: 'Petrona', 'Petrona', serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.dir-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Safe content area: below the header, inside the side margins, above the
+   bottom wave/watermark. */
+.dir-content {
+  position: absolute;
+  z-index: 1;
+  top: 10.8%;
+  left: 6.5%;
+  right: 6%;
+  bottom: 7.5%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page number, centered over the navy corner circle (bottom-left). */
+.dir-pageno {
+  position: absolute;
+  z-index: 2;
+  left: 6.0%;
+  bottom: 3.5%;
+  width: 5.6cqw;
+  height: 5.6cqw;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-family: 'Petrona', sans-serif;
+  font-weight: 600;
+  font-size: 2cqw;
+}
+
+/* Two club cards per sheet, evenly distributed. */
+.dir-clubs {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+  gap: 1.4cqw;
+}
+
+@media print {
+  @page {
+    size: 186mm 246mm;
+    margin: 0;
+  }
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  .dir-wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+  .dir-sheet {
+    width: 186mm;
+    height: 246mm;
+    margin: 0;
+    box-shadow: none;
+    break-inside: avoid;
+    break-after: page;
+    page-break-after: always;
+  }
+  .dir-sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

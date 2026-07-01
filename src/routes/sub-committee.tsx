@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useCommitteeDetails } from '../api/useCommitteeDetails'
-import { MemberCard } from '../components/MemberCard'
-import { CARD_BODY_COLORS, CARD_HEADER_COLORS, COMMITTEE_COLORS } from '../types/api'
-import { formatDayMonth, expandDesignation } from '../utils/formatDate'
-
+import { CommitteeDirectory } from '../components/CommitteeDirectory'
+import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
+import { COMMITTEE_COLORS } from '../types/api'
+import { expandDesignation } from '../utils/formatDate'
 
 // @ts-ignore
 export const Route = createFileRoute('/sub-committee')({
@@ -41,73 +41,60 @@ function SubCommitteePage() {
 
   const displayMembers = (() => {
     if (subCommitteeId && data?.subCommitteeMembers) {
-      return [...data.subCommitteeMembers]
-        .filter(m => m.fk_District_sub_Committee_id === subCommitteeId)
-        .sort((a, b) => (a.ClubName ?? '').localeCompare(b.ClubName ?? ''))
+      // URL search params arrive as numbers via TanStack Router, but the
+      // member's sub-committee id is a string — coerce both before comparing.
+      // Order is already by role (Chair → Co-Chair) from the selector.
+      return data.subCommitteeMembers.filter(
+        (m) => String(m.fk_District_sub_Committee_id) === String(subCommitteeId),
+      )
     }
-    return [...(data?.directMembers ?? [])].sort((a, b) => (a.ClubName ?? '').localeCompare(b.ClubName ?? ''))
+    return data?.directMembers ?? []
   })()
 
+  const members = displayMembers.map((m) => ({ ...m, DistrictDesignation: expandDesignation(m.DistrictDesignation || '') }))
+  const sections = [{ title: displayTitle, members }]
+
   const showSubCommittees = !subCommitteeId && (data?.subCommittees ?? []).length > 0
-  const showMembers = displayMembers.length > 0
-  const showDivider = !subCommitteeId && showMembers && showSubCommittees
+  const showMembers = members.length > 0
+
+  const subNav = showSubCommittees ? (
+    <div className="auto-container no-print" style={{ marginTop: 18 }}>
+      {showMembers && (
+        <h2 style={{ textAlign: 'center', fontWeight: 600, color: '#2e5339', margin: '12px 0' }}>Sub Committees</h2>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {(data?.subCommittees ?? []).map((sub, i) => (
+          <a
+            key={sub.pk_District_sub_Committee_id}
+            href={`/sub-committee?committeeId=${committeeId}&name=${encodeURIComponent(name)}&subCommitteeId=${sub.pk_District_sub_Committee_id}&subCommitteeName=${encodeURIComponent(sub.name)}`}
+            className="avenu-crd"
+            style={{ backgroundColor: COMMITTEE_COLORS[i % 4] }}
+          >
+            <div className="cat-text">{sub.name}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  ) : null
 
   return (
-    <section className="py-10">
-      <div className="auto-container">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-[#3b251a]">{displayTitle}</h2>
-          <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
-        </div>
-
-        {showMembers && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            {displayMembers.map((member, i) => (
-              <MemberCard
-                key={i}
-                designation={expandDesignation(member.DistrictDesignation || '')}
-                name={member.name || ''}
-                club={member.ClubName || ''}
-                mobile={member.MobileNumber || ''}
-                email={member.MailID || ''}
-                dob={formatDayMonth(member.DOB)}
-                doa={formatDayMonth(member.DOA)}
-                photo={member.img || ''}
-                classification={member.classification || member.Keywords || ''}
-                spouseName={member.SpouseName || ''}
-                spouseDob={member.SpouseDOB || member.Spouse_DOB || ''}
-                headerColor={CARD_HEADER_COLORS[i % 4]}
-                bodyColor={CARD_BODY_COLORS[i % 4]}
-              />
-            ))}
-          </div>
-        )}
-
-        {showDivider && (
-          <div className="text-center my-8">
-            <h2 className="text-2xl font-semibold text-[#2E5339]">Sub Committees</h2>
-          </div>
-        )}
-
-        {showSubCommittees && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {(data?.subCommittees ?? []).map((sub, i) => (
-              <a
-                key={sub.pk_District_sub_Committee_id}
-                href={`/sub-committee?committeeId=${committeeId}&name=${encodeURIComponent(name)}&subCommitteeId=${sub.pk_District_sub_Committee_id}&subCommitteeName=${encodeURIComponent(sub.name)}`}
-                className="avenu-crd"
-                style={{ backgroundColor: COMMITTEE_COLORS[i % 4] }}
-              >
-                <div className="cat-text">{sub.name}</div>
-              </a>
-            ))}
-          </div>
-        )}
-
-        {!showMembers && !showSubCommittees && (
-          <p className="text-center text-gray-500">No data available.</p>
-        )}
-      </div>
-    </section>
+    <DirectoryPage title={displayTitle} pdfName={`${displayTitle} — District 3055`}>
+      {(mode) => (
+        <>
+          {showMembers ? (
+            mode === 'web' ? (
+              <WebDoc>
+                <CommitteeDirectory sections={sections} mode="web" />
+              </WebDoc>
+            ) : (
+              <CommitteeDirectory sections={sections} mode="print" />
+            )
+          ) : !showSubCommittees ? (
+            <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>No data available.</p>
+          ) : null}
+          {subNav}
+        </>
+      )}
+    </DirectoryPage>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import logo1 from '../assets/images/logo1.png'
+import logo1 from '../assets/images/rotary-3055.png'
 import phoenix from '../assets/images/phoenix-1.png'
 
 export function Header() {

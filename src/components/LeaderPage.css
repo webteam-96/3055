@@ -1,0 +1,193 @@
+/* ============================================================
+   LeaderPage — supplied Border.svg as full-page background,
+   per-leader content overlaid on top.
+   ============================================================ */
+.leader-page {
+  --lp-navy: #1d2d6c;
+  --lp-gold: #c8862b;
+  --lp-body: #2b2b2b;
+
+  position: relative;
+  container-type: inline-size; /* enables cqw units for content scaling */
+  box-sizing: border-box;
+  overflow: hidden;
+  width: min(700px, 96vw);
+  /* Match the Border.svg artwork exactly (viewBox 527.24 x 697.32) so the frame
+     fills the page edge-to-edge with no letterbox bands. This is ~186 x 246 mm,
+     i.e. effectively B5 sized to the design. */
+  aspect-ratio: 527.24 / 697.32;
+  margin: 28px auto;
+  background: #f8f5ef; /* fallback base under the border image */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14);
+  color: var(--lp-body);
+  font-family: 'Petrona', 'Petrona', Georgia, serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Full-page Border.svg background, stretched to the B5 page box. */
+.lp-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Content sits in the safe area: below the header, inside the side margins,
+   above the skyline watermark. Positioned so the page keeps its A4 shape
+   regardless of body length. */
+.lp-content {
+  position: absolute;
+  z-index: 1;
+  top: 15%;
+  left: 8%;
+  right: 7%;
+}
+.lp-content::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+/* "Profile" / "Message" eyebrow — states up front what this page is. Sits at
+   the very top, full width above the photo, in gold letter-spaced small caps. */
+.lp-kind {
+  font-family: 'Petrona', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.7cqw;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--lp-gold);
+  margin-bottom: 1.2cqw;
+}
+
+/* Photo — gold frame, floated left so the text wraps beside then below it. */
+.lp-photo-frame {
+  float: left;
+  width: 28%;
+  margin: 0.6cqw 4% 3% 0;
+  padding: 0.5cqw;
+  background: #fff;
+  border: 0.4cqw solid var(--lp-gold);
+  border-radius: 2.4cqw;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+.lp-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 170 / 220;
+  object-fit: cover;
+  border-radius: 1.6cqw;
+}
+
+/* Identity block — its own BFC so it sits beside the floated photo and the
+   gold title line can stretch to the right edge. */
+.lp-identity {
+  overflow: hidden;
+}
+.lp-name {
+  margin: 0 0 0.6cqw;
+  font-family: 'Petrona', 'Petrona', serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 4.2cqw;
+  line-height: 1.12;
+  color: var(--lp-navy);
+}
+.lp-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+}
+.lp-title {
+  font-family: 'Petrona', sans-serif;
+  font-weight: 600;
+  font-size: 2.4cqw;
+  color: var(--lp-gold);
+  white-space: nowrap;
+}
+.lp-title-line {
+  flex: 1;
+  height: 2px;
+  background: var(--lp-gold);
+}
+.lp-title-dot {
+  width: 1.1cqw;
+  height: 1.1cqw;
+  border-radius: 50%;
+  background: var(--lp-gold);
+  flex: none;
+}
+.lp-year {
+  margin-top: 1cqw;
+  font-family: 'Petrona', serif;
+  font-weight: 600;
+  font-size: 2.6cqw;
+  color: var(--lp-navy);
+}
+
+.lp-body {
+  margin-top: 1.8cqw;
+}
+.lp-body p {
+  /* --lp-scale (set by LeaderPage's auto-fit) shrinks long bodies to fit one
+     page; defaults to 1 (no change) for short profiles/messages. */
+  margin: 0 0 calc(1.5cqw * var(--lp-scale, 1));
+  font-size: calc(1.95cqw * var(--lp-scale, 1));
+  line-height: 1.62;
+  text-align: justify;
+  /* Preserve single newlines as line breaks so bullet lists (one item per line)
+     render as a list; blank lines already split paragraphs. */
+  white-space: pre-line;
+  color: var(--lp-body);
+}
+.lp-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   Print — pixel-perfect B5 PDF.
+   Each leader page becomes one full-bleed B5 sheet; all app
+   chrome (header, footer, buttons, page backdrop) is hidden.
+   ============================================================ */
+@media print {
+  @page {
+    /* Design's native size (Border.svg viewBox), ≈ B5, no white margins. */
+    size: 186mm 246mm;
+    margin: 0;
+  }
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  /* Hide everything outside the printed pages. */
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  .lp-detail-wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+  .leader-page {
+    width: 186mm;
+    height: 246mm;
+    margin: 0;
+    box-shadow: none;
+    break-inside: avoid;
+    break-after: page;
+    page-break-after: always;
+  }
+  .leader-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

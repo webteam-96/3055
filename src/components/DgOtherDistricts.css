@@ -1,0 +1,129 @@
+/* DG of other districts (Inner Pages Redo p4) — year tabs header, 2 photos per
+   side, values flanking a navy center label strip. cqw-scaled. */
+.dg-sheet {
+  /* Colours per Inner Pages Redo p4. */
+  --navy: #1a2b5e;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8cqw;
+}
+
+.dg-card {
+  flex: none;
+  border-radius: 1.2cqw;
+  overflow: hidden;
+  background: #f3ece5; /* warm cream body, per the PDF (was stark white) */
+  border: 1px solid #e2d6c9;
+}
+
+/* Header: 2026-27 | DISTRICT N | 2027-28. The centre column width matches the
+   body label strip below so the navy reads as one continuous column. */
+.dg-head {
+  display: grid;
+  grid-template-columns: 1fr 22cqw 1fr;
+  align-items: stretch;
+  background: var(--navy, #1d2d6c);
+  min-height: 4.8cqw;
+}
+.dg-yr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* brighter orange year tab with a subtle gradient, per the PDF */
+  background: linear-gradient(180deg, #f2a15d 0%, #e08744 100%);
+  color: #fff;
+  font-family: 'Petrona', sans-serif;
+  font-weight: 700;
+  font-size: 2.2cqw;
+}
+/* Angle the inner-top corner of each year tab so the navy centre rises as a
+   banner between them. */
+.dg-yr:first-of-type {
+  clip-path: polygon(0 0, calc(100% - 2.2cqw) 0, 100% 100%, 0 100%);
+}
+.dg-yr:last-of-type {
+  clip-path: polygon(2.2cqw 0, 100% 0, 100% 100%, 0 100%);
+}
+.dg-dist {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2.7cqw;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Body: left values | navy label strip | right values, with photos on top. */
+.dg-grid {
+  display: grid;
+  grid-template-columns: 1fr 22cqw 1fr;
+  align-items: stretch;
+  column-gap: 0;
+  row-gap: 0;
+}
+.dg-photos {
+  display: flex;
+  gap: 1.2cqw;
+  justify-content: center;
+  padding: 1cqw 1cqw 0.7cqw;
+}
+.dg-pbox {
+  position: relative;
+  width: 7.3cqw;
+  aspect-ratio: 1 / 1.05;
+  background: #eef0f1;
+  border: 1px solid #d8d9dc;
+  border-radius: 0.4cqw;
+  overflow: hidden;
+}
+.dg-silhouette {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 94%;
+  height: 95%;
+  fill: #c2c4c8;
+}
+
+.dg-lv,
+.dg-rv {
+  display: flex;
+  align-items: center;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 1.72cqw;
+  line-height: 1.2;
+  color: var(--ink, #20242c);
+  padding: 0.17cqw 2cqw;
+}
+.dg-lv {
+  justify-content: flex-end;
+  text-align: right;
+}
+.dg-rv {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* Navy center label strip (one continuous bar) */
+.dg-lbl {
+  background: var(--navy, #1d2d6c);
+  color: #fff;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.62cqw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0.17cqw 1.8cqw;
+}
+.dg-strip-top {
+  border-top-left-radius: 1cqw;
+  border-top-right-radius: 1cqw;
+}

@@ -26,3 +26,8 @@ dist-ssr/
 
 # TanStack Router generated
 src/routeTree.gen.ts
+
+# Local-only assets (not committed)
+member-photos/
+# Exceeds GitHub's 100MB/file limit — track via Git LFS if it must be in the repo
+3055 Directory Design.pdf

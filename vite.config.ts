@@ -18,6 +18,15 @@ export default defineConfig({
         secure: true,
         rewrite: (p) => p.replace(/^\/rzapi/, ''),
       },
+      // Member/club photos are served from rotaryindia.org without CORS headers,
+      // so html2canvas (bulk ZIP export) can't read them cross-origin. Route them
+      // through Vite to become same-origin, then they can be inlined as base64.
+      '/imgproxy': {
+        target: 'https://rotaryindia.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (p) => p.replace(/^\/imgproxy/, ''),
+      },
     },
   },
   test: {

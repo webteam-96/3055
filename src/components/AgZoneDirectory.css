@@ -1,0 +1,228 @@
+/* AG page — Inner Pages Redo p1: styled AG card on top + a 2-col grid of
+   role cards (President/Secretary), every field aligned label|value, photos
+   mirrored toward the gutter. cqw-scaled to the sheet/web container. */
+.ag-zoneblock {
+  /* Colours sampled from Inner Pages Redo p1 (override the DirectorySheet vars):
+     darker navy, burnt-orange headers, warm card cream. */
+  --navy: #1a2b5e;
+  --orange: #c8752f;
+  --cream: #f7f0e7;
+  display: flex;
+  flex-direction: column;
+  gap: 1.05cqw;
+}
+
+/* Shared field — two columns: [label] [value], values share a tab stop so they
+   line up down the card. --lblw is set per context (AG card vs role card). */
+.ag-field {
+  display: grid;
+  /* Label column is at least the tab stop (--lblw) so short labels line their
+     values up; longer labels (Classification, Spouse Name) grow the column and
+     push their value right — matching the design. */
+  grid-template-columns: minmax(var(--lblw, 9cqw), auto) 1fr;
+  column-gap: 0.5cqw;
+  font-size: 1.6cqw;
+  line-height: 1.42;
+  color: var(--ink, #20242c);
+  min-width: 0;
+}
+.ag-lbl {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ag-val {
+  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Paired row (Spouse DOB + DOA): value sits right after its own label. */
+.ag-pair {
+  display: flex;
+  gap: 1.4cqw;
+}
+.ag-pair .ag-field {
+  grid-template-columns: auto 1fr;
+  column-gap: 0.5cqw;
+}
+.ag-pair > .ag-field:first-child {
+  flex: 1;
+}
+
+/* ---------- AG card ---------- */
+.ag-card {
+  border-radius: 1.5cqw;
+  overflow: hidden;
+  background: var(--cream, #f6ece8);
+  border: 1px solid #e7dccf;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+}
+.ag-head {
+  display: flex;
+  align-items: stretch;
+  background: var(--navy, #1d2d6c);
+  min-height: 5.6cqw;
+  overflow: hidden;
+}
+.ag-head-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0.7cqw 2.6cqw;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2.9cqw;
+  color: #fff;
+}
+.ag-zone {
+  display: flex;
+  align-items: center;
+  /* brighter tab with a subtle gradient, per the PDF */
+  background: linear-gradient(105deg, #dd9455 0%, #c9782f 82%);
+  color: #fff;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2.5cqw;
+  white-space: nowrap;
+  padding: 0 2.8cqw 0 4.2cqw;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 3.4cqw 100%);
+}
+.ag-body {
+  display: flex;
+  gap: 2cqw;
+  padding: 1cqw 2.2cqw;
+}
+.ag-info {
+  flex: 1;
+  display: grid;
+  row-gap: 0.3cqw;
+  align-content: start;
+  --lblw: 12cqw;
+}
+.ag-info .ag-field {
+  font-size: 1.86cqw;
+}
+.ag-clubs {
+  margin-top: 0.5cqw;
+}
+.ag-clubs .ag-val {
+  white-space: normal;
+}
+.ag-photos {
+  display: flex;
+  gap: 1.8cqw;
+  flex: none;
+}
+.ag-photo {
+  text-align: center;
+}
+.ag-pbox {
+  position: relative;
+  width: 12cqw;
+  aspect-ratio: 1 / 1.08;
+  background: #eef0f1;
+  border: 1px solid #d8d9dc;
+  border-radius: 0.5cqw;
+  overflow: hidden;
+}
+/* Grey person silhouette placeholder (shared by AG card + officer cards). */
+.ag-silhouette {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 94%;
+  height: 95%;
+  fill: #c2c4c8;
+}
+.ag-cap {
+  margin-top: 0.5cqw;
+  font-weight: 700;
+  font-size: 2.05cqw;
+  color: var(--ink, #20242c);
+}
+
+/* Continuation header */
+.ag-contbar {
+  background: var(--navy, #1d2d6c);
+  color: #fff;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 2cqw;
+  padding: 0.9cqw 2cqw;
+  border-radius: 1cqw;
+}
+
+/* ---------- Role (President/Secretary) cards ---------- */
+.ag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1cqw;
+}
+.agc {
+  border-radius: 1.5cqw;
+  overflow: hidden;
+  background: #ece5dc; /* muted cream, per the PDF (was near-white) */
+  border: 1px solid #e0d3c4;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+}
+.agc-head {
+  text-align: center;
+  color: #fff;
+  font-family: 'Petrona', serif;
+  font-weight: 700;
+  font-size: 1.95cqw;
+  padding: 0.42cqw 1cqw;
+}
+.agc-head.navy {
+  background: var(--navy, #1d2d6c);
+}
+.agc-head.orange {
+  background: var(--orange, #e08a3c);
+}
+.agc-body {
+  display: flex;
+  gap: 1.1cqw;
+  padding: 0.55cqw 1.1cqw 0.62cqw;
+  align-items: flex-start;
+}
+.agc-info {
+  flex: 1;
+  display: grid;
+  row-gap: 0.18cqw;
+  min-width: 0;
+  align-content: start;
+  --lblw: 7cqw;
+}
+.agc-info .ag-field {
+  font-size: 1.5cqw;
+  line-height: 1.32;
+}
+.agc-info .ag-pair {
+  gap: 1.2cqw;
+}
+.agc-photo {
+  flex: none;
+  align-self: flex-start;
+  text-align: center;
+}
+.agc-pbox {
+  position: relative;
+  width: 8.5cqw;
+  aspect-ratio: 1 / 1.1;
+  background: #eef0f1;
+  border: 1px solid #d8d9dc;
+  border-radius: 0.4cqw;
+  overflow: hidden;
+}
+.agc-cap {
+  margin-top: 0.4cqw;
+  font-weight: 700;
+  font-size: 1.82cqw;
+  color: var(--ink, #20242c);
+}
+/* Right-column cards mirror so the photo sits toward the centre gutter. */
+.ag-grid > .agc:nth-child(even) .agc-body {
+  flex-direction: row-reverse;
+}

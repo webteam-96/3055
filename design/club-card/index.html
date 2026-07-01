@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rotary Club Directory — Member Card</title>
+
+<!-- ===== Fonts: Playfair Display (serif) + Inter (sans) ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet" />
+
+<style>
+  /* ===== Color tokens ===== */
+  :root {
+    --navy:        #1A2B5E;
+    --orange:      #EE9050;       /* lighter peach — officer side band */
+    --orange-deep: #D07830;       /* burnt orange — centre strip */
+    --orange-id:   #C87028;       /* darkest burnt — Club ID tab */
+    --cream:       #F5EBE8;
+    --gray:        #C4C4C4;
+    --ink:         #20242c;
+    --page:        #FCFAF8;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #e9eaee;
+    color: var(--ink);
+    padding: 28px 16px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Transparent wrapper — no surface/background, just centres the card(s) */
+  .page {
+    max-width: 880px; margin: 0 auto;
+    background: transparent; padding: 0;
+  }
+
+  /* ============================================================
+     CLUB CARD (rendered twice via JS)
+     ============================================================ */
+  /* The reference sets the whole card in Playfair Display (serif) — names,
+     values, labels and captions alike — so the card inherits it here. */
+  .card { margin: 0; font-family: 'Playfair Display', serif; }
+
+  /* --- Title bar: navy block, angled orange "Club ID" tab on the right --- */
+  .titlebar {
+    position: relative; overflow: hidden;
+    background: var(--navy);
+    border-radius: 9px;
+    display: flex; align-items: stretch;
+    min-height: 40px;
+  }
+  .titlebar .club-name {
+    flex: 1; display: flex; align-items: center;
+    padding: 6px 20px;
+    font-weight: 700; font-size: 23px; color: #fff; line-height: 1.05;
+    letter-spacing: .2px;
+  }
+  .titlebar .club-id {
+    display: flex; align-items: center;
+    background: var(--orange-id);
+    color: #fff; font-weight: 700; font-size: 18px; white-space: nowrap;
+    padding: 0 22px 0 36px;
+    /* orange wider at the TOP, narrowing toward the bottom (matches reference) */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%);
+  }
+
+  /* --- Info strip --- */
+  .info {
+    background: var(--cream);
+    border-radius: 8px; margin-top: 5px;
+    padding: 11px 24px 9px;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    column-gap: 28px; row-gap: 4px;
+  }
+  .info-grid .row { font-size: 13.5px; line-height: 1.45; }
+  .info .lbl { color: var(--ink); font-style: normal; font-weight: 400; }
+  .info .val { color: var(--ink); font-weight: 700; }
+  .info-ag {
+    margin-top: 7px; padding-top: 7px;
+    border-top: 1px solid #ddd2cc;
+    text-align: center; font-size: 13.5px;
+  }
+  .info-ag span { margin: 0 18px; }
+
+  /* --- Officer panel ---
+     Single 3-col grid. Background = bright orange band at the top that
+     softly fades into a cream body; centre column painted solid orange so
+     it reads as one continuous vertical strip. Data cells share grid rows,
+     so President value / centre label / Secretary value share a baseline. */
+  .officer {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 1fr 116px 1fr;
+    gap: 0;
+    border-radius: 13px; overflow: hidden;
+    /* solid peach band with a near-hard edge into the cream body */
+    background: linear-gradient(180deg,
+      var(--orange) 0%, var(--orange) 23%, var(--cream) 27%, var(--cream) 100%);
+  }
+  .officer .c { background: var(--orange-deep); }   /* darker burnt centre strip */
+
+  /* Row 1 — names (sides) + "Scan to know more" (centre); sits on orange band */
+  .off-head { grid-row: 1; padding: 11px 12px 8px; text-align: center; color: #fff; }
+  .off-head.pres { grid-column: 1; }
+  .off-head.sec  { grid-column: 3; }
+  .off-head .nm {
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 20px;
+    line-height: 1.12; color: #fff;
+  }
+  .off-head .role {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 14px; margin-top: 0; color: #fff;
+  }
+  .scan {
+    grid-row: 1; grid-column: 2;
+    color: #fff; text-align: center; font-style: normal;   /* upright serif */
+    font-size: 11px; line-height: 1.25; padding: 10px 6px 4px;
+  }
+
+  /* Row 2 — photo placeholders (sides) + QR (centre) */
+  .photos {
+    grid-row: 2; padding: 3px 14px 10px;
+    display: flex; justify-content: center; gap: 14px;
+  }
+  .photos.pres { grid-column: 1; }
+  .photos.sec  { grid-column: 3; }
+  .photo { text-align: center; }
+  .photo .box {
+    width: 80px; height: 88px; background: var(--gray);
+    border-radius: 3px; display: grid; place-items: center; overflow: hidden;
+  }
+  .photo .box svg { width: 60px; height: 60px; opacity: .58; }
+  .photo .cap { margin-top: 5px; font-weight: 700; font-size: 12.5px; color: var(--ink); }
+
+  .qr {
+    grid-row: 2; grid-column: 2;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 0 0 8px;
+  }
+  .qr .frame { background: #fff; padding: 4px; border-radius: 2px; line-height: 0; }
+  .qr svg { display: block; }
+
+  /* Rows 3–8 — aligned data rows */
+  .pv, .sv, .olbl {
+    font-size: 12.5px; line-height: 1.52; padding: 0; align-self: center;
+  }
+  .pv   { grid-column: 1; text-align: right; padding-right: 14px; color: var(--ink); }
+  .sv   { grid-column: 3; text-align: left;  padding-left: 14px;  color: var(--ink); }
+  .olbl { grid-column: 2; text-align: left;  padding-left: 14px;
+          color: #fff; font-style: italic; font-weight: 500; }
+  .officer .pad-b { height: 12px; }
+
+  /* --- Ornamental flourish divider between the two cards --- */
+  .flourish { text-align: center; margin: 13px 0; line-height: 0; }
+  .flourish svg { display: inline-block; vertical-align: middle; }
+
+  @media (max-width: 600px) {
+    .titlebar .club-name { font-size: 19px; }
+    .officer { grid-template-columns: 1fr 100px 1fr; }
+    .photo .box { width: 68px; height: 76px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="cards" id="cards"></div>
+  </div>
+
+<script>
+  /* ===== Data ===== */
+  const club = {
+    name: "Ahmedabad Skyline Tejasvani",
+    clubId: "227663",
+    charterDate: "DD/MM/YYYY",
+    memberCount: "5000",
+    meetingTime: "Friday, 01:30 PM",
+    venue: "Sankalp Square III Opp. Saket 3",
+    ag: "Manisha Bhanushali",
+    zone: "023",
+    president: {
+      name: "Satishkumar Mahale", firstName: "Satishkumar",
+      phone: "9325001531", email: "pareshbene@gmail.com",
+      classification: "Chartered Accountant",
+      dob: "00/00", spouseDob: "00/00", doa: "00/00"
+    },
+    secretary: {
+      name: "Anilkumar Manja Naik", firstName: "Anilkumar",
+      phone: "9823723060", email: "sajj1770@gmail.com",
+      classification: "Chartered Accountant",
+      dob: "17/03", spouseDob: "00/00", doa: "00/00"
+    }
+  };
+
+  /* ===== Placeholder graphics ===== */
+  const personSvg = `
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="23" r="12" fill="#8f8f8f"/>
+      <path d="M10 60 a22 22 0 0 1 44 0 Z" fill="#8f8f8f"/>
+    </svg>`;
+
+  // Deterministic QR-like placeholder (finder patterns + pseudo-noise modules)
+  function qrSvg(px) {
+    const n = 21, m = px / (n + 2);
+    const inBox = (x, y, ox, oy) => x >= ox && x < ox + 7 && y >= oy && y < oy + 7;
+    const isFinder = (x, y) => inBox(x,y,0,0) || inBox(x,y,n-7,0) || inBox(x,y,0,n-7);
+    const finderOn = (x, y) => {
+      const ring = (ox, oy) => {
+        const rx = x - ox, ry = y - oy;
+        if (rx === 0 || rx === 6 || ry === 0 || ry === 6) return true;
+        return rx >= 2 && rx <= 4 && ry >= 2 && ry <= 4;
+      };
+      if (x < 7 && y < 7)    return ring(0, 0);
+      if (x >= n-7 && y < 7) return ring(n-7, 0);
+      if (x < 7 && y >= n-7) return ring(0, n-7);
+      return false;
+    };
+    let rects = "";
+    for (let y = 0; y < n; y++)
+      for (let x = 0; x < n; x++) {
+        const on = isFinder(x, y) ? finderOn(x, y)
+                                  : ((x * 7 + y * 13 + (x * y) % 5) % 3) === 0;
+        if (on) rects += `<rect x="${((x+1)*m).toFixed(2)}" y="${((y+1)*m).toFixed(2)}" width="${(m+0.3).toFixed(2)}" height="${(m+0.3).toFixed(2)}"/>`;
+      }
+    return `<svg width="${px}" height="${px}" viewBox="0 0 ${px} ${px}" shape-rendering="crispEdges">
+      <rect width="${px}" height="${px}" fill="#fff"/><g fill="#111">${rects}</g></svg>`;
+  }
+
+  const photo = (cap) => `
+    <div class="photo"><div class="box">${personSvg}</div><div class="cap">${cap}</div></div>`;
+
+  // Ornamental divider — a small repeated paisley/leaf motif row (navy + orange)
+  function flourishSvg() {
+    const motif = (x, flip) => `
+      <g transform="translate(${x},11)${flip ? ' scale(-1,1)' : ''}">
+        <path d="M0 0 C 6 -7 16 -6 16 2 C 16 8 8 9 5 5 C 8 6 12 4 11 0 C 10 -3 4 -4 0 0 Z"
+              fill="${flip ? '#1A2B5E' : '#E08A3C'}"/>
+      </g>`;
+    let g = "";
+    for (let i = 0; i < 6; i++) g += motif(70 + i * 24, i % 2 === 0);
+    return `
+      <div class="flourish">
+        <svg width="300" height="22" viewBox="0 0 300 22" aria-hidden="true">
+          <g stroke="#1A2B5E" stroke-width="1.2" fill="none">
+            <path d="M20 11 H66"/><path d="M234 11 H280"/>
+          </g>
+          <circle cx="20" cy="11" r="2" fill="#1A2B5E"/>
+          <circle cx="280" cy="11" r="2" fill="#1A2B5E"/>
+          ${g}
+        </svg>
+      </div>`;
+  }
+
+  /* ===== Card template ===== */
+  function renderCard(c) {
+    const p = c.president, s = c.secretary;
+    const rows = [
+      [p.phone,          "Contact:",        s.phone],
+      [p.email,          "E-mail:",         s.email],
+      [p.classification, "Classification:", s.classification],
+      [p.dob,            "DOB:",            s.dob],
+      [p.spouseDob,      "Spouse DOB:",     s.spouseDob],
+      [p.doa,            "DOA:",            s.doa],
+    ];
+    const dataRows = rows.map(([pv, lbl, sv]) => `
+        <div class="pv">${pv}</div>
+        <div class="olbl c">${lbl}</div>
+        <div class="sv">${sv}</div>`).join("");
+
+    return `
+    <article class="card">
+      <div class="titlebar">
+        <div class="club-name">${c.name}</div>
+        <div class="club-id">Club ID: ${c.clubId}</div>
+      </div>
+
+      <div class="info">
+        <div class="info-grid">
+          <div class="row"><span class="lbl">Charter Date:</span> <span class="val">${c.charterDate}</span></div>
+          <div class="row"><span class="lbl">Meeting Day &amp; Time:</span> <span class="val">${c.meetingTime}</span></div>
+          <div class="row"><span class="lbl">Member Count:</span> <span class="val">${c.memberCount}</span></div>
+          <div class="row"><span class="lbl">Venue:</span> <span class="val">${c.venue}</span></div>
+        </div>
+        <div class="info-ag">
+          <span><span class="lbl">A.G.:</span> <span class="val">${c.ag}</span></span>
+          <span><span class="lbl">Zone No:</span> <span class="val">${c.zone}</span></span>
+        </div>
+      </div>
+
+      <div class="officer">
+        <div class="off-head pres">
+          <div class="nm">${p.name}</div><div class="role">President</div>
+        </div>
+        <div class="scan c">Scan to<br>know more</div>
+        <div class="off-head sec">
+          <div class="nm">${s.name}</div><div class="role">Secretary</div>
+        </div>
+
+        <div class="photos pres">${photo(p.firstName)}${photo("Name")}</div>
+        <div class="qr c"><div class="frame">${qrSvg(62)}</div></div>
+        <div class="photos sec">${photo(s.firstName)}${photo("Name")}</div>
+
+        ${dataRows}
+
+        <div class="pad-b" style="grid-column:1"></div>
+        <div class="pad-b c" style="grid-column:2"></div>
+        <div class="pad-b" style="grid-column:3"></div>
+      </div>
+    </article>`;
+  }
+
+  document.getElementById("cards").innerHTML =
+    renderCard(club) + flourishSvg() + renderCard(club);
+</script>
+</body>
+</html>

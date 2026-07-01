@@ -39,11 +39,14 @@ function CommitteeDetailsPage() {
 
   const displayMembers = (() => {
     if (subCommitteeId && data?.subCommitteeMembers) {
-      return [...data.subCommitteeMembers]
-        .filter(m => m.fk_District_sub_Committee_id === subCommitteeId)
-        .sort((a, b) => (a.ClubName ?? '').localeCompare(b.ClubName ?? ''))
+      // URL search params arrive as numbers via TanStack Router, but the
+      // member's sub-committee id is a string — coerce both before comparing.
+      // Order is already by role (Chair → Co-Chair) from the selector.
+      return data.subCommitteeMembers.filter(
+        m => String(m.fk_District_sub_Committee_id) === String(subCommitteeId),
+      )
     }
-    return [...(data?.directMembers ?? [])].sort((a, b) => (a.ClubName ?? '').localeCompare(b.ClubName ?? ''))
+    return data?.directMembers ?? []
   })()
 
   const showSubCommittees = !subCommitteeId && (data?.subCommittees ?? []).length > 0

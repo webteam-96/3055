@@ -94,6 +94,24 @@ export function isoToDayMonth(iso?: string | null): string {
   return m ? `${m[3]}/${m[2]}` : ''
 }
 
+// ISO datetime → DD/MM/YYYY (date part only, no timezone drift).
+export function isoToDMY(iso?: string | null): string {
+  if (!iso) return ''
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso))
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : ''
+}
+
+// "13:30:00" / "13:30" → "01:30 PM". Empty for missing/unparseable input.
+export function to12Hour(t?: string | null): string {
+  if (!t) return ''
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(t).trim())
+  if (!m) return ''
+  let h = Number(m[1])
+  const ampm = h >= 12 ? 'PM' : 'AM'
+  h = h % 12 || 12
+  return `${String(h).padStart(2, '0')}:${m[2]} ${ampm}`
+}
+
 function pick(...vals: Array<string | null | undefined>): string {
   for (const v of vals) {
     if (v != null && String(v).trim() !== '') return String(v)
@@ -130,6 +148,25 @@ function mapCommitteeMember(m: RawMember): DistrictCommitteeMember {
   }
 }
 
+// The unified API repeats some committee members (e.g. a person listed twice in
+// the same committee). De-duplicate by person + role so each record shows once.
+function dedupeMembers(list: DistrictCommitteeMember[]): DistrictCommitteeMember[] {
+  const seen = new Set<string>()
+  const out: DistrictCommitteeMember[] = []
+  for (const m of list) {
+    const key = [
+      (m.RotaryID || '').trim(),
+      (m.name || '').trim().toLowerCase(),
+      (m.MobileNumber || '').trim(),
+      (m.DistrictDesignation || '').trim().toLowerCase(),
+    ].join('|')
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(m)
+  }
+  return out
+}
+
 // ---------------------------------------------------------------------------
 // Selectors — pure transforms from the unified response to the existing UI
 // types. Exported for reuse by hooks and tests.
@@ -137,7 +174,7 @@ function mapCommitteeMember(m: RawMember): DistrictCommitteeMember {
 
 /** Executive committee = the top-level districtCommittee array (DG team). */
 export function selectExecutiveCommittee(data: DistrictDirectoryResponse): DistrictCommitteeMember[] {
-  return (data.districtCommittee ?? []).map(mapCommitteeMember)
+  return dedupeMembers((data.districtCommittee ?? []).map(mapCommitteeMember))
 }
 
 /** Directory category cards = the committee groups. */
@@ -163,14 +200,22 @@ export function selectCommitteeDetails(
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
     .map((s) => ({ pk_District_sub_Committee_id: String(s.id), name: s.subGroupName }))
 
+  // Members come ordered by the API's per-member sort_order, which ranks roles
+  // (Chair → Co-Chair → …). Preserve that ordering; the cards must not be
+  // re-sorted alphabetically downstream.
+  const byRole = (a: RawMember, b: RawMember) =>
+    Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0)
+
   const subCommitteeMembers: DistrictCommitteeMember[] = (group.subGroups ?? []).flatMap((s) =>
-    (s.members ?? []).map((m) => ({
-      ...mapCommitteeMember(m),
-      fk_District_sub_Committee_id: String(s.id),
-    })),
+    dedupeMembers(
+      [...(s.members ?? [])].sort(byRole).map((m) => ({
+        ...mapCommitteeMember(m),
+        fk_District_sub_Committee_id: String(s.id),
+      })),
+    ),
   )
 
-  const directMembers = (group.members ?? []).map(mapCommitteeMember)
+  const directMembers = dedupeMembers([...(group.members ?? [])].sort(byRole).map(mapCommitteeMember))
   return { subCommittees, subCommitteeMembers, directMembers }
 }
 
@@ -188,12 +233,22 @@ export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[
     .map((entry) => {
       const pres = findByDesignation(entry.boardOfDirectors, 'Club President')
       const sec = findByDesignation(entry.boardOfDirectors, 'Club Secretary')
-      const id = String(entry.club?.pk_club_id ?? '')
+      const info = entry.club
+      const id = String(info?.pk_club_id ?? '')
+      const meeting = [info?.MeetingDay ?? '', to12Hour(info?.MeetingFromTime)]
+        .filter(Boolean)
+        .join(', ')
       return {
         grpID: id,
         clubId: id,
-        clubName: entry.club?.ClubName ?? '',
-        // Per-club Assistant Governor is not provided by the unified API.
+        clubRotaryId: pick(info?.ClubRotaryId, id),
+        clubName: info?.ClubName ?? '',
+        charterDate: isoToDMY(info?.ClubCharterDate),
+        memberCount: String((entry.members ?? []).length),
+        meeting,
+        venue: pick(info?.MeetingAddress),
+        // Zone No / per-club Assistant Governor are not in the unified API yet.
+        zoneNo: '',
         AG_Name: '',
         AG_MobileNumber: '',
         AG_EmailID: '',
@@ -203,7 +258,10 @@ export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[
         President_member_email_id: pres?.EmailId ?? '',
         President_member_mobile_no: pres?.PrimaryMobileNumber ?? '',
         President_Classification: pres?.MemberIntroduction ?? '',
+        President_DOB: isoToDayMonth(pres?.BirthDate),
+        President_DOA: isoToDayMonth(pres?.AnniversaryDate),
         President_Profile_Photo: resolveImg(pres?.ProfilePhotoPath),
+        // Spouse details are not in the unified API yet.
         President_Spouse_member_name: '',
         President_Spouse_DOB: '',
         President_Spouse_Profile_Photo: '',
@@ -211,6 +269,8 @@ export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[
         Secreatary_email_id: sec?.EmailId ?? '',
         Secreatary_mobile_no: sec?.PrimaryMobileNumber ?? '',
         Secreatary_Classification: sec?.MemberIntroduction ?? '',
+        Secreatary_DOB: isoToDayMonth(sec?.BirthDate),
+        Secreatary_DOA: isoToDayMonth(sec?.AnniversaryDate),
         Secreatary_Profile_Photo: resolveImg(sec?.ProfilePhotoPath),
         Secreatary_Spouse_member_name: '',
         Secreatary_Spouse_DOB: '',
