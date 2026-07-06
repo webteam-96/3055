@@ -4,6 +4,8 @@ import { useClubsBOD } from '../api/useClubsBOD'
 import { ClubBODCard } from '../components/ClubBODCard'
 import { DirectorySheet } from '../components/DirectorySheet'
 import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
+import { Loading } from '../components/Loading'
+import { ApiErrorNotice } from '../components/ApiErrorNotice'
 
 export const Route = createFileRoute('/bod')({
   component: BODPage,
@@ -20,7 +22,7 @@ function chunk<T>(arr: T[], size: number): T[][] {
 
 function BODPage() {
   const [search, setSearch] = useState('')
-  const { data: clubs, isLoading, isError } = useClubsBOD(GROUP_ID, YEAR)
+  const { data: clubs, isLoading, isError, error } = useClubsBOD(GROUP_ID, YEAR)
 
   const filtered = useMemo(() => {
     if (!clubs) return []
@@ -38,8 +40,8 @@ function BODPage() {
 
   const sheets = useMemo(() => chunk(filtered, 2), [filtered])
 
-  if (isLoading) return null
-  if (isError) return <div className="p-8 text-center text-red-500">Failed to load clubs.</div>
+  if (isLoading) return <Loading label="Loading clubs…" />
+  if (isError) return <ApiErrorNotice error={error} fallback="Failed to load clubs." />
 
   const searchBox = (
     <div

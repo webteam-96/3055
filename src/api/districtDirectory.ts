@@ -15,6 +15,7 @@ import type {
   ClubBODMember,
 } from '../types/api'
 import type { CommitteeDetailsData } from './useCommitteeDetails'
+import { API_BASE, ApiAuthError, getActiveToken } from './authToken'
 
 // ---------------------------------------------------------------------------
 // Single source of truth — the unified district-directory API.
@@ -26,26 +27,19 @@ import type { CommitteeDetailsData } from './useCommitteeDetails'
 const DISTRICT = '3055'
 const ROTARY_YEAR = '2026-27'
 
-// Bearer token for the API. Overridable via VITE_RZ_API_TOKEN; the committed
-// fallback is the token supplied for this district. NOTE: this token is
-// embedded in the client bundle and has an expiry — rotate it via the env var.
-const API_TOKEN =
-  (import.meta.env.VITE_RZ_API_TOKEN as string | undefined) ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6Ijg0MDUwMyIsIm5hbWUiOiJLYWxwZXNoIEEiLCJlbWFpbCI6IndlYkBrYWl6ZW5pbmZvdGVjaC5jb20iLCJyb2xlcyI6IkFkbWluLE1lbWJlciIsImxvZ2luVHlwZSI6Im1vYmlsZSIsIm1lbWJlclR5cGUiOiJtZW1iZXIiLCJpbWVpIjoiMWMxMTZjOTBjNTgzNjdiN2MzMjJmYzdkZDIyYmQ1YTMiLCJleHAiOjE3ODMxNjIxNjAsImlzcyI6Ikp3dElzc3VlciIsImF1ZCI6Ikp3dEF1ZGllbmNlIn0.EkKMZEHbNfTkwvVno70xb-m3Yu0ZSx_cHlws4a8dyH8'
-
-const API_PATH = `/api/district-directory/${DISTRICT}?rotaryYear=${ROTARY_YEAR}`
-
-// The API only whitelists CORS for the deployed origin, not localhost.
-// In dev we route through the Vite proxy (`/rzapi` → rizones45678.org/API) to
-// stay same-origin; in production we call the whitelisted origin directly.
-const API_URL = import.meta.env.DEV ? `/rzapi${API_PATH}` : `https://rizones45678.org/API${API_PATH}`
+// Bearer token resolution (localStorage override → VITE_RZ_API_TOKEN env var →
+// committed fallback, skipping expired candidates) lives in authToken.ts.
+// API_BASE is the dev proxy (`/rzapi`, the API only whitelists CORS for the
+// deployed origin) or the whitelisted production origin.
+const API_URL = `${API_BASE}/api/district-directory/${DISTRICT}?rotaryYear=${ROTARY_YEAR}`
 
 export const directoryQueryKey = ['districtDirectory', DISTRICT, ROTARY_YEAR] as const
 
 export async function fetchDistrictDirectory(): Promise<DistrictDirectoryResponse> {
   const res = await fetch(API_URL, {
-    headers: { Authorization: `Bearer ${API_TOKEN}` },
+    headers: { Authorization: `Bearer ${getActiveToken()}` },
   })
+  if (res.status === 401 || res.status === 403) throw new ApiAuthError()
   if (!res.ok) throw new Error(`District directory request failed: ${res.status}`)
   return res.json()
 }

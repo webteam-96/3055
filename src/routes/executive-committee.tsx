@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useDistrictCommittee } from '../api/useDistrictCommittee'
 import { CommitteeDirectory } from '../components/CommitteeDirectory'
 import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
+import { Loading } from '../components/Loading'
+import { ApiErrorNotice } from '../components/ApiErrorNotice'
 
 export const Route = createFileRoute('/executive-committee')({
   component: ExecutiveCommitteePage,
@@ -11,10 +13,10 @@ const GROUP_ID = '34307'
 const YEAR = '2026-2027'
 
 function ExecutiveCommitteePage() {
-  const { data, isLoading, isError } = useDistrictCommittee(GROUP_ID, YEAR)
+  const { data, isLoading, isError, error } = useDistrictCommittee(GROUP_ID, YEAR)
 
-  if (isLoading) return null
-  if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
+  if (isLoading) return <Loading label="Loading Executive Committee…" />
+  if (isError) return <ApiErrorNotice error={error} />
 
   const members = data?.members ?? []
   const sections = [{ title: 'Executive Committee', members }]
