@@ -5,13 +5,14 @@
    matching the final "Inner Pages Redo" PDF. */
 
 .club-bod-card {
-  --navy: #1a2b5e;
-  --orange: #e89f66; /* muted peach — officer side band (sampled from PDF) */
-  --orange-deep: #d07830; /* burnt orange — centre strip */
-  --orange-id: #c87028; /* darkest burnt — Club ID tab */
-  --cream: #f1e7e3;
+  /* Exact palette sampled from Card Design/Club cards.svg */
+  --navy: #1a2954;
+  --orange: #f89c5c; /* light orange — officer band edges */
+  --orange-deep: #c4722e; /* burnt orange — centre strip / band centre */
+  --orange-id: #c4722e; /* Club ID tab */
+  --cream: #f2e9e8;
   --gray: #c4c4c4;
-  --ink: #20242c;
+  --ink: #231f20;
 
   font-family: 'Petrona', serif;
   color: var(--ink);
@@ -35,15 +36,15 @@
   border-radius: 0; /* outer .club-bod-card rounds the card's top corners */
   display: flex;
   align-items: stretch;
-  min-height: 5cqw;
+  min-height: 4.4cqw;
 }
 .club-bod-card .club-name {
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0.7cqw 2.4cqw;
+  padding: 0.5cqw 2.4cqw;
   font-weight: 700;
-  font-size: 3.3cqw;
+  font-size: 3.05cqw;
   color: #fff;
   line-height: 1.05;
   letter-spacing: 0.2px;
@@ -51,30 +52,34 @@
 .club-bod-card .club-id {
   display: flex;
   align-items: center;
-  /* brighter tab with a subtle left-to-right gradient, per the PDF */
-  background: linear-gradient(105deg, #e8a058 0%, #d67f3c 82%);
+  /* Orange tab: light at the left edge → burnt orange, per Club cards.svg. */
+  background: linear-gradient(90deg, #f89c5c 0%, #c4722e 58%);
   color: #fff;
   font-weight: 700;
   font-size: 2.6cqw;
   white-space: nowrap;
-  padding: 0 2.6cqw 0 4.2cqw;
+  /* Extra left padding keeps the text clear of the S-curve notch. */
+  padding: 0 2.6cqw 0 6cqw;
+  /* Curved navy↔orange boundary (S-curve), matching Club cards.svg. Falls back
+     to a straight cut in browsers without url() clip support. */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 3.4cqw 100%);
+  clip-path: url(#club-id-curve);
 }
 
 /* --- Info strip (serif, labels regular / values bold) --- */
 .club-bod-card .info {
   background: var(--cream);
-  padding: 0.7cqw 2.6cqw 0.6cqw; /* flush under the titlebar — no gap/radius */
+  padding: 0.45cqw 2.6cqw 0.35cqw; /* flush under the titlebar — no gap/radius */
 }
 .club-bod-card .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 3.2cqw;
-  row-gap: 0.4cqw;
+  row-gap: 0.2cqw;
 }
 .club-bod-card .info-grid .row {
-  font-size: 2cqw;
-  line-height: 1.3;
+  font-size: 1.78cqw;
+  line-height: 1.18;
 }
 .club-bod-card .info .lbl {
   color: var(--ink);
@@ -86,11 +91,11 @@
   font-weight: 700;
 }
 .club-bod-card .info-ag {
-  margin-top: 0.5cqw;
-  padding-top: 0.5cqw;
+  margin-top: 0.3cqw;
+  padding-top: 0.3cqw;
   border-top: 1px solid #ddd2cc;
   text-align: center;
-  font-size: 2cqw;
+  font-size: 1.78cqw;
 }
 .club-bod-card .info-ag span {
   margin: 0 2cqw;
@@ -98,25 +103,37 @@
 
 /* --- Officer panel --- */
 .club-bod-card .officer {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 15cqw 1fr;
+  grid-template-columns: 1fr 13cqw 1fr;
   gap: 0;
   overflow: hidden; /* flush under the info strip; outer card rounds the bottom */
-  /* Solid cream body. The peach officer band is painted onto row 1 (.off-head)
-     so it ends in a hard edge exactly at the name/photo boundary — matching the
-     PDF — instead of the soft gradient fade this used to have. */
+  /* Solid cream body. The orange officer band (row 1) is a full-width, rounded-
+     top gradient (light → dark → light) painted by .off-band; the dark centre of
+     that gradient lines up with the vertical centre strip (.c) below. */
   background: var(--cream);
+}
+/* Full-width gradient band behind the President/Secretary names. Occupies grid
+   row 1 across all three columns and sits beneath the row-1 content. */
+.club-bod-card .officer .off-band {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  z-index: 0;
+  border-radius: 4.6cqw 4.6cqw 0 0;
+  background: linear-gradient(90deg, #f89c5c 0%, #c4722e 50%, #f89c5c 100%);
 }
 .club-bod-card .officer .c {
   background: var(--orange-deep);
 }
 
 .club-bod-card .off-head {
+  position: relative;
+  z-index: 1;
   grid-row: 1;
   padding: 0.55cqw 1.4cqw 0.4cqw;
   text-align: center;
   color: #fff;
-  background: var(--orange); /* peach band, hard edge at the row-1 boundary */
+  background: transparent; /* reveal the .off-band gradient underneath */
 }
 .club-bod-card .off-head.pres {
   grid-column: 1;

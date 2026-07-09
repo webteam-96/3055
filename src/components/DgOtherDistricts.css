@@ -1,82 +1,86 @@
-/* DG of other districts (Inner Pages Redo p4) — year tabs header, 2 photos per
-   side, values flanking a navy center label strip. cqw-scaled. */
+/* ============================================================
+   DG of other districts — card rebuilt 1:1 from
+   "Card Design/Other DG Cards.svg" (artwork card = 469.8 × 231
+   units). Every measurement below is calc(var(--u) * N) where N
+   is the coordinate straight from that artwork, so the rendered
+   card is an exact scale of the design in web and print alike.
+   ============================================================ */
 .dg-sheet {
-  /* Colours per Inner Pages Redo p4. */
-  --navy: #1a2b5e;
   display: flex;
   flex-direction: column;
   gap: 1.8cqw;
 }
 
+/* Each card is its own inline-size container so that 1 artwork
+   unit (--u, defined on .dg-in) is exactly 1/469.8 of the card's
+   own width, independent of the sheet's padding. */
 .dg-card {
+  container-type: inline-size;
+  aspect-ratio: 469.8 / 231;
+  position: relative;
   flex: none;
-  border-radius: 1.2cqw;
-  overflow: hidden;
-  background: #f3ece5; /* warm cream body, per the PDF (was stark white) */
-  border: 1px solid #e2d6c9;
 }
 
-/* Header: 2026-27 | DISTRICT N | 2027-28. The centre column width matches the
-   body label strip below so the navy reads as one continuous column. */
+.dg-in {
+  --u: 0.2128565cqw; /* 100cqw / 469.8 artwork units */
+  --navy: #192854;
+  position: absolute;
+  inset: 0;
+  background: #ebebec;
+  border: 1px solid rgba(0, 0, 0, 0.32); /* stroke-width .1 hairline in the artwork */
+  border-radius: calc(var(--u) * 14.9);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navy header band (22.3 units tall). The copper year tabs and the
+   header texts are the artwork's own paths, rendered by .dg-head-art. */
 .dg-head {
-  display: grid;
-  grid-template-columns: 1fr 22cqw 1fr;
-  align-items: stretch;
-  background: var(--navy, #1d2d6c);
-  min-height: 4.8cqw;
+  position: relative;
+  flex: none;
+  height: calc(var(--u) * 22.3);
+  background: var(--navy);
 }
-.dg-yr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* brighter orange year tab with a subtle gradient, per the PDF */
-  background: linear-gradient(180deg, #f2a15d 0%, #e08744 100%);
-  color: #fff;
-  font-family: 'Petrona', sans-serif;
-  font-weight: 700;
-  font-size: 2.2cqw;
+.dg-head-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-/* Angle the inner-top corner of each year tab so the navy centre rises as a
-   banner between them. */
-.dg-yr:first-of-type {
-  clip-path: polygon(0 0, calc(100% - 2.2cqw) 0, 100% 100%, 0 100%);
-}
-.dg-yr:last-of-type {
-  clip-path: polygon(2.2cqw 0, 100% 0, 100% 100%, 0 100%);
-}
-.dg-dist {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
+.dg-h-txt {
   font-family: 'Petrona', serif;
   font-weight: 700;
-  font-size: 2.7cqw;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  font-size: 16px; /* user units of the 469.8-wide viewBox */
+  fill: #fff;
 }
 
-/* Body: left values | navy label strip | right values, with photos on top. */
-.dg-grid {
-  display: grid;
-  grid-template-columns: 1fr 22cqw 1fr;
-  align-items: stretch;
-  column-gap: 0;
-  row-gap: 0;
-}
-.dg-photos {
-  display: flex;
-  gap: 1.2cqw;
-  justify-content: center;
-  padding: 1cqw 1cqw 0.7cqw;
-}
-.dg-pbox {
+.dg-body {
   position: relative;
-  width: 7.3cqw;
-  aspect-ratio: 1 / 1.05;
+  flex: 1;
+}
+
+/* Full-height navy centre strip (artwork x 192.3 → 285.3, i.e. 186.5 → 279.5
+   from the card's left edge), running from the header to the card bottom. */
+.dg-strip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--u) * 186.5);
+  width: calc(var(--u) * 93);
+  background: var(--navy);
+}
+
+/* Photo boxes: 58.6 × 64.6 units, top edge 5.7 units below the header;
+   x-offsets come from PHOTO_X in the component. */
+.dg-pbox {
+  position: absolute;
+  top: calc(var(--u) * 5.7);
+  width: calc(var(--u) * 58.6);
+  height: calc(var(--u) * 64.6);
   background: #eef0f1;
-  border: 1px solid #d8d9dc;
-  border-radius: 0.4cqw;
+  border: 1px solid rgba(0, 0, 0, 0.4); /* stroke-width .2 in the artwork */
   overflow: hidden;
 }
 .dg-silhouette {
@@ -89,41 +93,60 @@
   fill: #c2c4c8;
 }
 
+/* Nine value | label | value rows on a 14.54-unit pitch; the first row's box
+   starts 75.3 units below the header, which puts the first baseline at the
+   artwork's y ≈ 86.4 (114.7 on the page). */
+.dg-rows {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--u) * 75.3);
+  display: grid;
+  /* minmax(0, 1fr): a plain 1fr's auto minimum would let a long nowrap value
+     grow the track past the card edge instead of triggering the FitText shrink. */
+  grid-template-columns: calc(var(--u) * 186.5) calc(var(--u) * 93) minmax(0, 1fr);
+  grid-auto-rows: minmax(calc(var(--u) * 14.54), auto);
+}
+
 .dg-lv,
 .dg-rv {
   display: flex;
   align-items: center;
   font-family: 'Petrona', serif;
   font-weight: 700;
-  font-size: 1.72cqw;
-  line-height: 1.2;
-  color: var(--ink, #20242c);
-  padding: 0.17cqw 2cqw;
+  font-size: calc(var(--u) * 11);
+  line-height: 1.08;
+  color: #000;
+}
+/* Values stay on one line at the design size; FitText shrinks an over-long
+   value instead of letting a wrap grow the row and clip the bottom rows. */
+.dg-fit {
+  flex: none;
+  white-space: nowrap;
 }
 .dg-lv {
   justify-content: flex-end;
   text-align: right;
+  padding-left: calc(var(--u) * 16.7);
+  padding-right: calc(var(--u) * 27.7); /* right-align values to x 158.8, the photo block's right edge */
 }
 .dg-rv {
   justify-content: flex-start;
   text-align: left;
+  padding-left: calc(var(--u) * 27.6); /* left-align values to x 307.1, the photo block's left edge */
+  padding-right: calc(var(--u) * 20.6); /* right content boundary at x 449.2, the photo block's right edge */
 }
 
-/* Navy center label strip (one continuous bar) */
+/* White italic labels centred on the navy strip. */
 .dg-lbl {
-  background: var(--navy, #1d2d6c);
-  color: #fff;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.62cqw;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  font-family: 'Petrona', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: calc(var(--u) * 11);
+  line-height: 1.08; /* the site stylesheet's inherited 32px would inflate the 14.54-unit rows */
+  color: #fff;
   white-space: nowrap;
-  padding: 0.17cqw 1.8cqw;
-}
-.dg-strip-top {
-  border-top-left-radius: 1cqw;
-  border-top-right-radius: 1cqw;
 }

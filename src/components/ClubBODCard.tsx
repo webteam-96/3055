@@ -48,6 +48,17 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
 
   return (
     <article className="club-bod-card">
+      {/* S-curve clip for the Club ID tab's left edge — transcribed from
+          Card Design/Club cards.svg (orange tab path st2) into objectBoundingBox
+          units (0–1) so it scales with the responsive card. */}
+      <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id="club-id-curve" clipPathUnits="objectBoundingBox">
+            <path d="M0,0 L1,0 L1,1 L0.2183,1 C0.2006,0.9775 0.1743,0.9324 0.1514,0.8063 C0.111,0.5811 0.1164,0.3018 0.0796,0.1216 C0.0651,0.0495 0.041,-0.018 0,0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* Title bar */}
       <div className="titlebar">
         <div className="club-name">{c.clubName}</div>
@@ -70,6 +81,9 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
 
       {/* Officer panel */}
       <div className="officer">
+        {/* Full-width rounded-top gradient band behind the President/Secretary
+            names (light → dark → light), matching Club cards.svg. */}
+        <div className="off-band" aria-hidden="true" />
         <div className="off-head pres">
           <div className="nm">{c.President_member_name}</div>
           <div className="role">President</div>

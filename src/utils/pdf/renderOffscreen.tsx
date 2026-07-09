@@ -13,8 +13,15 @@ function ensureHostStyle() {
   // Fix the sheet width inside the export host (the live `.dir-sheet` is
   // min(720px,96vw)). No other overrides: html-to-image renders natively, so the
   // bulk capture matches the on-screen / individual-PDF design 1:1.
+  //
+  // Exception: the Club ID tab's curved edge uses `clip-path: url(#…)`, which the
+  // html-to-image rasterizer (DOM → SVG <foreignObject> → canvas) can fail to
+  // resolve. Pin the bulk capture to the original straight polygon so the ZIP
+  // never renders an unclipped rectangle. Screen + the individual print-to-PDF
+  // (window.print, which resolves the ref natively) keep the curve.
   style.textContent =
-    '.pdf-export-host .dir-sheet,.pdf-export-host .leader-page{width:720px!important;max-width:none!important;margin:0!important;box-shadow:none!important}'
+    '.pdf-export-host .dir-sheet,.pdf-export-host .leader-page{width:720px!important;max-width:none!important;margin:0!important;box-shadow:none!important}' +
+    '.pdf-export-host .club-bod-card .club-id{clip-path:polygon(0 0,100% 0,100% 100%,3.4cqw 100%)!important}'
   document.head.appendChild(style)
 }
 

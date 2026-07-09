@@ -4,6 +4,7 @@ import { useClubsBOD } from '../api/useClubsBOD'
 import { ClubBODCard } from '../components/ClubBODCard'
 import { DirectorySheet } from '../components/DirectorySheet'
 import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
+import { Loading } from '../components/Loading'
 
 export const Route = createFileRoute('/bod')({
   component: BODPage,
@@ -38,7 +39,7 @@ function BODPage() {
 
   const sheets = useMemo(() => chunk(filtered, 2), [filtered])
 
-  if (isLoading) return null
+  if (isLoading) return <Loading label="Loading clubs…" />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load clubs.</div>
 
   const searchBox = (

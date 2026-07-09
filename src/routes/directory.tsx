@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useDistrictCommittee } from '../api/useDistrictCommittee'
 import { COMMITTEE_COLORS } from '../types/api'
 import { DirectoryZipButton } from '../components/DirectoryZipButton'
+import { Loading } from '../components/Loading'
 
 export const Route = createFileRoute('/directory')({
   component: DirectoryPage,
@@ -13,7 +14,7 @@ const YEAR = '2026-2027'
 function DirectoryPage() {
   const { data, isLoading, isError } = useDistrictCommittee(GROUP_ID, YEAR)
 
-  if (isLoading) return null
+  if (isLoading) return <Loading label="Loading directory…" />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
 
   return (

@@ -4,6 +4,7 @@ import { CommitteeDirectory } from '../components/CommitteeDirectory'
 import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
 import { COMMITTEE_COLORS } from '../types/api'
 import { expandDesignation } from '../utils/formatDate'
+import { Loading } from '../components/Loading'
 
 // @ts-ignore
 export const Route = createFileRoute('/sub-committee')({
@@ -34,7 +35,7 @@ function SubCommitteePage() {
 
   const { data, isLoading, isError } = useCommitteeDetails(committeeId, GROUP_ID)
 
-  if (isLoading) return null
+  if (isLoading) return <Loading label="Loading committee…" />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
 
   const displayTitle = subCommitteeName || name || 'Committee'

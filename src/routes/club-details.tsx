@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useClubDetails } from '../api/useClubDetails'
 import { useClubMembers } from '../api/useClubMembers'
 import { MemberCard } from '../components/MemberCard'
+import { Loading } from '../components/Loading'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS } from '../types/api'
 import { formatDateToDDMM } from '../utils/formatDate'
 import dummyImg from '../assets/images/dummy.jpg'
@@ -22,7 +23,7 @@ function ClubDetailsPage() {
   const { data: club, isLoading: clubLoading, isError: clubError } = useClubDetails(groupId, YEAR)
   const { data: members, isLoading: membersLoading } = useClubMembers(groupId, YEAR)
 
-  if (clubLoading) return null
+  if (clubLoading) return <Loading label="Loading club details…" />
   if (clubError || !club) return <div className="p-8 text-center text-red-500">Failed to load club details.</div>
 
   const { basicInfo, ag, president, secretary, bod, presidentPhoto } = club
@@ -155,6 +156,7 @@ function ClubDetailsPage() {
             {membersOpen ? '▲' : '▼'} Members
           </button>
         </div>
+        {membersOpen && membersLoading && <Loading label="Loading members…" />}
         {membersOpen && !membersLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {(members ?? []).map((member, i) => (

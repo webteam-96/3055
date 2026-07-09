@@ -3,6 +3,7 @@ import { useCommitteeDetails } from '../api/useCommitteeDetails'
 import { MemberCard } from '../components/MemberCard'
 import { CARD_BODY_COLORS, CARD_HEADER_COLORS, COMMITTEE_COLORS } from '../types/api'
 import { formatDayMonth, expandDesignation } from '../utils/formatDate'
+import { Loading } from '../components/Loading'
 
 // @ts-ignore
 export const Route = createFileRoute('/committee-details')({
@@ -32,7 +33,7 @@ function CommitteeDetailsPage() {
   const subCommitteeName = search?.subCommitteeName ?? ''
   const { data, isLoading, isError } = useCommitteeDetails(committeeId, GROUP_ID)
 
-  if (isLoading) return null
+  if (isLoading) return <Loading label="Loading committee…" />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load data.</div>
 
   const displayTitle = subCommitteeName || name || 'Committee'
