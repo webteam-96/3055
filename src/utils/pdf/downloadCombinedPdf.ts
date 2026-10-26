@@ -202,14 +202,20 @@ export async function downloadCombinedPdf(
                     if (unit.kind === 'quarter') {
                       const { adBox, fillerBox } = splitGapForQuarter(box)
                       drawAdInBox(pdf, adBox, unit.ad)
-                      if (fillerQ) await drawFillerInBox(pdf, fillerBox, fillerQ)
+                      // allowRepeat: this filler COMPANIONS the quarter ad (quarter + filler =
+                      // half page), so it must appear even after the fresh quote pool is spent —
+                      // otherwise the ad sits alone with an empty half beside it.
+                      if (fillerQ) await drawFillerInBox(pdf, fillerBox, fillerQ, true)
                     } else {
                       // Bottom-align the half ad and fill the space ABOVE it with a filler,
                       // instead of centering the ad and leaving empty bands top & bottom.
                       const { adBox, fillerBox } = splitGapForHalf(box, unit.ad)
                       drawAdInBox(pdf, adBox, unit.ad)
+                      // allowRepeat: the companion filler ABOVE the ad must never come up empty
+                      // (late in the book the 100 fresh quotes are exhausted) — else the ad is
+                      // left alone with blank space above it, which is the "odd alone" look.
                       if (fillerQ && fillerBox && fillerBox.h >= FILLER_MIN_MM) {
-                        await drawFillerInBox(pdf, fillerBox, fillerQ)
+                        await drawFillerInBox(pdf, fillerBox, fillerQ, true)
                       }
                     }
                     return

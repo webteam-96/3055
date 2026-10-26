@@ -151,16 +151,29 @@ export async function tuckFiller(pdf: jsPDF, canvas: HTMLCanvasElement, q: Fille
 }
 
 /**
- * Render the next unused filler to fit an EXPLICIT box (mm) and draw it there. Consumes one
- * item (never repeats). Used both for a whole bottom gap (via tuckFiller) and for the right
- * half of a quarter-ad gap (quarter ad + filler = half page). Caller gates the minimum size.
+ * Render a filler to fit an EXPLICIT box (mm) and draw it there. Normally consumes one UNUSED
+ * item (never repeats). Used for a whole bottom gap (via tuckFiller) and for the companion
+ * space beside/above an ad (the right half of a quarter-ad gap, or the band above a
+ * bottom-aligned half ad). Caller gates the minimum size.
+ *
+ * `allowRepeat`: when the fresh pool is EXHAUSTED, repeat a quote from the full library instead
+ * of drawing nothing. Pass `true` for a filler that COMPANIONS an ad — the ad must never sit
+ * alone on the page, so late in the book (after the 100 quotes are spent) it still gets a
+ * filler. Standalone gap-fillers leave it `false` (an un-filled gap is just harmless whitespace,
+ * so the "each quote once" rule holds where no ad is involved).
  */
-export async function drawFillerInBox(pdf: jsPDF, box: GapBox, q: FillerQueue): Promise<boolean> {
-  if (!q.items.length) return false
+export async function drawFillerInBox(pdf: jsPDF, box: GapBox, q: FillerQueue, allowRepeat = false): Promise<boolean> {
   // Size-match the quote to the gap: short→small space, long→big space (client's rule).
-  const item = pickForGap(q.items, box.h)
-  if (!item) return false
-  return renderItemInBox(pdf, box, item, q)
+  if (q.items.length) {
+    const item = pickForGap(q.items, box.h)
+    if (item) return renderItemInBox(pdf, box, item, q)
+  }
+  // Fresh pool spent — repeat from the full library only when the ad-companion caller allows it.
+  if (allowRepeat && q.all.length) {
+    const item = q.all[fullFillerSeq++ % q.all.length]
+    return renderItemInBox(pdf, box, item, q)
+  }
+  return false
 }
 
 /** Render ONE given filler item into a box (rasterize its SVG → addImage). No queue
