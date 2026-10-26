@@ -23,6 +23,7 @@ import {
   drawPageNumber,
   GAP_AD_MIN_MM,
   type AdUnit,
+  type GapBox,
 } from './placeAds'
 import { loadFillerQueue, drawFillerInBox, drawFullPageFiller, FILLER_MIN_MM } from './placeFillers'
 
@@ -122,6 +123,13 @@ export async function downloadCombinedPdf(
   // returns null and fillers are simply skipped. Reuses the minimal font embed so the
   // rendered quotes match the book's Petrona/Geist.
   const fillerQ = includeAds ? await loadFillerQueue(fontEmbedCSS) : null
+  // Fills the TOP slot of a LONE appended ad with a (repeat-safe) filler, so an odd leftover ad
+  // is bottom-aligned with a quote above it instead of sitting alone with an empty half.
+  let loneAdFiller: ((box: GapBox) => Promise<void>) | undefined
+  if (fillerQ) {
+    const fq = fillerQ
+    loneAdFiller = (box: GapBox) => drawFillerInBox(pdf, box, fq, true).then(() => {})
+  }
 
   for (let i = 0; i < docs.length; i++) {
     onProgress(docs[i].label, i, docs.length)
@@ -140,7 +148,7 @@ export async function downloadCombinedPdf(
         // Full-page ads are spent, but a "half + half = full" PAIR still fits this padding
         // page — draw it (stacked) rather than a filler, so a blank page that needs ads gets a
         // real ad. The first pair (RC Kalol + Khushal Khatri) fills the first such page.
-        drawPairPage(pdf, state, ads.pair[pairIdx], ads.pair[pairIdx + 1])
+        await drawPairPage(pdf, state, ads.pair[pairIdx], ads.pair[pairIdx + 1], loneAdFiller)
         pairIdx += 2
       } else {
         // No full-page ad or pair left for this padding page — add the page (so the opener
@@ -236,10 +244,12 @@ export async function downloadCombinedPdf(
   if (ads) {
     for (; adIdx < ads.blankPool.length; adIdx++) drawFullAdPage(pdf, state, ads.blankPool[adIdx])
     // Tuck-in ad UNITS that were never placed inline (book had fewer half-page gaps than
-    // the spread schedule expected) — append them two-up so no ad is dropped.
-    appendTwoUp(pdf, state, adUnits.slice(adsPlaced).map((u) => u.ad))
+    // the spread schedule expected) — append them two-up so no ad is dropped. A lone trailing
+    // ad (odd count) is bottom-aligned with a filler above (loneAdFiller) rather than left
+    // alone with an empty half — this is the page-349 "single ad" fix.
+    await appendTwoUp(pdf, state, adUnits.slice(adsPlaced).map((u) => u.ad), loneAdFiller)
     // Pairs not already placed on a padding page (see pairIdx) — stacked two-up at the end.
-    appendTwoUp(pdf, state, ads.pair.slice(pairIdx))
+    await appendTwoUp(pdf, state, ads.pair.slice(pairIdx), loneAdFiller)
     // Back cover (VR Ventures / Vijaysinh Vaghela): held aside per the client's request —
     // NOT placed in the PDF. The asset stays in the manifest (ads.back) so it can be
     // re-enabled later by restoring: if (ads.back) drawFullAdPage(pdf, state, ads.back)

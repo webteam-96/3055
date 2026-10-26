@@ -191,14 +191,32 @@ export function drawFullAdPage(pdf: jsPDF, state: { drawn: number }, ad: LoadedA
 
 /**
  * Draw two ads stacked (top + bottom), each fit into its half, on a NEW page — a "half + half
- * = full" pair page. The bottom ad is optional (a lone ad fills just the top half). Used for
- * the appended two-up pages AND to fill an otherwise-blank/filler recto-padding page with a
- * real pair ad (see downloadCombinedPdf).
+ * = full" pair page. Used for the appended two-up pages AND to fill an otherwise-blank/filler
+ * recto-padding page with a real pair ad (see downloadCombinedPdf).
+ *
+ * When `bottom` is omitted (a LONE ad, e.g. an odd leftover), the ad would otherwise sit in the
+ * top half with an empty page below it — the "single ad, odd alone" look. If `fillLoneTop` is
+ * given, the lone ad is instead dropped to the BOTTOM slot and the callback fills the TOP slot
+ * (with a filler), so a lone ad never sits alone. Without the callback it falls back to the old
+ * top-slot placement.
  */
-export function drawPairPage(pdf: jsPDF, state: { drawn: number }, top: LoadedAd, bottom?: LoadedAd): void {
+export async function drawPairPage(
+  pdf: jsPDF,
+  state: { drawn: number },
+  top: LoadedAd,
+  bottom?: LoadedAd,
+  fillLoneTop?: (box: GapBox) => Promise<void>,
+): Promise<void> {
   const slotH = (PAGE_H_MM - 2 * M - GAP) / 2
   const bw = PAGE_W_MM - 2 * M
   startPage(pdf, state)
+  if (!bottom && fillLoneTop) {
+    // Lone ad → bottom slot, filler above (so it reads as a deliberate full page, not alone).
+    await fillLoneTop({ x: M, y: M, w: bw, h: slotH })
+    const b = fitBox(M, M + slotH + GAP, bw, slotH, top.aspect)
+    pdf.addImage(top.dataUrl, 'PNG', b.x, b.y, b.w, b.h)
+    return
+  }
   const t = fitBox(M, M, bw, slotH, top.aspect)
   pdf.addImage(top.dataUrl, 'PNG', t.x, t.y, t.w, t.h)
   if (bottom) {
@@ -207,9 +225,15 @@ export function drawPairPage(pdf: jsPDF, state: { drawn: number }, top: LoadedAd
   }
 }
 
-/** Append pages carrying up to two ads stacked (top + bottom), each fit into its half. */
-export function appendTwoUp(pdf: jsPDF, state: { drawn: number }, ads: LoadedAd[]): void {
-  for (let i = 0; i < ads.length; i += 2) drawPairPage(pdf, state, ads[i], ads[i + 1])
+/** Append pages carrying up to two ads stacked (top + bottom), each fit into its half. A lone
+ *  trailing ad (odd count) is bottom-aligned with a filler above via `fillLoneTop`. */
+export async function appendTwoUp(
+  pdf: jsPDF,
+  state: { drawn: number },
+  ads: LoadedAd[],
+  fillLoneTop?: (box: GapBox) => Promise<void>,
+): Promise<void> {
+  for (let i = 0; i < ads.length; i += 2) await drawPairPage(pdf, state, ads[i], ads[i + 1], fillLoneTop)
 }
 
 /**
