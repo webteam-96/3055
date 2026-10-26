@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import logo1 from '../assets/images/rotary-3055.png'
-import phoenix from '../assets/images/phoenix-1.png'
+import nirman from '../assets/images/theme/team-nirman.jpg'
 
 export function Header() {
   const [sticky, setSticky] = useState(false)
@@ -24,7 +24,7 @@ export function Header() {
             <img src={logo1} alt="District 3055" className="h-14 object-contain" />
           </Link>
           <Link to="/directory">
-            <img src={phoenix} alt="Phoenix" className="h-10 object-contain" />
+            <img src={nirman} alt="Team NIRMAN" className="h-30 object-contain" />
           </Link>
         </div>
       </div>

@@ -3,8 +3,10 @@ import { useState, useMemo } from 'react'
 import { useClubsBOD } from '../api/useClubsBOD'
 import { ClubBODCard } from '../components/ClubBODCard'
 import { DirectorySheet } from '../components/DirectorySheet'
+import { ReferenceTitlePage } from '../components/ReferencePage'
 import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
 import { Loading } from '../components/Loading'
+import { orderClubsByZone } from '../data/zoneClubOrder'
 
 export const Route = createFileRoute('/bod')({
   component: BODPage,
@@ -25,9 +27,16 @@ function BODPage() {
 
   const filtered = useMemo(() => {
     if (!clubs) return []
+    // Rotary Clubs of 3055 only: hide a club whose card carries NO officer info at
+    // all — i.e. neither a President nor a Secretary name was added. Clubs that have
+    // at least one of the two are kept. Scoped to this section; the shared
+    // selectClubsBOD selector (used by club-details and the bulk exports) is untouched.
+    const withOfficers = clubs.filter(
+      (c) => Boolean((c.President_member_name ?? '').trim()) || Boolean((c.Secreatary_member_name ?? '').trim()),
+    )
     const q = search.toLowerCase().trim()
-    if (!q) return clubs
-    return clubs.filter(
+    if (!q) return withOfficers
+    return withOfficers.filter(
       (c) =>
         (c.clubName ?? '').toLowerCase().includes(q) ||
         (c.President_member_name ?? '').toLowerCase().includes(q) ||
@@ -37,7 +46,12 @@ function BODPage() {
     )
   }, [clubs, search])
 
-  const sheets = useMemo(() => chunk(filtered, 2), [filtered])
+  // Rotary Clubs are ordered ZONE-WISE per the district's "Zonal Data of AGs &
+  // Presidents & Secretaries" sheet (see src/data/zoneClubOrder.ts): zone 1's clubs
+  // first (in the sheet's order), then zone 2's, … then any club the sheet doesn't list.
+  // No zone headings — the cards simply flow in this order. Card data is from the API.
+  const ordered = useMemo(() => orderClubsByZone(filtered), [filtered])
+  const sheets = useMemo(() => chunk(ordered, 2), [ordered])
 
   if (isLoading) return <Loading label="Loading clubs…" />
   if (isError) return <div className="p-8 text-center text-red-500">Failed to load clubs.</div>
@@ -65,20 +79,26 @@ function BODPage() {
           <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>No clubs found.</p>
         ) : mode === 'web' ? (
           <WebDoc>
-            {filtered.map((club) => (
+            {ordered.map((club) => (
               <ClubBODCard key={club.grpID} club={club} />
             ))}
           </WebDoc>
         ) : (
-          sheets.map((pair, i) => (
-            <DirectorySheet key={i} pageNumber={i + 1} side={i % 2 === 0 ? 'right' : 'left'}>
-              <div className="dir-clubs">
-                {pair.map((club) => (
-                  <ClubBODCard key={club.grpID} club={club} />
-                ))}
-              </div>
-            </DirectorySheet>
-          ))
+          <>
+            {/* Chapter-style opener: the section title page sits on the right (recto),
+                so the club cards then begin on the left (verso) and alternate — the
+                same book layout as the combined "Download All" separators. */}
+            <ReferenceTitlePage title="Rotary Clubs of District 3055" pageIndex={0} />
+            {sheets.map((pair, i) => (
+              <DirectorySheet key={i} pageNumber={i + 2} side={i % 2 === 0 ? 'left' : 'right'}>
+                <div className="dir-clubs">
+                  {pair.map((club) => (
+                    <ClubBODCard key={club.grpID} club={club} />
+                  ))}
+                </div>
+              </DirectorySheet>
+            ))}
+          </>
         )
       }
     </DirectoryPage>

@@ -1,0 +1,43 @@
+/* DG's Family photo placement ONLY — the photos are dropped into the exact rectangle
+   frames of the "DG's Family page 1/2" source artwork. Scoped to .moments / .moment-card;
+   nothing outside the photos changes. The frames are positioned against the FULL sheet
+   (matching the SVG's 527.2×697.3 coordinates), so the collage container spans the sheet
+   from inside the inset content box, and the sheet itself clips at its own edge. */
+
+.moments {
+  position: absolute;
+  /* Extend from the inset content box (top12% left8% right7% bottom8%) out to the sheet
+     edges, so left/top %s equal the SVG's full-sheet percentages. */
+  top: -15%;
+  bottom: -10%;
+  left: -9.412%;
+  right: -8.235%;
+}
+
+/* One photographic frame: a rounded rectangle, cover-filled, tilted −30°, placed by its
+   centre. Rounded-corner radius matches the source art. */
+.moment-card {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 2cqw;
+  background: #e9e5dc;
+  box-shadow: 0 0.35cqw 0.9cqw rgba(20, 24, 45, 0.22);
+}
+.moment-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%; /* top-biased so faces stay visible in the fixed frame */
+}
+
+/* Family sheets only: let the full-sheet collage escape the content box (the sheet still
+   clips at its edge), and keep the "DG'S FAMILY" heading above the photos. */
+.ref-content.album.album-family {
+  overflow: visible;
+}
+.ref-content.album-family .ref-title {
+  position: relative;
+  z-index: 20;
+}

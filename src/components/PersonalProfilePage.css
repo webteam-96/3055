@@ -1,0 +1,72 @@
+/* ============================================================
+   Personal Profile — the blank hand-fill form that opens the
+   directory. Drawn on the shared .ref-page B5 frame; the title
+   reuses .ref-title (same navy banner as every page), the fields
+   sit centred in the body, and the note is one grey line at the
+   bottom. Everything is sized in cqw so it scales with the sheet.
+   ============================================================ */
+
+/* Safe area inside the frame — matches .ref-content insets. */
+.pp-page .pp-content {
+  position: absolute;
+  z-index: 1;
+  top: 12%;
+  left: 8%;
+  right: 7%;
+  bottom: 8%;
+  display: flex;
+  flex-direction: column;
+  color: var(--ref-ink);
+  font-family: 'Geist', sans-serif;
+}
+
+/* The title uses the shared .ref-title (navy pill, white text, centred, same size as
+   every other page). It stays at the top of the content area. */
+.pp-page .ref-title {
+  margin-top: 0;
+}
+
+/* ---- Fill-in fields, centred in the middle of the page ---- */
+.pp-fields {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertically centre the block between title and note */
+  gap: 4.2cqw;
+  font-size: 2.7cqw;
+}
+.pp-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  row-gap: 4cqw; /* gap between the two ruled lines of the address field */
+}
+.pp-label {
+  flex: none;
+  color: #2f2f2f;
+  font-weight: 500;
+  margin-right: 1.4cqw;
+  white-space: nowrap;
+}
+.pp-dots {
+  flex: 1 1 auto;
+  min-width: 2em;
+  position: relative;
+  top: -0.35em;
+  border-bottom: 2.5px dotted #4a4a4a;
+}
+/* The second ruled line of a two-line field (Residential Address) spans the full width. */
+.pp-dots--full {
+  flex-basis: 100%;
+}
+
+/* ---- Footer note: one grey line pinned at the bottom ---- */
+.pp-note {
+  flex: none;
+  margin: 0;
+  text-align: center;
+  color: #8a8a8a;
+  font-size: 1.5cqw;
+  line-height: 1.4;
+  white-space: nowrap; /* keep it on a single line */
+}

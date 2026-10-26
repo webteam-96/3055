@@ -14,6 +14,15 @@ function ensureHostStyle() {
   // min(720px,96vw)). No other overrides: html-to-image renders natively, so the
   // bulk capture matches the on-screen / individual-PDF design 1:1.
   //
+  // CRITICAL: pin `margin:0` on EVERY captured sheet. The live sheets use
+  // `margin: … auto`, so in the wider export host they sit centred (e.g. `.ref-page`
+  // at min(700px,96vw) is offset ~30px from the host's left). html-to-image leaks
+  // that left margin into the capture of title-less continuation sheets — shifting
+  // their content ~4% right, into the frame's right edge — while first sheets (with
+  // a banner) capture correctly. Zeroing the margin removes the offset so every
+  // sheet is captured flush and the content stays within the framed safe area.
+  // (`.dir-sheet`/`.leader-page` were already pinned, which is why they never drift.)
+  //
   // Exception: the Club ID tab's curved edge uses `clip-path: url(#…)`, which the
   // html-to-image rasterizer (DOM → SVG <foreignObject> → canvas) can fail to
   // resolve. Pin the bulk capture to the original straight polygon so the ZIP
@@ -21,6 +30,7 @@ function ensureHostStyle() {
   // (window.print, which resolves the ref natively) keep the curve.
   style.textContent =
     '.pdf-export-host .dir-sheet,.pdf-export-host .leader-page{width:720px!important;max-width:none!important;margin:0!important;box-shadow:none!important}' +
+    '.pdf-export-host .ref-page{width:min(700px,96vw)!important;margin:0!important;box-shadow:none!important}' +
     '.pdf-export-host .club-bod-card .club-id{clip-path:polygon(0 0,100% 0,100% 100%,3.4cqw 100%)!important}'
   document.head.appendChild(style)
 }
@@ -33,6 +43,7 @@ function ensureHostStyle() {
 export async function withOffscreen<T>(
   element: ReactElement,
   fn: (root: HTMLElement) => Promise<T>,
+  opts?: { settleMs?: number },
 ): Promise<T> {
   ensureHostStyle()
   const host = document.createElement('div')
@@ -43,8 +54,13 @@ export async function withOffscreen<T>(
   const root = createRoot(host)
   root.render(element)
 
-  // Let React commit + the browser lay out before we touch the DOM.
-  await new Promise((r) => setTimeout(r, 150))
+  // Let React commit + the browser lay out before we touch the DOM. Static layouts
+  // (the directory sheets) settle in ~150ms; the reference / leader pages paginate
+  // asynchronously (their own measure + fonts.ready + 400-500ms timers set the sheet
+  // count), so callers pass a larger `settleMs` to let that finish BEFORE we inline
+  // images and capture — otherwise a late re-render could move an <img> to a new
+  // sheet and drop the base64 src we just inlined.
+  await new Promise((r) => setTimeout(r, opts?.settleMs ?? 150))
   await waitForFonts()
 
   try {

@@ -47,6 +47,17 @@
   flex-direction: column;
 }
 
+/* Committee sheets only (they hold a `.cm-sheet`): use the exact vertical band of
+   "District Committee.svg", whose first section title sits ~9% from the top (higher
+   than the default 10.8%) and whose last card reaches ~92.8%. This reclaims the
+   room the SVG uses to carry FIVE member cards per page even when the page also
+   shows two section titles. Scoped with :has() so club / AG / DG sheets keep the
+   default 10.8%/7.5% band unchanged. */
+.dir-content:has(.cm-sheet) {
+  top: 9%;
+  bottom: 7.2%;
+}
+
 /* Page number, centered over the navy corner circle (bottom-left). */
 .dir-pageno {
   position: absolute;

@@ -1,14 +1,17 @@
 import { Fragment } from 'react'
-import type { SyntheticEvent } from 'react'
+import type { SyntheticEvent, CSSProperties } from 'react'
 // QRCodeSVG (not QRCodeCanvas): the bulk PDF rasterizer (html-to-image) hangs
 // when it tries to serialize a <canvas>; an inline <svg> QR rasterizes fine.
 import { QRCodeSVG } from 'qrcode.react'
 import type { ClubBODSummary } from '../types/api'
 import { firstName } from '../utils/firstName'
+import { titleCase } from '../utils/titleCase'
+import { useSheetBg } from './SheetBg'
+import { NoPhoto } from './NoPhoto'
 import './ClubBODCard.css'
 
-// When a member photo is missing or fails to load, hide the <img> so the grey
-// person silhouette behind it shows through — matching the PDF's placeholder.
+// When a member photo is missing or fails to load, hide the <img> so the Rotary-logo
+// placeholder behind it shows through.
 const onImgError = (e: SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.style.display = 'none'
 }
@@ -17,10 +20,7 @@ function Photo({ src, caption, alt }: { src: string; caption: string; alt: strin
   return (
     <div className="photo">
       <div className="box">
-        <svg className="silhouette" viewBox="0 0 64 64" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-          <circle cx="32" cy="22" r="15" />
-          <path d="M3 64 a29 29 0 0 1 58 0 Z" />
-        </svg>
+        <NoPhoto />
         {src ? <img src={src} alt={alt} onError={onImgError} /> : null}
       </div>
       <div className="cap">{caption}</div>
@@ -29,6 +29,10 @@ function Photo({ src, caption, alt }: { src: string; caption: string; alt: strin
 }
 
 export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
+  // The card body (`--cream`) matches the sheet's section background, so the body
+  // blends into the page as it did on the original uniform cream — only the navy
+  // titlebar and orange officer bands stand out. The header colours are unchanged.
+  const sheetBg = useSheetBg()
   // Points at this site's own club-details page so the QR resolves on whatever
   // origin the directory is deployed to (and in dev). Scanning opens the club's
   // full details + members.
@@ -40,14 +44,14 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
   const rows: Array<[string, string, string]> = [
     [c.President_member_mobile_no, 'Contact:',        c.Secreatary_mobile_no],
     [c.President_member_email_id,  'E-mail:',         c.Secreatary_email_id],
-    [c.President_Classification,   'Classification:', c.Secreatary_Classification],
+    [titleCase(c.President_Classification), 'Classification:', titleCase(c.Secreatary_Classification)],
     [c.President_DOB,              'DOB:',            c.Secreatary_DOB],
     [c.President_Spouse_DOB,       'Spouse DOB:',     c.Secreatary_Spouse_DOB],
     [c.President_DOA,              'DOA:',            c.Secreatary_DOA],
   ]
 
   return (
-    <article className="club-bod-card">
+    <article className="club-bod-card" style={{ '--cream': sheetBg } as CSSProperties}>
       {/* S-curve clip for the Club ID tab's left edge — transcribed from
           Card Design/Club cards.svg (orange tab path st2) into objectBoundingBox
           units (0–1) so it scales with the responsive card. */}
@@ -61,7 +65,7 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
 
       {/* Title bar */}
       <div className="titlebar">
-        <div className="club-name">{c.clubName}</div>
+        <div className="club-name">{titleCase(c.clubName)}</div>
         {c.clubRotaryId && <div className="club-id">Club ID: {c.clubRotaryId}</div>}
       </div>
 
@@ -71,10 +75,10 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
           <div className="row"><span className="lbl">Charter Date:</span> <span className="val">{c.charterDate}</span></div>
           <div className="row"><span className="lbl">Meeting Day &amp; Time:</span> <span className="val">{c.meeting}</span></div>
           <div className="row"><span className="lbl">Member Count:</span> <span className="val">{c.memberCount}</span></div>
-          <div className="row"><span className="lbl">Venue:</span> <span className="val">{c.venue}</span></div>
+          <div className="row venue-row"><span className="lbl">Venue:</span> <span className="val">{titleCase(c.venue)}</span></div>
         </div>
         <div className="info-ag">
-          <span><span className="lbl">A.G.:</span> <span className="val">{c.AG_Name}</span></span>
+          <span><span className="lbl">A.G.:</span> <span className="val">{titleCase(c.AG_Name)}</span></span>
           <span><span className="lbl">Zone No:</span> <span className="val">{c.zoneNo}</span></span>
         </div>
       </div>
@@ -85,12 +89,12 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
             names (light → dark → light), matching Club cards.svg. */}
         <div className="off-band" aria-hidden="true" />
         <div className="off-head pres">
-          <div className="nm">{c.President_member_name}</div>
+          <div className="nm">{titleCase(c.President_member_name)}</div>
           <div className="role">President</div>
         </div>
         <div className="scan c">Scan to<br />know more</div>
         <div className="off-head sec">
-          <div className="nm">{c.Secreatary_member_name}</div>
+          <div className="nm">{titleCase(c.Secreatary_member_name)}</div>
           <div className="role">Secretary</div>
         </div>
 
@@ -107,13 +111,18 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
           <Photo src={c.Secreatary_Spouse_Profile_Photo} caption={firstName(c.Secreatary_Spouse_member_name) || 'Spouse'} alt="Spouse" />
         </div>
 
-        {rows.map(([pv, lbl, sv]) => (
-          <Fragment key={lbl}>
-            <div className="pv">{pv}</div>
-            <div className="olbl c">{lbl}</div>
-            <div className="sv">{sv}</div>
-          </Fragment>
-        ))}
+        {rows.map(([pv, lbl, sv]) => {
+          // Classification can be long; clamp it to a single line with an ellipsis so
+          // the row never grows (keeps the card height even). Other rows are short.
+          const clip = lbl === 'Classification:' ? ' clip' : ''
+          return (
+            <Fragment key={lbl}>
+              <div className={`pv${clip}`} title={clip ? pv : undefined}>{pv}</div>
+              <div className="olbl c">{lbl}</div>
+              <div className={`sv${clip}`} title={clip ? sv : undefined}>{sv}</div>
+            </Fragment>
+          )
+        })}
 
         <div className="pad-b" style={{ gridColumn: 1 }} />
         <div className="pad-b c" style={{ gridColumn: 2 }} />

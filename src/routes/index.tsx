@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useDistrictCommittee } from '../api/useDistrictCommittee'
+import { DownloadAllPdfButton } from '../components/DownloadAllPdfButton'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -40,6 +41,14 @@ function HomePage() {
               {committeeCount > 0 ? `Browse ${committeeCount} committees` : 'Browse the full directory'}
             </div>
           </a>
+        </div>
+
+        {/* Master export — the whole book (static pages + full directory) as one PDF. */}
+        <div className="mt-10 flex flex-col items-center gap-2">
+          <DownloadAllPdfButton scope="master" />
+          <p className="text-sm text-gray-500 text-center">
+            Download the entire directory — the static pages and the full committee &amp; club directory — as one PDF.
+          </p>
         </div>
       </div>
     </section>

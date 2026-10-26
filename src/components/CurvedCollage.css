@@ -1,0 +1,22 @@
+/* Curved photo-collage — fills the album safe area (below the banner). The framed
+   sheet and title banner around it are styled elsewhere and untouched. */
+/* Widen the photo safe area for the journey photo pages ONLY (Rotary Journey onwards) —
+   NOT DG's Family (.album-family) and NOT any other reference page. The base .ref-content
+   uses left:8%/right:7%; here the mosaic is pulled closer to the sheet edges so the side
+   cream border is smaller. Top/bottom kept as-is (banner clearance / skyline). */
+.ref-content.album:not(.album-family) {
+  left: 3.2%;
+  right: 3.2%;
+}
+.curved-collage {
+  flex: 1 1 auto;
+  min-height: 0;
+  /* The cream margin here is the paper showing around the mosaic. */
+  width: auto;
+  margin: 0.6cqw 0.4cqw 1cqw;
+}
+.curved-collage svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

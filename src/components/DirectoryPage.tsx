@@ -1,6 +1,15 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import { saveAs } from 'file-saver'
 import { useViewMode, type ViewMode } from '../hooks/useViewMode'
-import { printPdf } from '../utils/printPdf'
+import { SheetBg, useSheetBg } from './SheetBg'
+import { withOffscreen } from '../utils/pdf/renderOffscreen'
+import {
+  inlineImages,
+  rasterizeBackgrounds,
+  waitForImages,
+  sheetsToPdfBlob,
+  buildFontEmbedCSS,
+} from '../utils/pdf/captureToPdf'
 import './DirectoryPage.css'
 
 /**
@@ -21,14 +30,37 @@ export function DirectoryPage({
   children: (mode: ViewMode) => ReactNode
 }) {
   const [mode, setMode] = useViewMode()
+  const [downloading, setDownloading] = useState(false)
+  // The current route's section tint (provided by __root). Re-provided into the
+  // off-screen capture below, which renders in a fresh root without this provider.
+  const sheetBg = useSheetBg()
 
-  const onDownload = () => {
-    // The PDF is always the print view; switch to it first if needed.
-    if (mode !== 'print') {
-      setMode('print')
-      setTimeout(() => printPdf(pdfName), 500)
-    } else {
-      printPdf(pdfName)
+  // Settings-proof PDF: render the PRINT view off-screen and rasterize its B5
+  // sheets straight into a PDF file (same pipeline as "Download All"), so the
+  // output matches the on-screen Print view exactly — independent of the browser's
+  // Save-as-PDF dialog (paper size / margins / scale). Works from either view.
+  const onDownload = async () => {
+    if (downloading) return
+    setDownloading(true)
+    try {
+      let blob: Blob | null = null
+      // Every directory print sheet uses Petrona (cards) and Geist (title page); embed
+      // ONLY those, once, so a many-sheet section (e.g. the ~40-sheet club list) doesn't
+      // stall re-embedding all ~10 loaded font families on every single sheet. Undefined
+      // (fetch failed) falls back to the slower auto-embed rather than breaking.
+      const fontEmbedCSS = await buildFontEmbedCSS(['Petrona', 'Geist'])
+      await withOffscreen(<SheetBg color={sheetBg}>{children('print')}</SheetBg>, async (root) => {
+        await inlineImages(root)
+        await rasterizeBackgrounds(root)
+        await waitForImages(root)
+        blob = await sheetsToPdfBlob(root, fontEmbedCSS)
+      })
+      if (blob) saveAs(blob, /\.pdf$/i.test(pdfName) ? pdfName : `${pdfName}.pdf`)
+      else console.error('Download PDF: no sheets were produced.')
+    } catch (err) {
+      console.error('Download PDF failed:', err)
+    } finally {
+      setDownloading(false)
     }
   }
 
@@ -49,8 +81,8 @@ export function DirectoryPage({
               Print
             </button>
           </div>
-          <button onClick={onDownload} className="theme-btn">
-            ⬇ Download PDF
+          <button onClick={onDownload} className="theme-btn" disabled={downloading}>
+            {downloading ? 'Generating PDF…' : '⬇ Download PDF'}
           </button>
         </div>
       </div>

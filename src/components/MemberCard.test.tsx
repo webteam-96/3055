@@ -34,4 +34,15 @@ describe('MemberCard', () => {
     render(<MemberCard {...baseProps} spouseName="Jane Doe" spouseDob="02/06" />)
     expect(screen.getByText('Jane Doe')).toBeDefined()
   })
+
+  it('hides the spouse section when spouseName is empty (e.g. BOD members)', () => {
+    render(<MemberCard {...baseProps} spouseName="" spouseDob="" />)
+    expect(screen.queryByText('Spouse Name:')).toBeNull()
+    expect(screen.queryByText('Spouse DOB:')).toBeNull()
+  })
+
+  it('hides the spouse section when spouseName is omitted', () => {
+    render(<MemberCard {...baseProps} />)
+    expect(screen.queryByText('Spouse Name:')).toBeNull()
+  })
 })

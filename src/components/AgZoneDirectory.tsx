@@ -2,17 +2,15 @@ import { DirectorySheet } from './DirectorySheet'
 import type { AgZone, AgClub } from '../types/directory'
 import type { ViewMode } from '../hooks/useViewMode'
 import { firstName } from '../utils/firstName'
+import { titleCase } from '../utils/titleCase'
+import { assignedClubsForZone } from '../data/assignedClubs'
+import { NoPhoto } from './NoPhoto'
 import './AgZoneDirectory.css'
 
-// Grey person-silhouette placeholder (AG data carries no photos yet) — the crisp
-// grey person icon from the PDF, replacing the faint dummy.jpg.
+// "No photograph" placeholder (AG data carries no photos yet) — the Rotary wheel, shared
+// across the whole directory. See NoPhoto.
 function Silhouette() {
-  return (
-    <svg className="ag-silhouette" viewBox="0 0 64 64" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-      <circle cx="32" cy="22" r="15" />
-      <path d="M3 64 a29 29 0 0 1 58 0 Z" />
-    </svg>
-  )
+  return <NoPhoto />
 }
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -23,14 +21,29 @@ function Field({ label, value }: { label: string; value: string }) {
   )
 }
 
-/** The AG card — navy header + orange Zone tab + all AG fields + AG/spouse photos. */
+/** The AG card — navy header + orange Zone tab + AG fields + AG/spouse photos, and
+ *  an "Assigned Clubs" section at the foot listing the AG's clubs (from the sheet). */
 function AgCard({ z }: { z: AgZone }) {
-  const clubs = z.clubs.map((c) => c.club).join(', ')
+  // Authoritative roster from the shared zone→clubs map (the sheet); fall back to the
+  // officer list only if the zone can't be resolved, so the line is never empty.
+  const clubs = assignedClubsForZone(z.zone)
+  const assigned = (clubs.length ? clubs : z.clubs.map((c) => c.club)).map((c) => titleCase(c))
   return (
     <div className="ag-card">
       <div className="ag-head">
-        <span className="ag-head-title">AG : {z.agName}</span>
-        <span className="ag-zone">Zone {z.zone}</span>
+        <span className="ag-head-title">AG : {titleCase(z.agName)}</span>
+        <div className="ag-zone">
+          {/* Curved navy↔orange boundary — the SAME S-curve as the Club card's
+              Club-ID tab (Card Design/Club cards.svg), as a fixed-width navy overlay,
+              replacing the old straight slant. Inline fill so it survives PDF export. */}
+          <svg className="ag-zone-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path
+              d="M0,0 C18.78,-1.8 29.82,4.95 36.46,12.16 C53.32,30.18 50.85,58.11 69.35,80.63 C79.85,93.24 91.9,97.75 100,100 L0,100 Z"
+              fill="#1a2b5e"
+            />
+          </svg>
+          <span className="ag-zone-text">Zone {z.zone}</span>
+        </div>
       </div>
       <div className="ag-body">
         <div className="ag-info">
@@ -43,9 +56,6 @@ function AgCard({ z }: { z: AgZone }) {
             <Field label="Spouse DOB:" value="" />
             <Field label="DOA:" value="" />
           </div>
-          <div className="ag-field ag-clubs">
-            <span className="ag-lbl">Rotary Clubs:</span> <span className="ag-val">{clubs}</span>
-          </div>
         </div>
         <div className="ag-photos">
           <div className="ag-photo">
@@ -57,6 +67,11 @@ function AgCard({ z }: { z: AgZone }) {
             <div className="ag-cap">Spouse</div>
           </div>
         </div>
+      </div>
+      {/* Assigned Clubs — the AG's club roster from the AGs/Presidents/Secretaries sheet,
+          at the foot of the card, styled as a field (same font as "Spouse DOB:"). */}
+      <div className="ag-field ag-assigned">
+        <span className="ag-lbl">Assigned Clubs:</span> <span className="ag-val">{assigned.join(', ')}</span>
       </div>
     </div>
   )
@@ -82,10 +97,10 @@ function OfficerCard({
       <div className={`agc-head ${navy ? 'navy' : 'orange'}`}>{role}</div>
       <div className="agc-body">
         <div className="agc-info">
-          <Field label="Name:" value={name} />
+          <Field label="Name:" value={titleCase(name)} />
           <Field label="Contact:" value={contact} />
           <Field label="E-mail:" value="" />
-          <Field label="Club:" value={club} />
+          <Field label="Club:" value={titleCase(club)} />
           <Field label="DOB:" value="" />
           <Field label="Classification:" value="" />
           <Field label="Spouse Name:" value="" />
@@ -172,7 +187,7 @@ export function AgZoneDirectory({ zones, mode }: { zones: AgZone[]; mode: ViewMo
               <AgCard z={s.z} />
             ) : (
               <div className="ag-contbar">
-                Zone {s.z.zone} &nbsp;·&nbsp; AG: {s.z.agName} &nbsp;(contd.)
+                Zone {s.z.zone} &nbsp;·&nbsp; AG: {titleCase(s.z.agName)} &nbsp;(contd.)
               </div>
             )}
             <OfficerGrid clubs={s.clubs} />

@@ -54,7 +54,7 @@
 .ag-card {
   border-radius: 1.5cqw;
   overflow: hidden;
-  background: var(--cream, #f6ece8);
+  background: var(--sheet-bg, var(--cream, #f6ece8)); /* section tint (from DirectorySheet); cream fallback */
   border: 1px solid #e7dccf;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
 }
@@ -76,6 +76,7 @@
   color: #fff;
 }
 .ag-zone {
+  position: relative;
   display: flex;
   align-items: center;
   /* brighter tab with a subtle gradient, per the PDF */
@@ -85,8 +86,23 @@
   font-weight: 700;
   font-size: 2.5cqw;
   white-space: nowrap;
-  padding: 0 2.8cqw 0 4.2cqw;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 3.4cqw 100%);
+  /* Left padding clears the S-curve navy tail (see .ag-zone-shape). */
+  padding: 0 2.8cqw 0 7cqw;
+}
+/* Curved navy↔orange boundary: a fixed-width navy overlay whose right edge is the
+   Club card's S-curve, so the AG tab matches the Club-ID tab's curved divider
+   (same shape as the committee card's .cm-role-shape). Width is proportional to the
+   header height so the curve reads identically to the committee card. */
+.ag-zone-shape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6cqw;
+  height: 100%;
+}
+.ag-zone-text {
+  position: relative;
+  z-index: 1;
 }
 .ag-body {
   display: flex;
@@ -103,10 +119,16 @@
 .ag-info .ag-field {
   font-size: 1.86cqw;
 }
-.ag-clubs {
-  margin-top: 0.5cqw;
+/* ---------- Assigned Clubs (foot of the AG card) ---------- */
+/* Rendered as a normal .ag-field so its font matches "Spouse DOB:" exactly
+   (1.86cqw, label weight 500 / value weight 700). Full width at the card foot,
+   and the value wraps across lines instead of truncating. */
+.ag-assigned {
+  padding: 0 2.2cqw 1cqw;
+  font-size: 1.86cqw;
+  --lblw: 12cqw;
 }
-.ag-clubs .ag-val {
+.ag-assigned .ag-val {
   white-space: normal;
 }
 .ag-photos {
@@ -120,21 +142,14 @@
 .ag-pbox {
   position: relative;
   width: 12cqw;
+  /* Centre the fixed-width photo within its column so it stays centred over the
+     name caption below, even when the name is wider than the photo. */
+  margin-inline: auto;
   aspect-ratio: 1 / 1.08;
   background: #eef0f1;
   border: 1px solid #d8d9dc;
   border-radius: 0.5cqw;
   overflow: hidden;
-}
-/* Grey person silhouette placeholder (shared by AG card + officer cards). */
-.ag-silhouette {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 94%;
-  height: 95%;
-  fill: #c2c4c8;
 }
 .ag-cap {
   margin-top: 0.5cqw;
@@ -163,7 +178,7 @@
 .agc {
   border-radius: 1.5cqw;
   overflow: hidden;
-  background: #ece5dc; /* muted cream, per the PDF (was near-white) */
+  background: var(--sheet-bg, #ece5dc); /* section tint (from DirectorySheet); cream fallback */
   border: 1px solid #e0d3c4;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
 }
@@ -210,6 +225,9 @@
 .agc-pbox {
   position: relative;
   width: 8.5cqw;
+  /* Centre the fixed-width photo within its column so it stays centred over the
+     name caption below, even when the name is wider than the photo. */
+  margin-inline: auto;
   aspect-ratio: 1 / 1.1;
   background: #eef0f1;
   border: 1px solid #d8d9dc;

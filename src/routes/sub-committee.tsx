@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useCommitteeDetails } from '../api/useCommitteeDetails'
 import { CommitteeDirectory } from '../components/CommitteeDirectory'
+import { ZonalTeamDirectory } from '../components/ZonalTeamDirectory'
 import { DirectoryPage, WebDoc } from '../components/DirectoryPage'
 import { COMMITTEE_COLORS } from '../types/api'
 import { expandDesignation } from '../utils/formatDate'
@@ -52,11 +53,61 @@ function SubCommitteePage() {
     return data?.directMembers ?? []
   })()
 
-  const members = displayMembers.map((m) => ({ ...m, DistrictDesignation: expandDesignation(m.DistrictDesignation || '') }))
-  const sections = [{ title: displayTitle, members }]
+  const expandRoles = (list: typeof displayMembers) =>
+    list.map((m) => ({ ...m, DistrictDesignation: expandDesignation(m.DistrictDesignation || '') }))
+
+  const members = expandRoles(displayMembers)
 
   const showSubCommittees = !subCommitteeId && (data?.subCommittees ?? []).length > 0
   const showMembers = members.length > 0
+
+  // Web view: just this committee's own cards (sub-committees are the nav cards
+  // below). Order and data are untouched.
+  const webSections = showMembers ? [{ title: displayTitle, members }] : []
+
+  // Print/PDF view of a MAIN committee: the committee's own cards followed by every
+  // sub-committee as its own titled section, so the whole committee prints as one
+  // CONTINUOUS run of District-Committee.svg sheets (5 cards/page, section header
+  // pills, no page break forced between a committee and its sub-committees). On a
+  // sub-committee view (subCommitteeId set) this is just that one section, exactly
+  // as before. paginate() in CommitteeDirectory packs the sections across sheets.
+  const printSections = [
+    ...webSections,
+    ...(!subCommitteeId
+      ? (data?.subCommittees ?? [])
+          .map((sub) => ({
+            title: sub.name,
+            members: expandRoles(
+              (data?.subCommitteeMembers ?? []).filter(
+                (m) => String(m.fk_District_sub_Committee_id) === String(sub.pk_District_sub_Committee_id),
+              ),
+            ),
+          }))
+          .filter((s) => s.members.length > 0)
+      : []),
+  ]
+  // The Zonal Team renders each zone exactly like the Assistant Governors (Zone
+  // wise) page: the AG in a full-length card, the rest of the team 2 per row.
+  const isZonalTeam = name === 'Zonal Team'
+
+  // The Zonal Team's MAIN page has NO direct members — every zone is a sub-committee.
+  // Build a section per zone so the whole team renders and the PDF actually has pages
+  // (previously the main page's print view was empty, so "Download PDF" produced no
+  // sheets). On an individual zone view (subCommitteeId set) this stays empty and the
+  // single-zone render below is used.
+  const zoneSections =
+    isZonalTeam && !subCommitteeId
+      ? (data?.subCommittees ?? [])
+          .map((sub) => ({
+            name: sub.name,
+            members: expandRoles(
+              (data?.subCommitteeMembers ?? []).filter(
+                (m) => String(m.fk_District_sub_Committee_id) === String(sub.pk_District_sub_Committee_id),
+              ),
+            ),
+          }))
+          .filter((z) => z.members.length > 0)
+      : []
 
   const subNav = showSubCommittees ? (
     <div className="auto-container no-print" style={{ marginTop: 18 }}>
@@ -82,14 +133,34 @@ function SubCommitteePage() {
     <DirectoryPage title={displayTitle} pdfName={`${displayTitle} — District 3055`}>
       {(mode) => (
         <>
-          {showMembers ? (
-            mode === 'web' ? (
+          {isZonalTeam ? (
+            showMembers ? (
+              mode === 'web' ? (
+                <WebDoc>
+                  <ZonalTeamDirectory zoneName={displayTitle} members={members} mode="web" />
+                </WebDoc>
+              ) : (
+                <ZonalTeamDirectory zoneName={displayTitle} members={members} mode="print" />
+              )
+            ) : mode === 'print' && zoneSections.length ? (
+              // Main Zonal Team page (no direct members): emit one framed sheet per zone
+              // so the combined PDF contains every zone. Web keeps the zone nav cards.
+              zoneSections.map((z, i) => (
+                <ZonalTeamDirectory key={i} zoneName={z.name} members={z.members} mode="print" />
+              ))
+            ) : !showSubCommittees ? (
+              <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>No data available.</p>
+            ) : null
+          ) : mode === 'web' ? (
+            showMembers ? (
               <WebDoc>
-                <CommitteeDirectory sections={sections} mode="web" />
+                <CommitteeDirectory sections={webSections} mode="web" />
               </WebDoc>
-            ) : (
-              <CommitteeDirectory sections={sections} mode="print" />
-            )
+            ) : !showSubCommittees ? (
+              <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>No data available.</p>
+            ) : null
+          ) : printSections.length ? (
+            <CommitteeDirectory sections={printSections} mode="print" />
           ) : !showSubCommittees ? (
             <p style={{ textAlign: 'center', color: '#6b7280', padding: 32 }}>No data available.</p>
           ) : null}

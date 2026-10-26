@@ -98,6 +98,9 @@ export interface ClubBODMember {
   Emailid: string
   address: string
   member_profile_photo_path: string
+  classification: string
+  SpouseName: string
+  SpouseDOB: string
 }
 
 export interface ClubAG {
@@ -133,6 +136,7 @@ export interface ClubMember {
   MemberDOA: string
   MemberEmail: string
   MemberAddress: string
+  classification: string
   SpouseName: string
   SpouseDOB: string
   SpousePhoto: string
@@ -227,6 +231,13 @@ export interface RawMember {
   RotaryId?: string | null
   MemberIntroduction?: string | null
   ClubName?: string | null
+  // Newer unified-API fields carried on the committee/group member record itself
+  // (present even when the master-profile join is absent). The card mapping reads
+  // these directly — classification and the spouse block were previously dropped.
+  classification?: string | null
+  spouseName?: string | null
+  spouseDob?: string | null
+  spousePhoto?: string | null
   [key: string]: unknown
 }
 
@@ -270,8 +281,26 @@ export interface RawClubInfo {
   [key: string]: unknown
 }
 
+// Each club carries its Assistant Governor directly (the AG mapped this club to
+// themselves). The card only needs a few fields; the rest of the profile is kept
+// via the index signature.
+export interface RawClubAG {
+  agName?: string | null
+  agMobile?: string | null
+  agEmail?: string | null
+  agPhoto?: string | null
+  MemberName?: string | null
+  ProfilePhotoPath?: string | null
+  PrimaryMobileNumber?: string | null
+  EmailId?: string | null
+  BirthDate?: string | null
+  pk_member_master_profile_id?: number | null
+  [key: string]: unknown
+}
+
 export interface RawClubEntry {
   club: RawClubInfo
+  assistantGovernor?: RawClubAG | null
   boardOfDirectors: RawBODMember[]
   boardOfDirectorsYearId?: number | null
   boardOfDirectorsYearLabel?: string | null

@@ -1,0 +1,14 @@
+/* Rotary-wheel "no photograph" placeholder (see NoPhoto.tsx). Fills the photo box and is
+   contained with a little padding so the round mark reads clearly and is never cropped.
+   Sits UNDER the real <img> (which is also absolute + object-fit:cover), so a loaded photo
+   covers it and a missing/broken one leaves the logo showing. */
+.no-photo-logo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10%;
+  box-sizing: border-box;
+  pointer-events: none;
+}

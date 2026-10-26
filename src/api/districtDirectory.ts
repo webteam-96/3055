@@ -15,6 +15,7 @@ import type {
   ClubBODMember,
 } from '../types/api'
 import type { CommitteeDetailsData } from './useCommitteeDetails'
+import geetikaSalujaPhoto from '../assets/images/overrides/geetika-saluja.jpg'
 
 // ---------------------------------------------------------------------------
 // Single source of truth — the unified district-directory API.
@@ -43,8 +44,12 @@ const API_URL = import.meta.env.DEV ? `/rzapi${API_PATH}` : `https://rizones4567
 export const directoryQueryKey = ['districtDirectory', DISTRICT, ROTARY_YEAR] as const
 
 export async function fetchDistrictDirectory(): Promise<DistrictDirectoryResponse> {
+  // `cache: 'no-store'` so the browser never serves a stale copy of the directory
+  // JSON — a photo/field a member updated must show on the next load, not an old
+  // snapshot. (The API sends no cache headers, so this is defensive.)
   const res = await fetch(API_URL, {
     headers: { Authorization: `Bearer ${API_TOKEN}` },
+    cache: 'no-store',
   })
   if (!res.ok) throw new Error(`District directory request failed: ${res.status}`)
   return res.json()
@@ -71,16 +76,33 @@ export function useDistrictDirectory<T = DistrictDirectoryResponse>(
 // Helpers
 // ---------------------------------------------------------------------------
 
-// All member/club images are served from rotaryindia.org. ProfilePhotoPath /
+// Member/club images are served from the API's OWN host (rizones45678.org/API),
+// which is the authoritative, up-to-date store — the same origin the directory JSON
+// comes from. (rotaryindia.org mirrors most files but LAGS: newly-uploaded photos
+// 404 there until they sync, so a recent upload showed blank.) ProfilePhotoPath /
 // ClubLogoPath come as leading-slash paths ("/Documents/directory/x.jpg");
 // profile_photo / committeePhoto come as bare filenames living under
 // /Documents/directory/. Already-absolute URLs pass through untouched.
-export const IMAGE_HOST = 'https://rotaryindia.org'
+export const IMAGE_HOST = 'https://rizones45678.org/API'
+
+// Per-person photo overrides, keyed by the API photo's file name (last path
+// segment). Lets a specific member's photo be replaced with a bundled local image
+// wherever it appears, without altering any of their data. Resolved before the
+// rotaryindia.org host is applied.
+const PHOTO_OVERRIDES: Record<string, string> = {
+  'geetika_saluja_profiel_picture_10082024095715PM.jpg': geetikaSalujaPhoto,
+}
 
 export function resolveImg(path?: string | null): string {
   if (!path) return ''
   const p = String(path).trim()
   if (!p || p === 'null' || p === 'undefined') return ''
+  const file = p.split('/').pop() || ''
+  if (PHOTO_OVERRIDES[file]) return PHOTO_OVERRIDES[file]
+  // Locally-extracted DG/spouse photos (cropped from the DG-directory PDF for members
+  // the API had no photo for) live under public/dg-pdf/ and are served by the app
+  // itself — they must NOT be prefixed with the rotaryindia.org host.
+  if (p.startsWith('/dg-pdf/')) return p
   if (/^https?:\/\//i.test(p)) return p
   if (p.startsWith('/')) return `${IMAGE_HOST}${p}`
   return `${IMAGE_HOST}/Documents/directory/${p}`
@@ -119,10 +141,135 @@ function pick(...vals: Array<string | null | undefined>): string {
   return ''
 }
 
-// Map any committee/group member record → the DistrictCommitteeMember shape
-// the cards expect. Spouse fields are absent in the unified API, so they
-// are emitted empty (the UI hides empty spouse sections).
-function mapCommitteeMember(m: RawMember): DistrictCommitteeMember {
+// ---------------------------------------------------------------------------
+// Profile backfill. The unified API sometimes returns a committee/group member
+// WITHOUT joining their master profile (only name/phone/email/photo, no DOB,
+// classification or spouse — even though the member filled those in). The same
+// person almost always appears with a COMPLETE record elsewhere in the response
+// (their club membership, board seat, etc.). We index every complete record by
+// mobile / email / Rotary id and backfill the thin committee records from it.
+// ---------------------------------------------------------------------------
+interface ProfileFields {
+  name: string
+  BirthDate?: string | null
+  AnniversaryDate?: string | null
+  classification?: string | null
+  spouseName?: string | null
+  spouseDob?: string | null
+  spousePhoto?: string | null
+  ProfilePhotoPath?: string | null
+  ClubName?: string | null
+}
+type ProfileIndex = Map<string, ProfileFields>
+
+const norm10 = (s?: string | null) => String(s ?? '').replace(/\D/g, '').replace(/^91/, '').slice(-10)
+
+// Loose identity guard: at least one 3+ char name token in common (avoids a
+// shared-mobile match landing on a spouse's profile).
+function sameName(a: string, b: string): boolean {
+  const toks = (s: string) =>
+    new Set(
+      s
+        .toLowerCase()
+        .replace(/[^a-z\s]/g, ' ')
+        .split(/\s+/)
+        .filter((t) => t.length >= 3),
+    )
+  const ta = toks(a)
+  for (const t of toks(b)) if (ta.has(t)) return true
+  return false
+}
+
+function indexOneProfile(idx: ProfileIndex, m: RawMember): void {
+  // Only records that actually carry profile detail are worth indexing.
+  const classification = pick(m.classification, m.MemberIntroduction)
+  if (!m.BirthDate && !classification && !m.spouseName) return
+  const fields: ProfileFields = {
+    name: pick(m.MemberName, m.committeeName, m.name),
+    BirthDate: m.BirthDate,
+    AnniversaryDate: m.AnniversaryDate,
+    classification,
+    spouseName: m.spouseName,
+    spouseDob: m.spouseDob,
+    spousePhoto: m.spousePhoto,
+    ProfilePhotoPath: m.ProfilePhotoPath,
+    ClubName: m.ClubName,
+  }
+  const keys = [
+    norm10(m.PrimaryMobileNumber) && 'm:' + norm10(m.PrimaryMobileNumber),
+    String(m.EmailId ?? '').trim() && 'e:' + String(m.EmailId).trim().toLowerCase(),
+    String(m.RotaryId ?? '').trim() && 'r:' + String(m.RotaryId).trim(),
+  ].filter(Boolean) as string[]
+  for (const k of keys) if (!idx.has(k)) idx.set(k, fields) // first (richest) record wins
+}
+
+function buildProfileIndex(data: DistrictDirectoryResponse): ProfileIndex {
+  const idx: ProfileIndex = new Map()
+  for (const c of data.clubs ?? []) {
+    for (const m of c.members ?? []) indexOneProfile(idx, m)
+    for (const b of c.boardOfDirectors ?? []) indexOneProfile(idx, b)
+  }
+  for (const m of data.districtCommittee ?? []) indexOneProfile(idx, m)
+  for (const g of data.groups ?? []) {
+    for (const m of g.members ?? []) indexOneProfile(idx, m)
+    for (const s of g.subGroups ?? []) for (const m of s.members ?? []) indexOneProfile(idx, m)
+  }
+  return idx
+}
+
+/**
+ * Map of member profile id → resolved profile-photo URL, built across EVERY section
+ * of the directory. Lets a view that is NOT itself API-driven — the static Council of
+ * Governors — show the SAME photo a member has on their club/committee cards, so a
+ * person never appears with two different photos. Uses `ProfilePhotoPath` (the member
+ * master photo), which is identical regardless of which list the member is read from.
+ */
+export function selectMemberPhotos(data: DistrictDirectoryResponse): Map<number, string> {
+  const map = new Map<number, string>()
+  const add = (m: RawMember) => {
+    const pk = m.pk_member_master_profile_id
+    if (pk == null || map.has(pk)) return
+    const url = resolveImg(m.ProfilePhotoPath)
+    if (url) map.set(pk, url)
+  }
+  for (const c of data.clubs ?? []) {
+    for (const m of c.members ?? []) add(m)
+    for (const b of c.boardOfDirectors ?? []) add(b)
+  }
+  for (const m of data.districtCommittee ?? []) add(m)
+  for (const g of data.groups ?? []) {
+    for (const m of g.members ?? []) add(m)
+    for (const s of g.subGroups ?? []) for (const m of s.members ?? []) add(m)
+  }
+  return map
+}
+
+function lookupProfile(idx: ProfileIndex, m: RawMember): ProfileFields | undefined {
+  const name = pick(m.committeeName, m.name, m.MemberName)
+  const keys = [
+    norm10(m.committeeMobile) && 'm:' + norm10(m.committeeMobile),
+    norm10(m.mobile) && 'm:' + norm10(m.mobile),
+    norm10(m.PrimaryMobileNumber) && 'm:' + norm10(m.PrimaryMobileNumber),
+    String(m.committeeEmail ?? m.email ?? m.EmailId ?? '').trim() &&
+      'e:' + String(m.committeeEmail ?? m.email ?? m.EmailId).trim().toLowerCase(),
+    String(m.RotaryId ?? '').trim() && 'r:' + String(m.RotaryId).trim(),
+  ].filter(Boolean) as string[]
+  for (const k of keys) {
+    const hit = idx.get(k)
+    if (hit && (!name || !hit.name || sameName(name, hit.name))) return hit
+  }
+  return undefined
+}
+
+// Map any committee/group member record → the DistrictCommitteeMember shape the
+// cards expect. The unified API now carries `classification` and a spouse block
+// (`spouseName`/`spouseDob`/`spousePhoto`) ON the member record — read them
+// directly (classification falls back to `MemberIntroduction`). When this record's
+// master-profile join is missing, `idx` backfills the gaps from the same person's
+// complete record elsewhere in the response.
+function mapCommitteeMember(m: RawMember, idx?: ProfileIndex): DistrictCommitteeMember {
+  const p = idx ? lookupProfile(idx, m) : undefined
+  const spouseDob = isoToDayMonth(pick(m.spouseDob, p?.spouseDob))
   return {
     DistrictDesignation: pick(m.districtDesignation, m.district_designation),
     name: pick(m.committeeName, m.name, m.MemberName),
@@ -132,19 +279,19 @@ function mapCommitteeMember(m: RawMember): DistrictCommitteeMember {
     Bloodgrp: pick(m.BloodGroup),
     MailID: pick(m.committeeEmail, m.email, m.EmailId),
     Address: '',
-    DOB: isoToDayMonth(m.BirthDate),
-    DOA: isoToDayMonth(m.AnniversaryDate),
+    DOB: isoToDayMonth(pick(m.BirthDate, p?.BirthDate)),
+    DOA: isoToDayMonth(pick(m.AnniversaryDate, p?.AnniversaryDate)),
     RotaryID: pick(m.RotaryId),
-    img: resolveImg(pick(m.ProfilePhotoPath, m.committeePhoto, m.profile_photo)),
-    SpouseName: '',
-    SpousePhoto: '',
-    SpouseDOB: '',
-    Spouse_DOB: '',
+    img: resolveImg(pick(m.ProfilePhotoPath, m.committeePhoto, m.profile_photo, p?.ProfilePhotoPath)),
+    SpouseName: pick(m.spouseName, p?.spouseName),
+    SpousePhoto: resolveImg(pick(m.spousePhoto, p?.spousePhoto)),
+    SpouseDOB: spouseDob,
+    Spouse_DOB: spouseDob,
     Spouse_Mobile_Number: '',
     SpouseMobileNumber: '',
     SpouseMobile: '',
-    Keywords: pick(m.MemberIntroduction),
-    classification: pick(m.MemberIntroduction),
+    Keywords: pick(m.classification, m.MemberIntroduction, p?.classification),
+    classification: pick(m.classification, m.MemberIntroduction, p?.classification),
   }
 }
 
@@ -174,14 +321,24 @@ function dedupeMembers(list: DistrictCommitteeMember[]): DistrictCommitteeMember
 
 /** Executive committee = the top-level districtCommittee array (DG team). */
 export function selectExecutiveCommittee(data: DistrictDirectoryResponse): DistrictCommitteeMember[] {
-  return dedupeMembers((data.districtCommittee ?? []).map(mapCommitteeMember))
+  const idx = buildProfileIndex(data)
+  return dedupeMembers((data.districtCommittee ?? []).map((m) => mapCommitteeMember(m, idx)))
+}
+
+// Display-name overrides for committee groups whose API `groupName` differs from the
+// wording the directory should show. Keyed by the exact API groupName.
+const GROUP_NAME_OVERRIDES: Record<string, string> = {
+  'Regional coordinators': 'Regional Co-ordinators',
 }
 
 /** Directory category cards = the committee groups. */
 export function selectCategories(data: DistrictDirectoryResponse): CommitteeCategory[] {
   return [...(data.groups ?? [])]
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-    .map((g) => ({ Fk_DistrictCommitteeID: String(g.id), name: g.groupName }))
+    .map((g) => ({
+      Fk_DistrictCommitteeID: String(g.id),
+      name: GROUP_NAME_OVERRIDES[g.groupName] ?? g.groupName,
+    }))
 }
 
 export function selectDistrictCommitteeResult(data: DistrictDirectoryResponse): DistrictCommitteeResult {
@@ -206,16 +363,17 @@ export function selectCommitteeDetails(
   const byRole = (a: RawMember, b: RawMember) =>
     Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0)
 
+  const idx = buildProfileIndex(data)
   const subCommitteeMembers: DistrictCommitteeMember[] = (group.subGroups ?? []).flatMap((s) =>
     dedupeMembers(
       [...(s.members ?? [])].sort(byRole).map((m) => ({
-        ...mapCommitteeMember(m),
+        ...mapCommitteeMember(m, idx),
         fk_District_sub_Committee_id: String(s.id),
       })),
     ),
   )
 
-  const directMembers = dedupeMembers([...(group.members ?? [])].sort(byRole).map(mapCommitteeMember))
+  const directMembers = dedupeMembers([...(group.members ?? [])].sort(byRole).map((m) => mapCommitteeMember(m, idx)))
   return { subCommittees, subCommitteeMembers, directMembers }
 }
 
@@ -226,15 +384,45 @@ function findByDesignation(bod: RawBODMember[], designation: string): RawBODMemb
   return (bod ?? []).find((b) => (b.designationName ?? '').trim() === designation)
 }
 
+// There is no per-club zone field, but the "Zonal Team" group's "Zone N"
+// sub-groups list each zone's Assistant Governors. Index AG → zone number so each
+// club's Zone No can be resolved from its AG.
+function buildZoneIndex(data: DistrictDirectoryResponse): { byId: Map<number, string>; byMobile: Map<string, string> } {
+  const byId = new Map<number, string>()
+  const byMobile = new Map<string, string>()
+  const zonal = (data.groups ?? []).find((g) => /zonal team/i.test(g.groupName ?? ''))
+  for (const s of zonal?.subGroups ?? []) {
+    const num = (s.subGroupName?.match(/\d+/) ?? [''])[0]
+    if (!num) continue
+    for (const m of s.members ?? []) {
+      if (m.pk_member_master_profile_id != null) byId.set(m.pk_member_master_profile_id, num)
+      for (const mob of [norm10(m.PrimaryMobileNumber), norm10(m.committeeMobile)]) if (mob) byMobile.set(mob, num)
+    }
+  }
+  return { byId, byMobile }
+}
+
+// Manual corrections where the unified API's AG→club assignment is stale, so the Zone
+// No (derived from the AG's "Zone N" sub-group) comes out wrong on the club card. Keyed
+// by pk_club_id (the same id as src/data/zoneClubOrder.ts). Ahmedabad Atulya (35207)
+// moved Zone 6 → Zone 3 per the "AGs, Presidents & Secretaries" sheet, but the API still
+// links it to the Zone-6 AG. `agName` can be set too when the displayed AG must change.
+const CLUB_AG_OVERRIDES: Record<string, { zoneNo?: string; agName?: string }> = {
+  '35207': { zoneNo: '3' }, // Ahmedabad Atulya → Zone 3
+}
+
 /** All clubs with their AG/President/Secretary summary (BOD listing page). */
 export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[] {
+  const zone = buildZoneIndex(data)
   return [...(data.clubs ?? [])]
     .sort((a, b) => (a.club?.ClubName ?? '').localeCompare(b.club?.ClubName ?? ''))
     .map((entry) => {
       const pres = findByDesignation(entry.boardOfDirectors, 'Club President')
       const sec = findByDesignation(entry.boardOfDirectors, 'Club Secretary')
       const info = entry.club
+      const ag = entry.assistantGovernor
       const id = String(info?.pk_club_id ?? '')
+      const override = CLUB_AG_OVERRIDES[id]
       const meeting = [info?.MeetingDay ?? '', to12Hour(info?.MeetingFromTime)]
         .filter(Boolean)
         .join(', ')
@@ -247,34 +435,38 @@ export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[
         memberCount: String((entry.members ?? []).length),
         meeting,
         venue: pick(info?.MeetingAddress),
-        // Zone No / per-club Assistant Governor are not in the unified API yet.
-        zoneNo: '',
-        AG_Name: '',
-        AG_MobileNumber: '',
-        AG_EmailID: '',
-        AG_DOB: '',
-        AG_Photo: '',
+        // Assistant Governor comes on the club entry; Zone No is derived from the
+        // AG's "Zone N" sub-group in the Zonal Team (no per-club zone field exists).
+        zoneNo:
+          override?.zoneNo ??
+          (ag?.pk_member_master_profile_id != null ? zone.byId.get(ag.pk_member_master_profile_id) : undefined) ??
+          zone.byMobile.get(norm10(pick(ag?.agMobile, ag?.PrimaryMobileNumber))) ??
+          '',
+        AG_Name: override?.agName ?? pick(ag?.agName, ag?.MemberName),
+        AG_MobileNumber: pick(ag?.agMobile, ag?.PrimaryMobileNumber),
+        AG_EmailID: pick(ag?.agEmail, ag?.EmailId),
+        AG_DOB: isoToDayMonth(ag?.BirthDate),
+        AG_Photo: resolveImg(pick(ag?.agPhoto, ag?.ProfilePhotoPath)),
         President_member_name: pres?.MemberName ?? '',
         President_member_email_id: pres?.EmailId ?? '',
         President_member_mobile_no: pres?.PrimaryMobileNumber ?? '',
-        President_Classification: pres?.MemberIntroduction ?? '',
+        President_Classification: pick(pres?.classification, pres?.MemberIntroduction),
         President_DOB: isoToDayMonth(pres?.BirthDate),
         President_DOA: isoToDayMonth(pres?.AnniversaryDate),
         President_Profile_Photo: resolveImg(pres?.ProfilePhotoPath),
-        // Spouse details are not in the unified API yet.
-        President_Spouse_member_name: '',
-        President_Spouse_DOB: '',
-        President_Spouse_Profile_Photo: '',
+        President_Spouse_member_name: pick(pres?.spouseName),
+        President_Spouse_DOB: isoToDayMonth(pres?.spouseDob),
+        President_Spouse_Profile_Photo: resolveImg(pick(pres?.spousePhoto)),
         Secreatary_member_name: sec?.MemberName ?? '',
         Secreatary_email_id: sec?.EmailId ?? '',
         Secreatary_mobile_no: sec?.PrimaryMobileNumber ?? '',
-        Secreatary_Classification: sec?.MemberIntroduction ?? '',
+        Secreatary_Classification: pick(sec?.classification, sec?.MemberIntroduction),
         Secreatary_DOB: isoToDayMonth(sec?.BirthDate),
         Secreatary_DOA: isoToDayMonth(sec?.AnniversaryDate),
         Secreatary_Profile_Photo: resolveImg(sec?.ProfilePhotoPath),
-        Secreatary_Spouse_member_name: '',
-        Secreatary_Spouse_DOB: '',
-        Secreatary_Spouse_Profile_Photo: '',
+        Secreatary_Spouse_member_name: pick(sec?.spouseName),
+        Secreatary_Spouse_DOB: isoToDayMonth(sec?.spouseDob),
+        Secreatary_Spouse_Profile_Photo: resolveImg(pick(sec?.spousePhoto)),
       }
     })
 }
@@ -301,10 +493,10 @@ export function selectClubDetails(data: DistrictDirectoryResponse, clubId: strin
         DOA: isoToDayMonth(presRaw.AnniversaryDate),
         address: '',
         RotaryID: presRaw.RotaryId ?? '',
-        Classification: presRaw.MemberIntroduction ?? '',
-        President_spouse_name: '',
-        President_spouse_DOB: '',
-        President_photo_spouse: '',
+        Classification: pick(presRaw.classification, presRaw.MemberIntroduction),
+        President_spouse_name: pick(presRaw.spouseName),
+        President_spouse_DOB: isoToDayMonth(presRaw.spouseDob),
+        President_photo_spouse: resolveImg(pick(presRaw.spousePhoto)),
       }
     : null
 
@@ -355,6 +547,9 @@ export function selectClubDetails(data: DistrictDirectoryResponse, clubId: strin
       Emailid: b.EmailId ?? '',
       address: '',
       member_profile_photo_path: resolveImg(b.ProfilePhotoPath),
+      classification: pick(b.classification, b.MemberIntroduction),
+      SpouseName: pick(b.spouseName),
+      SpouseDOB: isoToDayMonth(b.spouseDob),
     }))
 
   return {
@@ -392,9 +587,10 @@ export function selectClubMembers(data: DistrictDirectoryResponse, clubId: strin
     MemberDOA: isoToDayMonth(m.AnniversaryDate),
     MemberEmail: m.EmailId ?? '',
     MemberAddress: '',
-    SpouseName: '',
-    SpouseDOB: '',
-    SpousePhoto: '',
+    classification: pick(m.classification, m.MemberIntroduction),
+    SpouseName: pick(m.spouseName),
+    SpouseDOB: isoToDayMonth(m.spouseDob),
+    SpousePhoto: resolveImg(pick(m.spousePhoto)),
     SpouseMobile: '',
   }))
 }

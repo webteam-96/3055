@@ -1,8 +1,10 @@
 import type { SyntheticEvent } from 'react'
 import type { DistrictCommitteeMember } from '../types/api'
 import { firstName } from '../utils/firstName'
+import { titleCase } from '../utils/titleCase'
+import { NoPhoto } from './NoPhoto'
 
-// Hide a missing/broken photo so the grey person silhouette shows through.
+// Hide a missing/broken photo so the Rotary-logo placeholder shows through.
 const onImgError = (e: SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.style.display = 'none'
 }
@@ -24,25 +26,27 @@ export function CommitteeMemberRow({ m }: { m: DistrictCommitteeMember }) {
   return (
     <div className="cm-card">
       <div className="cm-head">
-        <span className="cm-name">{m.name}</span>
+        <span className="cm-name">{titleCase(m.name)}</span>
         {m.DistrictDesignation && (
           <div className="cm-role">
-            <svg className="cm-role-shape" viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
-              {/* Concrete fill (= --navy) as an attribute so it survives the bulk
-                  export's DOM serialization, which drops CSS-var fills on SVG paths. */}
-              <path d="M0,0 C 40,12 60,32 100,44 L0,44 Z" fill="#1a2b5e" />
+            <svg className="cm-role-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {/* S-curve navy tail — the SAME divider as the Club card's Club-ID tab
+                  (transcribed from Card Design/Club cards.svg), replacing the old near-
+                  straight slant. Concrete fill as an attribute so it survives the bulk
+                  export's DOM serialization (CSS-var fills are dropped on SVG paths). */}
+              <path
+                d="M0,0 C18.78,-1.8 29.82,4.95 36.46,12.16 C53.32,30.18 50.85,58.11 69.35,80.63 C79.85,93.24 91.9,97.75 100,100 L0,100 Z"
+                fill="#1a2b5e"
+              />
             </svg>
-            <span className="cm-role-text">{m.DistrictDesignation}</span>
+            <span className="cm-role-text">{titleCase(m.DistrictDesignation)}</span>
           </div>
         )}
       </div>
       <div className="cm-body">
         <div className="cm-photo">
           <div className="cm-photo-box">
-            <svg className="cm-silhouette" viewBox="0 0 64 64" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-              <circle cx="32" cy="22" r="15" />
-              <path d="M3 64 a29 29 0 0 1 58 0 Z" />
-            </svg>
+            <NoPhoto />
             {m.img ? <img src={m.img} alt={m.name} onError={onImgError} /> : null}
           </div>
           <div className="cm-cap">{firstName(m.name)}</div>
@@ -56,10 +60,10 @@ export function CommitteeMemberRow({ m }: { m: DistrictCommitteeMember }) {
             <F label="E-mail:" value={m.MailID} />
           </div>
           <div className="cm-line">
-            <F label="Home Club:" value={m.ClubName} />
+            <F label="Home Club:" value={titleCase(m.ClubName)} />
           </div>
           <div className="cm-line">
-            <F label="Classification:" value={m.classification || m.Keywords} multiline />
+            <F label="Classification:" value={titleCase(m.classification || m.Keywords)} multiline />
           </div>
           <div className="cm-line cm-line-3">
             <F label="Spouse:" value={firstName(m.SpouseName)} />

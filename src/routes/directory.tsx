@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useDistrictCommittee } from '../api/useDistrictCommittee'
 import { COMMITTEE_COLORS } from '../types/api'
 import { DirectoryZipButton } from '../components/DirectoryZipButton'
+import { DownloadAllPdfButton } from '../components/DownloadAllPdfButton'
 import { Loading } from '../components/Loading'
 
 export const Route = createFileRoute('/directory')({
@@ -22,7 +23,10 @@ function DirectoryPage() {
       <div className="auto-container">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-[#3b251a]">Rotary District 3055</h1>
-          <DirectoryZipButton />
+          <div className="flex items-center gap-3">
+            <DownloadAllPdfButton scope="dynamic" />
+            <DirectoryZipButton />
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/executive-committee" className="avenu-crd" style={{ backgroundColor: '#2F4366' }}>
@@ -36,6 +40,9 @@ function DirectoryPage() {
           </a>
           <a href="/dg-other-districts" className="avenu-crd" style={{ backgroundColor: '#2F5755' }}>
             <div className="cat-text">DGs of Other Districts</div>
+          </a>
+          <a href="/council-of-governors" className="avenu-crd" style={{ backgroundColor: '#5A2E4D' }}>
+            <div className="cat-text">Council Of Governors</div>
           </a>
           {(data?.categories ?? []).map((committee, i) => (
             <a

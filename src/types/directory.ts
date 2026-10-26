@@ -26,6 +26,16 @@ export interface DgPerson {
   spouseName: string
   spouseDob: string
   doa: string
+  // Optional photos, enriched from the API by matching `contact` (mobile) to the
+  // member record (see scripts/enrich-dg-photos.mjs). Raw API paths — resolve with
+  // resolveImg() at render. Absent ⇒ the card shows the grey silhouette placeholder.
+  photo?: string
+  spousePhoto?: string
+  // 2027-28 only: a single wide DG+spouse "couple" photo (≈5:3), used by the card
+  // as ONE holder in place of the two separate next-year boxes. High-res and shown
+  // whole (no crop), so it beats the small solo/spouse crops. Absent ⇒ fall back to
+  // the two `photo`/`spousePhoto` boxes. Raw /dg-pdf/ path — resolve with resolveImg().
+  couplePhoto?: string
 }
 
 export interface OtherDistrict {

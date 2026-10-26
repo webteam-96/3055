@@ -81,6 +81,16 @@
   font-size: 1.78cqw;
   line-height: 1.18;
 }
+/* Venue can carry a long address; cap it at 3 lines and end the 3rd with "…" when it
+   overflows. A shorter venue (≤3 lines) is unaffected — shown in full, no ellipsis.
+   Clamps the whole cell (label + value together) so "Venue:" stays inline with the text. */
+.club-bod-card .info-grid .row.venue-row {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
 .club-bod-card .info .lbl {
   color: var(--ink);
   font-style: normal;
@@ -183,19 +193,13 @@
   position: relative;
   width: 9.2cqw;
   height: 9.6cqw;
+  /* Centre the fixed-width photo within its column so it stays centred over the
+     name caption below, even when the name is wider than the photo. */
+  margin-inline: auto;
   background: #eef0f1;
   border: 1px solid #d8d9dc;
   border-radius: 0.4cqw;
   overflow: hidden;
-}
-.club-bod-card .photo .silhouette {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 94%;
-  height: 95%;
-  fill: #c2c4c8; /* grey person icon, per the PDF placeholder */
 }
 .club-bod-card .photo .box img {
   position: absolute;
@@ -203,6 +207,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Top-aligned so a face is never cropped from the top (overflow trims the bottom). */
+  object-position: top;
 }
 .club-bod-card .photo .cap {
   margin-top: 0.3cqw;
@@ -267,12 +273,31 @@
   color: var(--ink);
   font-weight: 700;
 }
+/* Classification value: clamp to a single line with an ellipsis so a long one does
+   not wrap to a second line (keeps the card height even). min-width:0 lets the grid
+   cell shrink to its track so text-overflow can take effect. */
+.club-bod-card .pv.clip,
+.club-bod-card .sv.clip {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .club-bod-card .olbl {
   grid-column: 2;
   text-align: center; /* labels centered in the orange strip, per the PDF */
   color: #fff;
   font-style: italic;
   font-weight: 500;
+  /* Fill the full row height (overriding the shared `align-self: center`) so the
+     orange centre strip stays solid even when a row grows — e.g. when a long
+     Classification wraps to two lines on one side — instead of leaving a cream gap
+     above/below the label. The label text is kept vertically centred via flex. */
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .club-bod-card .pad-b {
   height: 0.3cqw;

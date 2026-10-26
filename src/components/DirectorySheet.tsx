@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import './DirectorySheet.css'
+import { useSheetBg } from './SheetBg'
 
 // Two page backgrounds — a right-hand (recto) and left-hand (verso) variant, as
 // in a bound book. Rendered as an <img> (not a CSS background) so they print.
@@ -25,8 +26,15 @@ export function DirectorySheet({
   pageNumber?: string | number
   side?: 'left' | 'right'
 }) {
+  // Per-section tint shows through the frame's now-transparent interior. Inline so it
+  // is captured by html-to-image (Download PDF / All) and printed reliably. The same
+  // colour is also exposed as the `--sheet-bg` custom property so the member cards that
+  // sit on the sheet (committee / AG / zonal / DG / club cards) paint their body in the
+  // SECTION tint too — otherwise their fixed cream covers the page and every section
+  // looks identical. Each card's CSS keeps its old cream as the var() fallback.
+  const sheetBg = useSheetBg()
   return (
-    <section className="dir-sheet">
+    <section className="dir-sheet" style={{ background: sheetBg, '--sheet-bg': sheetBg } as CSSProperties}>
       <img className="dir-bg" src={BORDER_BG[side]} alt="" aria-hidden="true" />
       <div className="dir-content">{children}</div>
     </section>

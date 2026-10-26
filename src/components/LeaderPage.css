@@ -42,7 +42,7 @@
 .lp-content {
   position: absolute;
   z-index: 1;
-  top: 15%;
+  top: 10%; /* content block sits just below the printed header logos */
   left: 8%;
   right: 7%;
 }
@@ -75,12 +75,80 @@
   border-radius: 2.4cqw;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
 }
-.lp-photo {
+/* Clip box: sits inside the frame's white padding (the mat), owns the image
+   shape (aspect-ratio) and rounded corners, and hides any zoom overflow. Because
+   the clipping happens HERE — not on the frame — a scaled <img> is cropped at the
+   image box and can never cover the white mat. */
+.lp-photo-clip {
   display: block;
   width: 100%;
   aspect-ratio: 170 / 220;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: 1.6cqw;
+}
+.lp-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Per-person framing variant: a larger photo box, cropped tighter on the faces.
+   Used where the supplied portrait is a wide two-person shot, which the default
+   box would otherwise render small and loose. `overflow: hidden` keeps the zoomed
+   image inside the gold frame; the origin sits on the faces so scaling up crops
+   away the empty space above them and the body below. */
+.lp-photo-frame.lp-photo--face {
+  width: 46%;
+}
+.lp-photo-frame.lp-photo--face .lp-photo {
+  object-position: 50% 12%; /* bias the cover crop to the top, where the faces are */
+  transform: scale(1.4);
+  transform-origin: 50% 20%;
+}
+
+/* Uniform couple-photo frame for the profile pages — Babalola, K. P. Nagesh,
+   Muruganandam M, and Vikram Thakkar all share ONE box: 46% wide × the standard
+   170/220 portrait aspect (the same frame every other photo in the app uses), so no
+   profile's photo looks bigger than another's. Each photo fills the box with the base
+   `object-fit: cover`; `object-position` holds the couple's faces while the crop
+   trims the empty margins — the wide landscape shots lose their side space, the tall
+   portraits lose extra headroom and foreground. Used ALONE (no `lp-photo--face`). */
+.lp-photo-frame.lp-photo--uniform {
+  width: 46%;
+}
+.lp-photo-frame.lp-photo--uniform .lp-photo {
+  transform: none;            /* no per-person zoom */
+  object-position: 50% 40%;   /* hold the faces; cover trims the excess margins */
+}
+
+/* Venky's couple photo: his wife stands on the LEFT of a wide landscape shot, so
+   the uniform centre crop (object-position 50%) clipped her left side. Bias the
+   cover crop leftward — i.e. shift the image to the right within the frame — so she
+   sits fully inside while his (centred) face stays framed. Stacked with
+   lp-photo--uniform for higher specificity, so it wins regardless of source order. */
+.lp-photo-frame.lp-photo--uniform.lp-photo--shift-right .lp-photo {
+  object-position: 40% 40%;
+}
+
+/* Wide couple photo where the two people stand FAR APART with empty wall between
+   them (e.g. Shyam Kumar's shot: him at ~32% width, his wife at ~75%). In the
+   portrait `lp-photo--face` box even `lp-photo--wide` only shows the middle ~51%
+   of the width, which slices the wife off the right edge. This variant reshapes
+   the frame to a landscape aspect so the full width — both faces — is shown at
+   full height, with no side crop. Pair with `lp-photo--face`; listed last so its
+   aspect/position win at equal specificity. */
+.lp-photo-frame.lp-photo--couple .lp-photo-clip {
+  aspect-ratio: 5 / 4; /* landscape box: fits both faces side by side */
+}
+.lp-photo-frame.lp-photo--couple .lp-photo {
+  object-position: 53% 50%; /* midpoint between the two faces; full height shown */
+  /* A slight zoom anchored to the BOTTOM of the frame lifts the empty wall above
+     their heads up and out the top, while their torsos stay planted at the
+     bottom (so no gap opens below). Kept small so the faces don't over-enlarge
+     and the wife's right edge isn't clipped. */
+  transform: scale(1.08);
+  transform-origin: 50% 100%;
 }
 
 /* Identity block — its own BFC so it sits beside the floated photo and the
@@ -93,7 +161,15 @@
   font-family: 'Petrona', 'Petrona', serif;
   font-weight: 700;
   font-style: italic;
-  font-size: 4.2cqw;
+  /* 3.8cqw (was 4.2cqw): at 4.2cqw the longest single-line names sat EXACTLY at the
+     identity column's wrap boundary (e.g. "Rtn. K.A. Shyam Kumar" = 100% of the column,
+     "Rtn. Dr. Geetika Saluja" ≈ 96%). On-screen they fit one line, but html-to-image's
+     capture renders text a hair wider AND bakes each element's one-line height into the
+     clone — so in the PDF the name tipped onto a second line while the gold designation
+     row kept its one-line position, overlapping the wrapped name. 3.8cqw gives those
+     names ~12% headroom so they stay one line in the capture too; genuinely long names
+     (Babalola, Venky) still wrap to two lines cleanly at this same uniform size. */
+  font-size: 3.8cqw;
   line-height: 1.12;
   color: var(--lp-navy);
 }
@@ -108,6 +184,17 @@
   font-size: 2.4cqw;
   color: var(--lp-gold);
   white-space: nowrap;
+}
+/* Continuation of the gold title (e.g. an RI Director's term line). Matches
+   .lp-title exactly, tucked tight beneath the first line. */
+.lp-subtitle {
+  margin-top: 0.3cqw;
+  font-family: 'Petrona', sans-serif;
+  font-weight: 600;
+  font-size: 2.4cqw;
+  line-height: 1.2;
+  color: var(--lp-gold);
+  white-space: pre-line;
 }
 .lp-title-line {
   flex: 1;
@@ -126,6 +213,11 @@
   font-family: 'Petrona', serif;
   font-weight: 600;
   font-size: 2.6cqw;
+  line-height: 1.28;
+  /* A leader holding two roles (e.g. RI Director + Vice President) passes a
+     two-line `year` split by \n; render those breaks. Single-line years are
+     unaffected. */
+  white-space: pre-line;
   color: var(--lp-navy);
 }
 
@@ -133,16 +225,26 @@
   margin-top: 1.8cqw;
 }
 .lp-body p {
-  /* --lp-scale (set by LeaderPage's auto-fit) shrinks long bodies to fit one
-     page; defaults to 1 (no change) for short profiles/messages. */
-  margin: 0 0 calc(1.5cqw * var(--lp-scale, 1));
-  font-size: calc(1.95cqw * var(--lp-scale, 1));
-  line-height: 1.62;
+  /* --lp-para-fs / --lp-para-gap are complete cqw lengths precomputed by
+     LeaderPage's auto-fit (base * scale). They shrink long bodies to fit one
+     page; the defaults below are the full size for short profiles/messages.
+     NB: we store a whole length here rather than `calc(1.95cqw * var(--scale))`
+     because multiplying a container-query unit by a custom-property *number*
+     inside calc() does not reliably re-evaluate across browsers. */
+  margin: 0 0 var(--lp-para-gap, 1.5cqw);
+  font-size: var(--lp-para-fs, 1.95cqw);
+  line-height: var(--lp-line-height, 1.62);
   text-align: justify;
   /* Preserve single newlines as line breaks so bullet lists (one item per line)
      render as a list; blank lines already split paragraphs. */
   white-space: pre-line;
   color: var(--lp-body);
+}
+/* Complimentary close — the "Warm regards, / name / designation" block that ends
+   a Message. Set bold to sign the letter off. Only Message sheets get this class
+   (Profiles have no close), and only on their final paragraph. */
+.lp-body p.lp-signoff {
+  font-weight: 700;
 }
 .lp-body p:last-child {
   margin-bottom: 0;

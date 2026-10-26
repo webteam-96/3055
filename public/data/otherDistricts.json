@@ -1,12 +1,1239 @@
 [
   {
     "districtNo": "2981",
-    "dgThisYear": { "name": "Vaithianathan Krishnasamy", "contact": "9655008000", "email": "vaithianathank@gmail.com", "club": "Pondicherry Pride", "classification": "MD, Jothi Eye Care Centre", "dob": "26th May", "spouseName": "Dr. Vanaja", "spouseDob": "00/00", "doa": "08th July" },
-    "dgNextYear": { "name": "T. N. Jayakumar", "contact": "9842455016", "email": "jeykayar@gmail.com", "club": "Thanjavur Greenary", "classification": "Club Foundation Chair", "dob": "13th February", "spouseName": "Suganya", "spouseDob": "00/00", "doa": "15th September" }
+    "dgThisYear": {
+      "name": "Vaithianathan Krishnasamy",
+      "contact": "9655008000",
+      "email": "vaithianathank@gmail.com",
+      "club": "Pondicherry Pride",
+      "classification": "Business",
+      "dob": "26th May",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "08th July",
+      "photo": "https://rotaryindia.org/Documents/directory/Rtn_K_Vaithianathan10012024010843PM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "T. N. Jayakumar",
+      "contact": "9842415016",
+      "email": "jeykayar@gmail.com",
+      "club": "Thanjavur Granary  Tamil Nadu",
+      "classification": "Club Foundation Chair",
+      "dob": "13th February",
+      "spouseName": "Suganya J",
+      "spouseDob": "01st August",
+      "doa": "15th September",
+      "photo": "https://rotaryindia.org/Documents/directory/jay30102024053657PM.png",
+      "spousePhoto": "/dg-pdf/sp_2981_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_2981.jpg"
+    }
+  },
+  {
+    "districtNo": "2982",
+    "dgThisYear": {
+      "name": "Chinniah Senthil Kumar",
+      "contact": "8124805166",
+      "email": "rtnsenthil2982@gmail.com",
+      "club": "Kallakurichi Tamil Nadu",
+      "classification": "Club Membership Chair",
+      "dob": "22nd October",
+      "spouseName": "Indumathi Senthilkumar",
+      "spouseDob": "18th October",
+      "doa": "04th December",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-01-08_at_9.20.03_AM08012024100458AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_2982_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Loganathan S",
+      "contact": "9842768781",
+      "email": "logusspa@gmail.com",
+      "club": "Salem Gugai Tamil Nadu",
+      "classification": "Director/Chairman Club Administration",
+      "dob": "22nd July",
+      "spouseName": "Gayathri",
+      "spouseDob": "25th November",
+      "doa": "27th August",
+      "photo": "https://rotaryindia.org/Documents/directory/Loganathan_S18092024095908AM.png",
+      "spousePhoto": "/dg-pdf/sp_2982_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_2982.jpg"
+    }
   },
   {
     "districtNo": "3000",
-    "dgThisYear": { "name": "R. Senthil Kumar", "contact": "9840000001", "email": "senthil.dg@gmail.com", "club": "Madurai Midtown", "classification": "Textile Manufacturer", "dob": "10th March", "spouseName": "Lakshmi", "spouseDob": "00/00", "doa": "21st November" },
-    "dgNextYear": { "name": "P. Anand Babu", "contact": "9840000002", "email": "anand.dge@gmail.com", "club": "Trichy Fort", "classification": "Civil Engineer", "dob": "02nd August", "spouseName": "Priya", "spouseDob": "00/00", "doa": "14th April" }
+    "dgThisYear": {
+      "name": "Subramani Ramanujam",
+      "contact": "7373723456",
+      "email": "rbsmani3000@gmail.com",
+      "club": "Tiruchirapalli Diamond City  Tamil Nadu",
+      "classification": "3000 Dg 2026 - 27",
+      "dob": "28th January",
+      "spouseName": "Bala Shalini Dhevi S",
+      "spouseDob": "01st July",
+      "doa": "21st May",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR170220260444202331898PM.png",
+      "spousePhoto": "/dg-pdf/sp_3000_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "A. Leo Felix Louis",
+      "contact": "9842023899",
+      "email": "leofelin@yahoo.com",
+      "club": "Pudukkottai Crown City  Tamil Nadu",
+      "classification": "3000 Dg 2027 - 28",
+      "dob": "20th March",
+      "spouseName": "Salomi Sangeetha",
+      "spouseDob": "12th August",
+      "doa": "23rd May",
+      "photo": "https://rotaryindia.org/Documents/directory/Leo13042026023638PM.JPG",
+      "spousePhoto": "/dg-pdf/cr_3000_nextDG_sp.jpg",
+      "couplePhoto": "/dg-pdf/couple_3000.jpg"
+    }
+  },
+  {
+    "districtNo": "3011",
+    "dgThisYear": {
+      "name": "Ajeet Jalan",
+      "contact": "9810133803",
+      "email": "ajeetjalan3011@gmail.com",
+      "club": "Delhi South West",
+      "classification": "Club Trainer",
+      "dob": "09th December",
+      "spouseName": "Anju Jalan",
+      "spouseDob": "09th October",
+      "doa": "20th February",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2025-07-04_at_4.14.52_PM04072025041539PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3011_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Dr. Pushpa Sethi",
+      "contact": "9810015259",
+      "email": "psethi8@hotmail.com",
+      "club": "Gurgaon Haryana",
+      "classification": "Other",
+      "dob": "26th April",
+      "spouseName": "Dr Ashok Kr Sethi",
+      "spouseDob": "10th October",
+      "doa": "06th September",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2025-07-05_at_2.20.38_PM_(1)05072025022252PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3011_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3011.jpg"
+    }
+  },
+  {
+    "districtNo": "3012",
+    "dgThisYear": {
+      "name": "Amit Gupta",
+      "contact": "9810456700",
+      "email": "cmd@kalco.in",
+      "club": "Ghaziabad Central  Utt. Pr.",
+      "classification": "3012 Dg 2026 - 27",
+      "dob": "23rd September",
+      "spouseName": "Swati Gupta",
+      "spouseDob": "21st September",
+      "doa": "01st December",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR130920250425369791461PM.png",
+      "spousePhoto": "/dg-pdf/sp_3012_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Ravi Bali",
+      "contact": "9650733337",
+      "email": "ravibalideepika@gmail.com",
+      "club": "Ghaziabad Greater Utt. Pr.",
+      "classification": "Business",
+      "dob": "13th October",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "10th December",
+      "photo": "/dg-pdf/dg_3012_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3012.jpg"
+    }
+  },
+  {
+    "districtNo": "3020",
+    "dgThisYear": {
+      "name": "Sree Ramulu Guttikonda",
+      "contact": "9848181274",
+      "email": "sriram.g5559@gmail.com",
+      "club": "Vijayawada East",
+      "classification": "Managing Director",
+      "dob": "25th August",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "22nd May",
+      "photo": "https://rotaryindia.org/Documents/directory/Rtn_G_Sriram_(2)11012024024218PM.jpg"
+    },
+    "dgNextYear": {
+      "name": "Sobhan Prakash Puvvada",
+      "contact": "9849048481",
+      "email": "sobhanprakashp@hotmail.com",
+      "club": "Vizag Couples And. Pr.",
+      "classification": "Logistics Business",
+      "dob": "05th May",
+      "spouseName": "Sudha Rani",
+      "spouseDob": "17th February",
+      "doa": "21st October",
+      "photo": "https://rotaryindia.org/Documents/directory/123asv17082025071703PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3020_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3020.jpg"
+    }
+  },
+  {
+    "districtNo": "3030",
+    "dgThisYear": {
+      "name": "Rajesh Vishwasrao Patil",
+      "contact": "8975975757",
+      "email": "dr.rajeshpatil@gmail.com",
+      "club": "Rotary Club of Jalgaon West",
+      "classification": "Other",
+      "dob": "30th October",
+      "spouseName": "Dr Seemaa Patil",
+      "spouseDob": "02nd October",
+      "doa": "25th December",
+      "photo": "https://rotaryindia.org/Documents/directory/DG5A0223_copy24022024035036PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3030_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Kishore Vitthaldas Rathi",
+      "contact": "9325132336",
+      "email": "rathi.kishore@yahoo.co.in",
+      "club": "Nagpur South East",
+      "classification": "3030 Dg 2027 - 28",
+      "dob": "02nd October",
+      "spouseName": "Kajal Rathi",
+      "spouseDob": "22nd November",
+      "doa": "20th February",
+      "photo": "https://rotaryindia.org/Documents/directory/de59daa4-7fb7-4289-828b-e079ad0d8a1c02052025062702PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3030_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3030.jpg"
+    }
+  },
+  {
+    "districtNo": "3040",
+    "dgThisYear": {
+      "name": "SANSKAR KOTHARI",
+      "contact": "9425103608",
+      "email": "sanskarkothari@gmail.com",
+      "club": "Rotary Club Ratlam  MP",
+      "classification": "Club Executive Secretary/Director",
+      "dob": "02nd April",
+      "spouseName": "Deepti Kothari",
+      "spouseDob": "16th July",
+      "doa": "26th December",
+      "photo": "https://rotaryindia.org/Documents/directory/3317082025085031AM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3040_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Mukesh Sahu",
+      "contact": "9926383267",
+      "email": "mukeshsahusagar01@gmail.com",
+      "club": "Sagar Phoenix  Mad. Pr.",
+      "classification": "Club Executive Secretary/Director",
+      "dob": "07th April",
+      "spouseName": "Preeti Sahu",
+      "spouseDob": "19th August",
+      "doa": "07th June",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR310320260448017588966PM.png",
+      "spousePhoto": "/dg-pdf/sp_3040_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3040.jpg"
+    }
+  },
+  {
+    "districtNo": "3053",
+    "dgThisYear": {
+      "name": "BRIJ MOHAN AGARWAL",
+      "contact": "9314012541",
+      "email": "brijmohanca@gmail.com",
+      "club": "Bhiwadi",
+      "classification": "Club Learning Facilitator",
+      "dob": "31st August",
+      "spouseName": "Anita Agarwal",
+      "spouseDob": "09th October",
+      "doa": "03rd February",
+      "photo": "/dg-pdf/dg_3053_this.jpg",
+      "spousePhoto": "/dg-pdf/sp_3053_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Pradeep Parashar",
+      "contact": "9425114486",
+      "email": "pradeepparashar45@gmail.com",
+      "club": "Gwalior",
+      "classification": "3053 Dg 2027 - 28",
+      "dob": "01st August",
+      "spouseName": "Tanushka Parashar",
+      "spouseDob": "25th September",
+      "doa": "02nd December",
+      "photo": "/dg-pdf/dg_3053_next.jpg",
+      "spousePhoto": "/dg-pdf/sp_3053_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3053.jpg"
+    }
+  },
+  {
+    "districtNo": "3056",
+    "dgThisYear": {
+      "name": "Arun Bagadia",
+      "contact": "9587000003",
+      "email": "arun@bestcapital.in",
+      "club": "Jaipur Royal",
+      "classification": "Club President",
+      "dob": "20th February",
+      "spouseName": "Poonam Bagadia",
+      "spouseDob": "11th August",
+      "doa": "21st February",
+      "photo": "/dg-pdf/dg_3056_this.jpg",
+      "spousePhoto": "/dg-pdf/sp_3056_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Deepak Sukhadia",
+      "contact": "9928355488",
+      "email": "deepaksukhadia@yahoo.com",
+      "club": "Udaipur Heritage",
+      "classification": "Club Secretary",
+      "dob": "10th November",
+      "spouseName": "Nimisha Sukhadia",
+      "spouseDob": "19th November",
+      "doa": "04th November",
+      "photo": "https://rotaryindia.org/Documents/directory/DEEPAK_SUKHADIA11042025040836PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3056_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3056.jpg"
+    }
+  },
+  {
+    "districtNo": "3060",
+    "dgThisYear": {
+      "name": "Nilesh Rameshchandra Shah",
+      "contact": "7069408373",
+      "email": "nileshdg2627@gmail.com",
+      "club": "Vapi Riverside",
+      "classification": "3060 Dg 2026 - 27",
+      "dob": "13th May",
+      "spouseName": "Shruti Shah",
+      "spouseDob": "23rd July",
+      "doa": "01st December",
+      "photo": "https://rotaryindia.org/Documents/directory/Nilesh1515072025045725PM.jpeg",
+      "spousePhoto": "https://rotaryindia.org/Documents/FaimilyMembersPhoto/WhatsApp_Image_2025-07-15_at_12.30.3915072025124910PM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "",
+      "contact": "",
+      "email": "",
+      "club": "",
+      "classification": "",
+      "dob": "",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "",
+      "couplePhoto": "/dg-pdf/couple_3060.jpg"
+    }
+  },
+  {
+    "districtNo": "3070",
+    "dgThisYear": {
+      "name": "Anil Kumar Singhal",
+      "contact": "9814051143",
+      "email": "anilsinghal1954@gmail.com",
+      "club": "Amritsar Midtown Punjab",
+      "classification": "Club Foundation Chair",
+      "dob": "16th November",
+      "spouseName": "Sonia Singhal",
+      "spouseDob": "10th April",
+      "doa": "28th May",
+      "photo": "https://rotaryindia.org/Documents/directory/ANIL_SINGHAL_NEW10072024090646PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3070_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Vijay Sehdev",
+      "contact": "9876615741",
+      "email": "vijaysehdev@yahoo.co.in",
+      "club": "Jalandhar Central Punjab",
+      "classification": "Club Membership Chair",
+      "dob": "03rd May",
+      "spouseName": "Veena Sehdev",
+      "spouseDob": "19th March",
+      "doa": "11th July",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG_003002072025120547AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3070_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3070.jpg"
+    }
+  },
+  {
+    "districtNo": "3080",
+    "dgThisYear": {
+      "name": "Rita Kalra",
+      "contact": "9878880550",
+      "email": "rita.kalra5@gmail.com",
+      "club": "Chandigarh Mid Town  Union Territory",
+      "classification": "Club Service Projects Chair",
+      "dob": "05th January",
+      "spouseName": "Rtn Dr Sanjay Kalra",
+      "spouseDob": "08th September",
+      "doa": "29th June",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-06-22_at_11.44.53_AM22062024114605AM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "Mohinder Paul Gupta",
+      "contact": "9814431388",
+      "email": "mohindergupta@gmail.com",
+      "club": "Chandigarh City Beautiful  Union Territory",
+      "classification": "Club Executive Secretary/Director",
+      "dob": "22nd October",
+      "spouseName": "Uma Gupta",
+      "spouseDob": "20th January",
+      "doa": "20th May",
+      "photo": "https://rotaryindia.org/Documents/directory/mp_gupta20112025013622PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3080_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3080.jpg"
+    }
+  },
+  {
+    "districtNo": "3090",
+    "dgThisYear": {
+      "name": "Amit Singla",
+      "contact": "9876400701",
+      "email": "amitlalitca@gmail.com",
+      "club": "Samana Punjab",
+      "classification": "Club Foundation Chair",
+      "dob": "26th October",
+      "spouseName": "Sachi Singla",
+      "spouseDob": "05th April",
+      "doa": "21st January",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-03-30_at_1.16.03_PM30032024011624PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3090_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Shiv Shankar Vashisth",
+      "contact": "9261300009",
+      "email": "shivshankar.vashisth@gmail.com",
+      "club": "Sri Ganganagar Rajasthan",
+      "classification": "Hotlier",
+      "dob": "01st November",
+      "spouseName": "Vinodini Vashisth",
+      "spouseDob": "15th July",
+      "doa": "15th June",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR310320260500009497594PM.png",
+      "spousePhoto": "/dg-pdf/sp_3090_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3090.jpg"
+    }
+  },
+  {
+    "districtNo": "3100",
+    "dgThisYear": {
+      "name": "Payal Gaur",
+      "contact": "8938888565",
+      "email": "payal.gaur86@gmail.com",
+      "club": "Bulandshahr Star",
+      "classification": "3100 Dg 2026 - 27",
+      "dob": "10th May",
+      "spouseName": "Sagar Sharma",
+      "spouseDob": "13th August",
+      "doa": "11th December",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG-20230817-WA010511062025124144PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3100_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Kavya Saurabh Rastogi",
+      "contact": "9837097944",
+      "email": "rastogikavya@gmail.com",
+      "club": "Moradabad South",
+      "classification": "Club Executive Secretary/Director",
+      "dob": "14th December",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "",
+      "photo": "/dg-pdf/dg_3100_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3100.jpg"
+    }
+  },
+  {
+    "districtNo": "3110",
+    "dgThisYear": {
+      "name": "Jasbir Singh Bhatia",
+      "contact": "9839084194",
+      "email": "cajsbhatia@gmail.com",
+      "club": "COG",
+      "classification": "3110 Dg 2026 27",
+      "dob": "02nd June",
+      "spouseName": "CS Daljeet Kaur Bhatia",
+      "spouseDob": "16th May",
+      "doa": "30th January",
+      "photo": "/dg-pdf/dg_3110_this.jpg",
+      "spousePhoto": "/dg-pdf/sp_3110_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Rtn. Rajive Mittal",
+      "contact": "9837025419",
+      "email": "mittalrajive@gmail.com",
+      "club": "Aligarh",
+      "classification": "Club President",
+      "dob": "28th July",
+      "spouseName": "Abha Mittal",
+      "spouseDob": "04th July",
+      "doa": "26th October",
+      "spousePhoto": "/dg-pdf/sp_3110_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3110.jpg"
+    }
+  },
+  {
+    "districtNo": "3120",
+    "dgThisYear": {
+      "name": "Poonam Gulati",
+      "contact": "9721277555",
+      "email": "poonam.gulati312@gmail.com",
+      "club": "Allahabad Royals",
+      "classification": "Club Trainer",
+      "dob": "23rd February",
+      "spouseName": "PDG Satpal Gulati",
+      "spouseDob": "08th April",
+      "doa": "21st November",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-01-10_at_3.36.23_PM11012024101655AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3120_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Dinesh Garg",
+      "contact": "9415225066",
+      "email": "dineshgarg1969@gmail.com",
+      "club": "Varanasi Central",
+      "classification": "3120 Dg 2027 - 28",
+      "dob": "13th July",
+      "spouseName": "Reena Garg",
+      "spouseDob": "19th October",
+      "doa": "03rd March",
+      "spousePhoto": "/dg-pdf/sp_3120_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3120.jpg"
+    }
+  },
+  {
+    "districtNo": "3131",
+    "dgThisYear": {
+      "name": "Nitin Sopanrao Dhamale",
+      "contact": "9881471001",
+      "email": "ndhamale@gmail.com",
+      "club": "Pimpri",
+      "classification": "3131 Dg 2026 - 27",
+      "dob": "03rd August",
+      "spouseName": "Dr Neelam Dhamale",
+      "spouseDob": "01st July",
+      "doa": "06th May",
+      "photo": "https://rotaryindia.org/Documents/directory/sdsdd22062024114538AM.JPG",
+      "spousePhoto": "/dg-pdf/sp_3131_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "",
+      "contact": "",
+      "email": "",
+      "club": "",
+      "classification": "",
+      "dob": "",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "",
+      "couplePhoto": "/dg-pdf/couple_3131.jpg"
+    }
+  },
+  {
+    "districtNo": "3132",
+    "dgThisYear": {
+      "name": "Jayesh Rameshbhai Patel",
+      "contact": "9823562303",
+      "email": "jayeshpatel3@gmail.com",
+      "club": "Solapur",
+      "classification": "Club Trainer",
+      "dob": "03rd March",
+      "spouseName": "Parul Patel",
+      "spouseDob": "26th July",
+      "doa": "15th May",
+      "photo": "/dg-pdf/cr_3132_thisDG_dg.jpg",
+      "spousePhoto": "/dg-pdf/sp_3132_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Kshitij Uday Zaware",
+      "contact": "9422080003",
+      "email": "kshitij_heavyequipments@yahoo.com",
+      "club": "Ahmednagar Mid Town Mah.",
+      "classification": "Club Membership Chair",
+      "dob": "20th January",
+      "spouseName": "Madhura",
+      "spouseDob": "26th December",
+      "doa": "28th June",
+      "photo": "/dg-pdf/cr_3132_nextDG_dg.jpg",
+      "spousePhoto": "/dg-pdf/sp_3132_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3132.jpg"
+    }
+  },
+  {
+    "districtNo": "3141",
+    "dgThisYear": {
+      "name": "Rajan Dua",
+      "contact": "9004762626",
+      "email": "rajan.dua@dpbuildhomes.com",
+      "club": "Mumbai Island City",
+      "classification": "3141 DG 2026 - 27",
+      "dob": "12th June",
+      "spouseName": "Rtn Preeti Rajan Dua",
+      "spouseDob": "06th December",
+      "doa": "01st January",
+      "photo": "/dg-pdf/dg_3141_this.jpg",
+      "spousePhoto": "/dg-pdf/sp_3141_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Deepak Jiandani",
+      "contact": "9821035822",
+      "email": "deepak.jiandani@cams-exact.com",
+      "club": "Mumbai Mulund East",
+      "classification": "Club Treasurer",
+      "dob": "11th August",
+      "spouseName": "Ujwala Jiandani",
+      "spouseDob": "20th January",
+      "doa": "07th May",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2025-03-30_at_7.35.43_PM31032025073845PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3141_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3141.jpg"
+    }
+  },
+  {
+    "districtNo": "3142",
+    "dgThisYear": {
+      "name": "Nilesh Vinayak Jaywant",
+      "contact": "9819823839",
+      "email": "assureddentalcare@gmail.com",
+      "club": "Thane Greenspans",
+      "classification": "Club Executive Secretary/Director",
+      "dob": "27th March",
+      "spouseName": "Dr Kanchan Jaywant",
+      "spouseDob": "27th June",
+      "doa": "25th December",
+      "photo": "https://rotaryindia.org/Documents/directory/DA2C741D-0B64-4185-B35C-10A258BA409219122024113304AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3142_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Chandrahas S Shetty",
+      "contact": "9930365444",
+      "email": "rtn.chandrahas@gmail.com",
+      "club": "Thane Downtown",
+      "classification": "Analytical Instruments Business",
+      "dob": "23rd July",
+      "spouseName": "BHARTI",
+      "spouseDob": "30th June",
+      "doa": "21st December",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG-20251011-WA000327102025095158AM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3142_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3142.jpg"
+    }
+  },
+  {
+    "districtNo": "3150",
+    "dgThisYear": {
+      "name": "Uday Sudhir Pilani",
+      "contact": "8106508299",
+      "email": "udaypilani@gmail.com",
+      "club": "Lake District Moinabad",
+      "classification": "3150 Dg 2026 - 27",
+      "dob": "16th October",
+      "spouseName": "Roopal",
+      "spouseDob": "23rd October",
+      "doa": "27th June",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2023-12-28_at_10.37.43_AM28122023110852AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3150_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Harihara Prasad Mullapudi",
+      "contact": "9848155827",
+      "email": "rtn.hariprasad@gmail.com",
+      "club": "Rotary Club of Hyderabad North",
+      "classification": "Club Vice President",
+      "dob": "06th January",
+      "spouseName": "Vasantha Kumari Mullapudi",
+      "spouseDob": "25th May",
+      "doa": "07th February",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR310320260520548772494PM.png",
+      "spousePhoto": "/dg-pdf/sp_3150_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3150.jpg"
+    }
+  },
+  {
+    "districtNo": "3160",
+    "dgThisYear": {
+      "name": "Pullalarevu Keshav Reddy",
+      "contact": "9390299899",
+      "email": "dgkeshav3160@gmail.com",
+      "club": "Anantapur Central And. Pr.",
+      "classification": "3160 Dg 2026 - 27",
+      "dob": "22nd September",
+      "spouseName": "Swetha Reddy",
+      "spouseDob": "14th December",
+      "doa": "25th April",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2023-12-21_at_9.59.40_AM21122023100002AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3160_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Trivikram Joshi",
+      "contact": "9448110099",
+      "email": "trivikramjoshi@gmail.com",
+      "club": "Raichur Central Karnataka",
+      "classification": "3160 Dg 2027 - 28",
+      "dob": "11th June",
+      "spouseName": "Amrutha Joshi",
+      "spouseDob": "13th January",
+      "doa": "21st February",
+      "photo": "/dg-pdf/dg_3160_next.jpg",
+      "spousePhoto": "/dg-pdf/sp_3160_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3160.jpg"
+    }
+  },
+  {
+    "districtNo": "3170",
+    "dgThisYear": {
+      "name": "Lenny Da Costa",
+      "contact": "9823093675",
+      "email": "drlennydacosta@gmail.com",
+      "club": "Margao Midtown",
+      "classification": "Club Executive Secretary/Director",
+      "dob": "13th December",
+      "spouseName": "Nita Noronha e Costa",
+      "spouseDob": "03rd August",
+      "doa": "05th December",
+      "photo": "https://rotaryindia.org/Documents/directory/lenny14042026071619PM.JPG",
+      "spousePhoto": "https://rotaryindia.org/Documents/FaimilyMembersPhoto/WhatsApp_Image_2024-01-09_at_11.44.02_PM10012024120646PM06042026112143AM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "Ashok Parashram Naik",
+      "contact": "9845398007",
+      "email": "apnaik7@gmail.com",
+      "club": "Belgaum South  Karnataka",
+      "classification": "Club President",
+      "dob": "30th July",
+      "spouseName": "Deepa",
+      "spouseDob": "22nd October",
+      "doa": "12th September",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2025-09-24_at_11.58.11_AM24092025120625PM.jpeg"
+    }
+  },
+  {
+    "districtNo": "3181",
+    "dgThisYear": {
+      "name": "Sathish Bolar",
+      "contact": "9343352355",
+      "email": "sathishbolar@gmail.com",
+      "club": "Mangalore South Karnataka",
+      "classification": "Director Club Service",
+      "dob": "",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "",
+      "photo": "https://rotaryindia.org/Documents/directory/sathish-bolar16092025114921AM.png"
+    },
+    "dgNextYear": {
+      "name": "Somashekar Shivanna",
+      "contact": "9448385682",
+      "email": "yashawimysore@gmail.com",
+      "club": "Mysore North Karnataka",
+      "classification": "Club Foundation Chair",
+      "dob": "18th May",
+      "spouseName": "KKanthamma",
+      "spouseDob": "20th July",
+      "doa": "12th May",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2025-01-06_at_6.25.20_PM06012025063204PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3181_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3181.jpg"
+    }
+  },
+  {
+    "districtNo": "3182",
+    "dgThisYear": {
+      "name": "Bandimut Manjunath Bhat",
+      "contact": "9845243619",
+      "email": "mbhatbvr@gmail.com",
+      "club": "Brahmavar Karnataka",
+      "classification": "3182 Dg 2026 - 27",
+      "dob": "21st May",
+      "spouseName": "Veena M Bhat",
+      "spouseDob": "20th December",
+      "doa": "04th March",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG-20241007-WA010908102024101955AM.jpg",
+      "spousePhoto": "/dg-pdf/cr_3182_thisDG_sp.jpg"
+    },
+    "dgNextYear": {
+      "name": "Vasanth Hoblidar",
+      "contact": "9449039066",
+      "email": "vasant.hoblidar@gmail.com",
+      "club": "Shimoga East Karnataka",
+      "classification": "Other",
+      "dob": "11th October",
+      "spouseName": "PADMINI V. HOBLIDAR",
+      "spouseDob": "07th May",
+      "doa": "21st November",
+      "photo": "https://rotaryindia.org/Documents/directory/VASANTH_HOBLIDAR07062026122953PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3182_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3182.jpg"
+    }
+  },
+  {
+    "districtNo": "3191",
+    "dgThisYear": {
+      "name": "Anil Gupta",
+      "contact": "9845028100",
+      "email": "anilgupta2809@gmail.com",
+      "club": "Bangalore IT Corridor",
+      "classification": "Club Trainer",
+      "dob": "28th September",
+      "spouseName": "Sangita Gupta",
+      "spouseDob": "23rd February",
+      "doa": "12th December",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-06-22_at_12.53.04_PM22062024125316PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3191_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Harini N. Ravindranath",
+      "contact": "9945480852",
+      "email": "harini20ravindranath@gmail.com",
+      "club": "Greater Jayanagar Bengaluru",
+      "classification": "3191 Dg 2027 - 28",
+      "dob": "24th September",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "16th August",
+      "photo": "https://rotaryindia.org/Documents/directory/Harini_N._Ravindranath12052026122213PM.jpg",
+      "couplePhoto": "/dg-pdf/couple_3191.jpg"
+    }
+  },
+  {
+    "districtNo": "3192",
+    "dgThisYear": {
+      "name": "Ravishankar Dakoju",
+      "contact": "9900926718",
+      "email": "ravi@harahousing.com",
+      "club": "Bangalore",
+      "classification": "",
+      "dob": "06th June",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR260320260622078851763PM.png"
+    },
+    "dgNextYear": {
+      "name": "B. S. Vinod Kumar",
+      "contact": "9845039706",
+      "email": "vinod@visbin.com",
+      "club": "Bangalore North",
+      "classification": "Club Secretary",
+      "dob": "17th July",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "25th November",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR310320260651345346330PM.png",
+      "couplePhoto": "/dg-pdf/couple_3192.jpg"
+    }
+  },
+  {
+    "districtNo": "3203",
+    "dgThisYear": {
+      "name": "Boopathi Kumarsamy",
+      "contact": "9363354003",
+      "email": "boopathiavn@gmail.com",
+      "club": "Avanashi",
+      "classification": "Club Foundation Chair",
+      "dob": "06th September",
+      "spouseName": "Tamilselvi Boopathi",
+      "spouseDob": "22nd October",
+      "doa": "12th December",
+      "photo": "https://rotaryindia.org/Documents/directory/07032024125430PM.png",
+      "spousePhoto": "/dg-pdf/sp_3203_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Vijayachandhran K K",
+      "contact": "9789776587",
+      "email": "vee.chandhran@gmail.com",
+      "club": "ERODE",
+      "classification": "3203 Dg 2027 - 28",
+      "dob": "05th July",
+      "spouseName": "Hemalatha P",
+      "spouseDob": "15th March",
+      "doa": "23rd February",
+      "photo": "https://rotaryindia.org/Documents/directory/Vijayachandhran_K_K18092024100536AM.png",
+      "spousePhoto": "/dg-pdf/sp_3203_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3203.jpg"
+    }
+  },
+  {
+    "districtNo": "3204",
+    "dgThisYear": {
+      "name": "Mohandas Menon Methile Veettil",
+      "contact": "9447133505",
+      "email": "menonlic@gmail.com",
+      "club": "Nileshwar",
+      "classification": "Life Insurance Expert",
+      "dob": "22nd May",
+      "spouseName": "Mini Mohandas",
+      "spouseDob": "25th May",
+      "doa": "30th May",
+      "photo": "https://rotaryindia.org/Documents/directory/GOVERNOR180220260302153301627PM18042026102123AM.png",
+      "spousePhoto": "/dg-pdf/sp_3204_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Deepak Kumar Koroth",
+      "contact": "9447040203",
+      "email": "deepakdebees@gmail.com",
+      "club": "Calicut Central",
+      "classification": "Sergeant At Arms",
+      "dob": "05th March",
+      "spouseName": "Rema Deepak",
+      "spouseDob": "05th June",
+      "doa": "28th May",
+      "photo": "/dg-pdf/dg_3204_next.jpg",
+      "spousePhoto": "/dg-pdf/sp_3204_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3204.jpg"
+    }
+  },
+  {
+    "districtNo": "3205",
+    "dgThisYear": {
+      "name": "Joshy Chacko",
+      "contact": "9846022537",
+      "email": "joshy_cm@yahoo.com",
+      "club": "Perumbavoor Central Kerala",
+      "classification": "Club Foundation Chair",
+      "dob": "07th February",
+      "spouseName": "NINJU JOSHY",
+      "spouseDob": "04th July",
+      "doa": "09th May",
+      "photo": "https://rotaryindia.org/Documents/directory/A3BA2250-055E-49CE-B4C2-DD8805914A2C23082024031346PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3205_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Jayasankar Raghava",
+      "contact": "9447052777",
+      "email": "rjayasankar04@gmail.com",
+      "club": "Cochin Titans",
+      "classification": "3205 Dg 2027 - 28",
+      "dob": "21st March",
+      "spouseName": "Neena Jayasankar",
+      "spouseDob": "29th May",
+      "doa": "06th February",
+      "photo": "https://rotaryindia.org/Documents/directory/Jayasankar10072025013618PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3205_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3205.jpg"
+    }
+  },
+  {
+    "districtNo": "3206",
+    "dgThisYear": {
+      "name": "Maruti Ramaswamy Shanmukam",
+      "contact": "9600677111",
+      "email": "rsmaruti@gmail.com",
+      "club": "Coimbatore Texcity Tamil Nadu",
+      "classification": "Director International Service",
+      "dob": "23rd December",
+      "spouseName": "Rtn M Devi Karpagam",
+      "spouseDob": "02nd April",
+      "doa": "27th January",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-01-10_at_6.28.14_PM_(1)11012024104743AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3206_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Subramanian Sundarakesari",
+      "contact": "9443147852",
+      "email": "pprsps@gmail.com",
+      "club": "Coimbatore Tamil Nadu",
+      "classification": "Coffee Manufacturing",
+      "dob": "15th February",
+      "spouseName": "Valli Subramanian",
+      "spouseDob": "18th July",
+      "doa": "02nd September",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG_149822032025064559PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3206_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3206.jpg"
+    }
+  },
+  {
+    "districtNo": "3211",
+    "dgThisYear": {
+      "name": "Krishnan G. Nair",
+      "contact": "9847071387",
+      "email": "kgnrotary@gmail.com",
+      "club": "Quilon  Kerala",
+      "classification": "Club Trainer",
+      "dob": "08th October",
+      "spouseName": "Rajashree V Nair",
+      "spouseDob": "05th October",
+      "doa": "14th June",
+      "photo": "https://rotaryindia.org/Documents/directory/Krishnan_G._Nair12052026035822PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3211_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Meera John",
+      "contact": "9447022478",
+      "email": "rtn.drmeerajohn@gmail.com",
+      "club": "Quilon Lotus  Kerala",
+      "classification": "Club Learning Facilitator",
+      "dob": "26th September",
+      "spouseName": "John Daniel",
+      "spouseDob": "14th February",
+      "doa": "21st May",
+      "photo": "/dg-pdf/cr_3211_nextDG_dg.jpg",
+      "spousePhoto": "/dg-pdf/sp_3211_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3211.jpg"
+    }
+  },
+  {
+    "districtNo": "3212",
+    "dgThisYear": {
+      "name": "Gandhi Krishnan",
+      "contact": "9442545555",
+      "email": "rtngandhikrishnan@gmail.com",
+      "club": "Ramnad",
+      "classification": "3212 Dg 2026 - 27",
+      "dob": "14th May",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "22nd August",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-01-09_at_5.59.46_PM09012024062016PM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "J.w. Ebenesh Bensam",
+      "contact": "9443135977",
+      "email": "ebeneshrehan@yahoo.co.in",
+      "club": "Nagercoil Supreme",
+      "classification": "Club Foundation Chair",
+      "dob": "24th January",
+      "spouseName": "Rekha Ebenesh",
+      "spouseDob": "19th March",
+      "doa": "30th December",
+      "photo": "https://rotaryindia.org/Documents/directory/J.w._Ebenesh_Bensam12052026125316PM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3212_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3212.jpg"
+    }
+  },
+  {
+    "districtNo": "3231",
+    "dgThisYear": {
+      "name": "T. S. Ravikumar",
+      "contact": "9944336600",
+      "email": "dg3231ravikumar2627@gmail.com",
+      "club": "Arkonam",
+      "classification": "Educationalist",
+      "dob": "24th December",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "07th February",
+      "photo": "https://rotaryindia.org/Documents/directory/ravi_sir11012024103119AM.jpg"
+    },
+    "dgNextYear": {
+      "name": "Thangavelu Sivakumar",
+      "contact": "9677373777",
+      "email": "tsivakumar3230@gmail.com",
+      "club": "Vellore Accord",
+      "classification": "Club Treasurer",
+      "dob": "31st May",
+      "spouseName": "Sangeetha S",
+      "spouseDob": "16th March",
+      "doa": "19th August",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-11-07_at_7.06.22_PM07112024070703PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3231_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3231.jpg"
+    }
+  },
+  {
+    "districtNo": "3233",
+    "dgThisYear": {
+      "name": "Shriram Duvvuri",
+      "contact": "9884110000",
+      "email": "shriramd3233@gmail.com",
+      "club": "Chennai Capital",
+      "classification": "3233 Dg 2026 - 27",
+      "dob": "30th September",
+      "spouseName": "Shalini Duvvuri",
+      "spouseDob": "08th September",
+      "doa": "11th May",
+      "photo": "https://rotaryindia.org/Documents/directory/Shriram_Duvvuri22032024095849AM.png",
+      "spousePhoto": "/dg-pdf/sp_3233_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "SATHYA SURESH",
+      "contact": "9677158111",
+      "email": "lovechennai@yahoo.com",
+      "club": "Chennai Nolambur",
+      "classification": "3233 Dg 2027 - 28",
+      "dob": "15th August",
+      "spouseName": "Sathya Suresh",
+      "spouseDob": "15th August",
+      "doa": "19th November",
+      "photo": "/dg-pdf/dg_3233_next.jpg",
+      "spousePhoto": "/dg-pdf/sp_3233_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3233.jpg"
+    }
+  },
+  {
+    "districtNo": "3234",
+    "dgThisYear": {
+      "name": "Suresh D Jain",
+      "contact": "9380000916",
+      "email": "suresh@kesar.in",
+      "club": "Madras Metro",
+      "classification": "Club Membership Chair",
+      "dob": "17th January",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-04-07_at_4.42.34_PM08042024094936AM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "Vijaya Bharathi Rangarajan",
+      "contact": "9841099363",
+      "email": "vbr.rotary@gmail.com",
+      "club": "Madras",
+      "classification": "3234 Dg 2027 - 28",
+      "dob": "11th November",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "07th August",
+      "photo": "https://rotaryindia.org/Documents/directory/VIJAYA_BHARATHI_RANGARAJAN_Dr.09072015122941PM06012025115018AM.jpeg"
+    }
+  },
+  {
+    "districtNo": "3240",
+    "dgThisYear": {
+      "name": "Asim Kanti Adhikary",
+      "contact": "9564564088",
+      "email": "adhikary.a.k@gmail.com",
+      "club": "Bolpur Santiniketan W. Bengal",
+      "classification": "Club Foundation Chair",
+      "dob": "14th September",
+      "spouseName": "Sonali Adhikary",
+      "spouseDob": "15th December",
+      "doa": "14th August",
+      "photo": "https://rotaryindia.org/Documents/directory/sdsdsdsd26062024010127PM.JPG",
+      "spousePhoto": "/dg-pdf/sp_3240_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Danny Dutta",
+      "contact": "9435081168",
+      "email": "dannydutta@gmail.com",
+      "club": "Tezpur Assam",
+      "classification": "Director Youth Service",
+      "dob": "03rd July",
+      "spouseName": "Parul Dutta",
+      "spouseDob": "21st September",
+      "doa": "04th February",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG_022924032025120521PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3240_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3240.jpg"
+    }
+  },
+  {
+    "districtNo": "3250",
+    "dgThisYear": {
+      "name": "Anu Narang",
+      "contact": "9334019545",
+      "email": "anunarang0101@gmail.com",
+      "club": "Dhanbad Jharkhand",
+      "classification": "3250 Dg 2026 - 27",
+      "dob": "01st January",
+      "spouseName": "SANDEEP NARANG",
+      "spouseDob": "01st April",
+      "doa": "19th November",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-03-03_at_18.35.4004032024103408AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3250_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Mukesh Taneja",
+      "contact": "9431115673",
+      "email": "mukeshkpc@gmail.com",
+      "club": "Ranchi Jharkhand",
+      "classification": "Other",
+      "dob": "21st December",
+      "spouseName": "BHAVNA TANEJA",
+      "spouseDob": "19th September",
+      "doa": "21st October",
+      "photo": "https://rotaryindia.org/Documents/directory/417c7c28-c9c6-4d65-9ff9-202019fbe9a706052026040201PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3250_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3250.jpg"
+    }
+  },
+  {
+    "districtNo": "3261",
+    "dgThisYear": {
+      "name": "Alam Singh Roopra",
+      "contact": "9437082821",
+      "email": "roopraalam@gmail.com",
+      "club": "Rourkela Royal Orissa",
+      "classification": "Club Trainer",
+      "dob": "14th January",
+      "spouseName": "Rtn. Harpal Roopra",
+      "spouseDob": "01st September",
+      "doa": "07th May",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-02-26_at_9.33.35_AM26022024093759AM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3261_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Bhanu Pratap Singh Choudhary",
+      "contact": "9131424146",
+      "email": "bhanuchoudhary2609@gmail.com",
+      "club": "Balaghat Tigers, Madhya Pradesh",
+      "classification": "Club Foundation Chair",
+      "dob": "26th September",
+      "spouseName": "",
+      "spouseDob": "00/00",
+      "doa": "10th June",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2026-05-15_at_15.38.3615052026034440PM.jpeg",
+      "couplePhoto": "/dg-pdf/couple_3261.jpg"
+    }
+  },
+  {
+    "districtNo": "3262",
+    "dgThisYear": {
+      "name": "Anil Kumar Samal",
+      "contact": "9437031784",
+      "email": "dganil2627@gmail.com",
+      "club": "Bhubaneswar Royal",
+      "classification": "Administrative Service",
+      "dob": "15th September",
+      "spouseName": "SUBRATA SAMAL",
+      "spouseDob": "20th June",
+      "doa": "03rd February",
+      "photo": "https://rotaryindia.org/Documents/directory/DGE_Rtn_Anil_Ku_Samal02042026105239PM.jpg",
+      "spousePhoto": "https://rotaryindia.org/Documents/FaimilyMembersPhoto/Rtn_Subrata_Samal07042026033440PM.jpeg"
+    },
+    "dgNextYear": {
+      "name": "Adv Indrajit Sahu",
+      "contact": "9937953729",
+      "email": "sahu.indrajit@gmail.com",
+      "club": "Bhadrak",
+      "classification": "Immediate Past President",
+      "dob": "07th November",
+      "spouseName": "Sayanta Souramalini",
+      "spouseDob": "00/00",
+      "doa": "20th February",
+      "photo": "https://rotaryindia.org/Documents/directory/IMG-20260525-WA000225052026062914PM.jpg",
+      "spousePhoto": "https://rotaryindia.org/Documents/FaimilyMembersPhoto/IMG-20260525-WA000325052026062914PM.jpg",
+      "couplePhoto": "/dg-pdf/couple_3262.jpg"
+    }
+  },
+  {
+    "districtNo": "3291",
+    "dgThisYear": {
+      "name": "Tapas Bhattacharya",
+      "contact": "9830503352",
+      "email": "tapas3291@gmail.com",
+      "club": "Dum Dum  W. Bengal",
+      "classification": "Chairman -  Literacy",
+      "dob": "10th December",
+      "spouseName": "Susmita",
+      "spouseDob": "15th July",
+      "doa": "04th February",
+      "photo": "https://rotaryindia.org/Documents/directory/WhatsApp_Image_2024-01-06_at_2.17.04_PM06012024024747PM.jpeg",
+      "spousePhoto": "/dg-pdf/sp_3291_this.jpg"
+    },
+    "dgNextYear": {
+      "name": "Purnendu Roychowdhury",
+      "contact": "9903099992",
+      "email": "purnendurc@gmail.com",
+      "club": "Calcutta",
+      "classification": "Club Foundation Chair",
+      "dob": "11th December",
+      "spouseName": "Sucharita Roychowdhury",
+      "spouseDob": "28th October",
+      "doa": "07th June",
+      "photo": "https://rotaryindia.org/Documents/directory/Purnendu_Roychowdhury13052026113653AM.jpg",
+      "spousePhoto": "/dg-pdf/sp_3291_next.jpg",
+      "couplePhoto": "/dg-pdf/couple_3291.jpg"
+    }
   }
 ]

@@ -34,7 +34,7 @@
 .cm-card {
   border-radius: 2.4cqw;
   overflow: hidden;
-  background: #ece5dc; /* muted cream, per the PDF (was near-white) */
+  background: var(--sheet-bg, #ece5dc); /* section tint (from DirectorySheet); cream fallback */
   border: 1px solid #e0d3c4;
 }
 .cm-head {
@@ -98,11 +98,11 @@
   flex: none;
   text-align: center;
 }
-/* Print sheets are a fixed B5 height: use a slightly smaller photo so the card
-   is short enough to fit at least 4 per page without crossing the page edge.
-   Web (.dir-web) keeps the larger 15cqw photo. */
+/* Print sheets are a fixed B5 height: use a smaller photo so the card is short
+   enough to fit FIVE per page (per District Committee.svg). Web (.dir-web) keeps
+   the larger 15cqw photo. Photo box is 52.7 × 58 units in the SVG → 10cqw wide. */
 .dir-sheet .cm-photo {
-  width: 12cqw;
+  width: 10cqw;
 }
 .cm-photo-box {
   position: relative;
@@ -113,21 +113,15 @@
   border-radius: 0.5cqw;
   overflow: hidden;
 }
-.cm-silhouette {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 94%;
-  height: 95%;
-  fill: #c2c4c8;
-}
 .cm-photo-box img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Top-aligned: the photo's top edge sits at the box top, so a face is never
+     cropped from the top — any overflow is trimmed from the bottom instead. */
+  object-position: top;
 }
 .cm-cap {
   margin-top: 0.4cqw;
@@ -197,3 +191,63 @@
 }
 /* Each value sits right after its own label (natural label width), matching the
    design — not forced into a shared column. */
+
+/* ============================================================
+   PRINT-ONLY compaction — "District Committee.svg" format: FIVE member cards per
+   B5 sheet. Scoped to .dir-sheet so the web view (.dir-web) is untouched. The
+   card is tightened (photo, header, fonts, gaps) to the SVG's vertical rhythm
+   (~105-unit card pitch ≈ 19.9cqw) so five cards clear the page edge.
+   ============================================================ */
+.dir-sheet .cm-sheet {
+  gap: 1.05cqw;
+  /* Stretch to the full committee content band so the springs below have room to
+     distribute. A page with no springs (a dense 2-title page, or any partial page)
+     keeps its cards top-aligned with the leftover height falling at the bottom, so
+     nothing about those pages changes. */
+  flex: 1 1 auto;
+}
+/* Elastic spacer inserted ONLY between member cards on a "full" page (five cards,
+   at most one title — see CommitteeDirectory.tsx). It grows to absorb the leftover
+   height so the five cards spread evenly down the sheet instead of leaving a gap at
+   the bottom — "the space is used between the cards." The negative margin cancels the
+   flex row-gap the spacer would otherwise add, so when it collapses to zero (a nearly
+   full page) the base 1.05cqw card spacing is unchanged. Springs are never placed
+   right after a section title, so a title stays snug above its first card. */
+.dir-sheet .cm-spring {
+  flex: 1 1 0;
+  margin-top: -1.05cqw; /* = −(the .cm-sheet row-gap above) */
+  pointer-events: none;
+}
+.dir-sheet .cm-section {
+  font-size: 2.35cqw;
+  padding: 0.48cqw 4cqw;
+  margin: 0.12cqw auto;
+}
+.dir-sheet .cm-photo-box {
+  aspect-ratio: 52.7 / 58; /* SVG photo box */
+}
+.dir-sheet .cm-head {
+  min-height: 3.6cqw;
+}
+.dir-sheet .cm-name {
+  font-size: 2.2cqw;
+  padding: 0.35cqw 1.8cqw;
+}
+.dir-sheet .cm-role-text {
+  font-size: 1.9cqw;
+}
+.dir-sheet .cm-body {
+  padding: 0.55cqw 1.3cqw 0.5cqw;
+  gap: 1.4cqw;
+}
+.dir-sheet .cm-details {
+  gap: 0.17cqw;
+}
+.dir-sheet .cm-f {
+  font-size: 1.82cqw;
+  line-height: 1.17;
+}
+.dir-sheet .cm-cap {
+  margin-top: 0.3cqw;
+  font-size: 1.85cqw;
+}

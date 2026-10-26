@@ -31,3 +31,13 @@ src/routeTree.gen.ts
 member-photos/
 # Exceeds GitHub's 100MB/file limit — track via Git LFS if it must be in the repo
 3055 Directory Design.pdf
+
+# TanStack Router devtools cache
+.tanstack/
+
+# Raw source photos (292MB) — distilled into public/journey/ via scripts; kept local only
+Photos/
+
+# JSON backups
+*.bak
+*.bak-*

@@ -12,6 +12,7 @@ import { expandDesignation } from '../formatDate'
 import { CommitteeDirectory } from '../../components/CommitteeDirectory'
 import { DirectorySheet } from '../../components/DirectorySheet'
 import { ClubBODCard } from '../../components/ClubBODCard'
+import { orderClubsByZone } from '../../data/zoneClubOrder'
 import { AgZoneDirectory } from '../../components/AgZoneDirectory'
 import { DgOtherDistricts } from '../../components/DgOtherDistricts'
 import type { DistrictCommitteeMember } from '../../types/api'
@@ -20,7 +21,7 @@ import { inlineImages, rasterizeBackgrounds, waitForImages, sheetsToPdfBlob } fr
 
 export type ProgressCallback = (label: string, current: number, total: number) => void
 
-interface ExportDoc {
+export interface ExportDoc {
   path: string // folder path + filename inside the zip
   element: ReactElement
 }
@@ -36,11 +37,14 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out
 }
 
+
 const expandRoles = (members: DistrictCommitteeMember[]) =>
   members.map((m) => ({ ...m, DistrictDesignation: expandDesignation(m.DistrictDesignation || '') }))
 
-/** Build the full list of documents (with their zip folder paths) to render. */
-async function buildDocuments(): Promise<ExportDoc[]> {
+/** Build the full list of directory documents (with their zip folder paths, which
+ *  the combined-PDF export reuses as section labels). Shared by the ZIP export and
+ *  the "Download All (PDF)" / master PDF so the two never diverge. */
+export async function buildDirectoryDocuments(): Promise<ExportDoc[]> {
   const data = await fetchDistrictDirectory()
   const docs: ExportDoc[] = []
 
@@ -78,9 +82,14 @@ async function buildDocuments(): Promise<ExportDoc[]> {
   }
 
   // Clubs (board of directors) — two cards per sheet, like the /bod page.
-  const clubs = selectClubsBOD(data)
+  // Match the "Rotary Clubs of 3055" section (bod.tsx): hide a club whose card has
+  // NO officer info at all — neither a President nor a Secretary name. Kept local to
+  // this Clubs section so no other export section (committees, AGs, DGs) is affected.
+  const clubs = selectClubsBOD(data).filter(
+    (c) => Boolean((c.President_member_name ?? '').trim()) || Boolean((c.Secreatary_member_name ?? '').trim()),
+  )
   if (clubs.length) {
-    const clubSheets = chunk(clubs, 2).map((pair, i) => (
+    const clubSheets = chunk(orderClubsByZone(clubs), 2).map((pair, i) => (
       <DirectorySheet key={i} pageNumber={i + 1} side={i % 2 === 0 ? 'right' : 'left'}>
         <div className="dir-clubs">
           {pair.map((club) => (
@@ -120,7 +129,7 @@ async function buildDocuments(): Promise<ExportDoc[]> {
  */
 export async function downloadDirectoryZip(onProgress: ProgressCallback): Promise<void> {
   onProgress('Preparing…', 0, 1)
-  const docs = await buildDocuments()
+  const docs = await buildDirectoryDocuments()
   const zip = new JSZip()
 
   for (let i = 0; i < docs.length; i++) {

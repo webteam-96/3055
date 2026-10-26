@@ -1,0 +1,1558 @@
+/* ============================================================
+   ReferencePage — static directory reference sheets (Founder,
+   Zones, Awards, Protocol, Donors, Rotary Information) rendered
+   on the SAME Border.svg frame + Petrona typography as the
+   Profile/Message (LeaderPage) sheets.
+   ============================================================ */
+.ref-page {
+  --ref-navy: #1d2d6c;
+  --ref-blue: #1d2d6c; /* dark navy — the light/royal blue is no longer used */
+  --ref-gold: #c8862b;
+  --ref-red: #c1121f; /* red title banner */
+  --ref-ink: #2b2b2b;
+
+  position: relative;
+  container-type: inline-size; /* enables cqw units, like LeaderPage */
+  box-sizing: border-box;
+  overflow: hidden;
+  width: min(700px, 96vw);
+  aspect-ratio: 527.24 / 697.32; /* Border.svg artwork — fixed B5 sheet */
+  margin: 28px auto;
+  background: #f8f5ef;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14);
+  color: var(--ref-ink);
+  font-family: 'Geist', sans-serif; /* sans-serif body for the reference sheets */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ref-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Content safe area (matches the Finalised Static Pages design): below the
+   header logos, inside the side margins, above the skyline. Content is scaled
+   (via --ref-base density) to fit this fixed box — it never overlaps the frame. */
+.ref-content {
+  position: absolute;
+  z-index: 1;
+  top: 12%;
+  left: 8%;
+  right: 7%;
+  bottom: 8%;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--ref-base, 1.8014cqw);
+  line-height: 1.5;
+  color: var(--ref-ink);
+}
+
+/* Hidden measuring sheet — same width as a real sheet (so cqw sizing matches) but
+   with unbounded height, so a whole page's content can be measured before it is
+   split across as many sheets as it needs. */
+.ref-page.ref-probe {
+  position: absolute;
+  left: -100000px;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: visible;
+  aspect-ratio: auto;
+  height: auto;
+  box-shadow: none;
+}
+.ref-content--probe {
+  position: static;
+  width: 85%; /* = 100% − 8% left − 7% right, matching the real content box */
+  height: auto;
+  bottom: auto;
+  margin: 0;
+}
+
+/* ---- Title banner: navy pill, identical to the directory's .cm-section ---- */
+.ref-title {
+  align-self: center;
+  max-width: 92%;
+  margin: 0 auto 1.4cqw;
+  padding: 0.85cqw 4cqw;
+  background: var(--ref-navy);
+  border-radius: 1.4cqw;
+  color: #fff;
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 2.6cqw;
+  line-height: 1.15;
+  text-align: center;
+}
+.ref-title--sm {
+  font-size: 2.4cqw;
+}
+
+/* ---- Cover / title sheet: one large section title, centred in the middle of the
+   framed page (same safe area as .ref-content — below the header logos, above the
+   skyline). Used by ReferenceTitlePage. ---- */
+.ref-cover {
+  position: absolute;
+  z-index: 1;
+  top: 12%;
+  left: 8%;
+  right: 7%;
+  bottom: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+/* Holds the title (centred in the cover, as before). The subtitle is absolutely
+   positioned off this box so it hangs BELOW the title without shifting the title's
+   centred placement. */
+.ref-cover-inner {
+  position: relative;
+  max-width: 100%;
+}
+.ref-cover-title {
+  margin: 0;
+  max-width: 100%;
+  color: var(--ref-navy);
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 5.6cqw;
+  line-height: 1.14;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+/* Short committee description under the title (client-supplied). 20px per request.
+   Positioned 4 blank lines BELOW the (centred) title, hanging into the lower half —
+   the title keeps its original dead-centre placement. */
+.ref-cover-subtitle {
+  position: absolute;
+  top: calc(100% + 150px); /* title bottom + ~5 blank lines (5 × the 30px line-height) */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 78cqw;
+  margin: 0;
+  color: var(--ref-navy);
+  font-family: 'Petrona', serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* ---- Index / table of contents (front matter): a borderless 3-column contents
+   table (Sr. No. | Contents | Page No.) with dotted leaders and decimal-numbered
+   sub-entries. Packs the whole list onto one B5 sheet at the uniform reference
+   type. Rough content + dummy page numbers for now. ---- */
+.ref-content.index {
+  --ix-leader: #c3b09a; /* muted tan dotted-leader, tied to the cream sheet */
+  font-size: 1.52cqw;
+}
+.ref-content.index .index-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  line-height: 1.2; /* rows are single lines — tight leading so the list fits one sheet */
+}
+.ref-content.index .index-table col.ix-c-sr {
+  width: 13%;
+}
+.ref-content.index .index-table col.ix-c-page {
+  width: 14%;
+}
+.ref-content.index .index-table th,
+.ref-content.index .index-table td {
+  border: 0; /* borderless — a clean TOC, no gridlines */
+  padding: 0;
+  vertical-align: baseline;
+}
+/* Column header row */
+/* All three column headers are centred; only the Contents entry list below stays
+   left-aligned. */
+.ref-content.index .index-table thead th {
+  color: var(--ref-navy);
+  font-weight: 700;
+  font-size: calc(1.02em + 3px); /* column headers bumped +3px for prominence */
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap; /* keep "PAGE NO." on one line at the larger size */
+  padding-bottom: 0.7em;
+}
+/* Sr. No. + Page No. columns: centred, tabular figures, never wrapping */
+.ref-content.index .index-table td.ix-sr {
+  color: var(--ref-navy);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+.ref-content.index .index-table td.ix-page {
+  text-align: center;
+  color: var(--ref-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ref-content.index .index-table tr.ix-row td {
+  padding-top: 0.13em;
+  padding-bottom: 0.13em;
+}
+/* Top-level entries: bold navy, with extra space above to separate sections */
+.ref-content.index .index-table tr.ix-top td {
+  padding-top: 0.42em;
+}
+.ref-content.index .index-table tbody tr.ix-top:first-child td {
+  padding-top: 0;
+}
+.ref-content.index .index-table tr.ix-top td.ix-sr,
+.ref-content.index .index-table tr.ix-top td.ix-page,
+.ref-content.index .index-table tr.ix-top .ix-label {
+  color: var(--ref-navy);
+  font-weight: 700;
+}
+/* Sub-entries: lighter weight, content indented under its section */
+.ref-content.index .index-table tr.ix-sub td.ix-sr {
+  font-weight: 400;
+}
+.ref-content.index .index-table tr.ix-sub .ix-label {
+  padding-left: 1.6cqw;
+  color: var(--ref-ink);
+}
+/* Contents cell: label + dotted leader stretching to the page-number column */
+.ref-content.index .index-table .ix-cwrap {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+}
+.ref-content.index .index-table .ix-label {
+  flex: 0 1 auto;
+}
+.ref-content.index .index-table .ix-dots {
+  flex: 1 1 auto;
+  min-width: 1.4em;
+  margin: 0 0.5em;
+  border-bottom: 2px dotted var(--ix-leader);
+  position: relative;
+  top: -0.3em;
+}
+
+/* Two-line coloured document title (e.g. Founder page: red line + blue line),
+   used instead of the red banner where the source has coloured heading text. */
+.ref-doctitle {
+  align-self: center;
+  margin: 0 0 1cqw;
+  text-align: center;
+  line-height: 1.16;
+}
+.ref-doctitle .l1,
+.ref-doctitle .l2 {
+  display: block;
+  font-weight: 700;
+  font-size: 3.4cqw;
+  letter-spacing: 0.3px;
+}
+.ref-doctitle .l1,
+.ref-doctitle .l2 {
+  color: var(--ref-navy);
+}
+/* Founder page: the person's name, navy, under the "FOUNDER OF ROTARY" pill. */
+.founder-name {
+  align-self: center;
+  margin: 0.2cqw 0 1cqw;
+  text-align: center;
+  color: var(--ref-navy);
+  font-weight: 700;
+  font-size: 2.9cqw;
+  letter-spacing: 0.3px;
+}
+
+/* ---- Blue sub-heading with trailing rule ---- */
+.ref-h {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+  margin: 0.5em 0 0.35em;
+  color: var(--ref-navy); /* dark navy — matches the title-banner background */
+  font-weight: 700;
+  font-size: 1.08em;
+  line-height: 1.2;
+}
+.ref-h > span {
+  flex: none;
+}
+.ref-h--rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ref-gold);
+}
+
+/* ---- Body text ---- */
+.ref-content p,
+.ref-p {
+  margin: 0 0 0.62em;
+  text-align: justify;
+}
+/* RI President's Club Excellence Award — body copy in pure black (not the default
+   grey ink); blue sub-headings are unaffected. */
+.ref-content.cea p,
+.ref-content.cea .ref-ol > li,
+.ref-content.cea .ref-ul > li {
+  color: #000;
+}
+/* Rotary Protocol & Decorum — body copy in pure black (not the default grey ink);
+   the blue heading and blue policy label keep their colour. */
+.ref-content.protocol p,
+.ref-content.protocol .ref-ol > li,
+.ref-content.protocol .ref-ul > li {
+  color: #000;
+}
+/* Body text +2px on these four pages (over the uniform 1.8014cqw). font-size is
+   set here rather than via --ref-base because that variable is applied inline and
+   would win over a class rule. Club Excellence Award & Protocol bump only the body
+   paragraphs/lists (blue sub-headings keep their size); the two table pages bump
+   the whole content block (office-info/subtitle + table) — their titles are sized
+   in absolute cqw and are unaffected. Pagination re-measures at the larger size. */
+.ref-content.cea p,
+.ref-content.cea .ref-ol > li,
+.ref-content.cea .ref-ul > li,
+.ref-content.protocol p,
+.ref-content.protocol .ref-ol > li,
+.ref-content.protocol .ref-ul > li {
+  font-size: calc(1.8014cqw + 2px);
+}
+.ref-content.riso,
+.ref-content.zone4 {
+  font-size: calc(1.8014cqw + 2px);
+}
+/* Oath pages (President/Secretary + New Members): the English/Gujarati/Hindi oath
+   text (from the image-only PDF), as selectable text — +2px and pure black. Each
+   language is two <p>s (the oath + its "God help me" line); the 3rd and 5th <p> begin
+   the Gujarati and Hindi sections, so give them a two-blank-line gap from the one above. */
+.ref-content.oath p {
+  font-size: calc(1.8014cqw + 2px);
+  color: #000;
+}
+.ref-content.oath p:nth-of-type(1),
+.ref-content.oath p:nth-of-type(3),
+.ref-content.oath p:nth-of-type(5) {
+  margin-top: 3.6em;
+}
+.ref-content p:last-child {
+  margin-bottom: 0;
+}
+.ref-content .ref-lead {
+  text-align: center;
+  color: var(--ref-navy);
+  font-weight: 600;
+}
+.ref-content .ref-quote {
+  margin: 0.4em 0 0.9em;
+  text-align: center;
+  color: var(--ref-blue);
+  font-style: italic;
+  font-size: 1.12em;
+  line-height: 1.4;
+}
+.ref-note {
+  color: var(--ref-navy);
+  font-weight: 700;
+}
+
+/* ---- Lists ---- */
+.ref-ol,
+.ref-ul {
+  margin: 0.1em 0 0.62em;
+  padding: 0;
+  list-style: none;
+}
+.ref-ol > li,
+.ref-ul > li {
+  position: relative;
+  margin: 0 0 0.3em;
+  padding-left: 1.7em;
+}
+.ref-ol {
+  counter-reset: refol;
+}
+.ref-ol > li::before {
+  counter-increment: refol;
+  content: counter(refol) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ref-ink);
+  font-weight: 600;
+}
+/* Fleur-de-lis / diamond bullets echo the source's marker glyphs. */
+.ref-ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0.15em;
+  top: 0.52em;
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--ref-gold);
+  transform: rotate(45deg);
+}
+.ref-ul--diamond > li::before {
+  background: var(--ref-gold); /* orange/gold, consistent with the other diamonds */
+}
+.ref-ul--dot > li::before {
+  border-radius: 50%;
+  transform: none;
+  background: var(--ref-ink);
+  width: 0.32em;
+  height: 0.32em;
+  top: 0.6em;
+  left: 0.3em;
+}
+
+/* ---- Two-column layout (e.g. Protocol page) ---- */
+.ref-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 3cqw;
+  align-content: start;
+}
+
+/* ---- Images ---- */
+.ref-figure {
+  margin: 0 0 0.7em;
+  text-align: center;
+}
+.ref-figure img,
+.ref-img {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+  border-radius: 0.6cqw;
+}
+.ref-figure figcaption {
+  margin-top: 0.4em;
+  font-weight: 600;
+  color: var(--ref-navy);
+}
+.ref-portrait {
+  width: 34%;
+  border-radius: 0.4cqw;
+}
+
+/* ---- Tables (Donors, RI office, etc.) ---- */
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94em;
+}
+.ref-table th,
+.ref-table td {
+  border: 1px solid #c9cdd6;
+  padding: 0.28em 0.6em;
+  text-align: left;
+  vertical-align: top;
+}
+.ref-table thead th {
+  background: #eef1f6;
+  font-weight: 700;
+  text-align: center;
+}
+.ref-table .ref-group td {
+  background: #dce7f3;
+  color: var(--ref-blue);
+  font-weight: 700;
+}
+.ref-table--center td,
+.ref-table--center th {
+  text-align: center;
+}
+
+.ref-scroll {
+  overflow-x: auto;
+}
+
+/* ---- Page-specific tweaks ---- */
+/* Zones map: fill the full content margin (wider than the default text area),
+   scaled up with no distortion and no data loss. The PNG background is
+   transparent so it blends onto the cream page. */
+.ref-content.zones {
+  top: 12%;
+  left: 5%;
+  right: 5%;
+  bottom: 6%;
+  justify-content: center;
+  align-items: stretch;
+}
+.zones-figure {
+  margin: 0;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zones-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+}
+/* Founder page ONLY — larger photo, larger body text, and more space between
+   paragraphs (the sheet has ample empty room). Scoped so no other page changes. */
+.ref-content.founder {
+  font-size: 2.4cqw;
+}
+.ref-content.founder .ref-portrait {
+  width: 44%;
+}
+.ref-content.founder p {
+  margin-bottom: 1.5em;
+}
+.ref-content.founder .ref-quote {
+  margin: 1em 0 1.3em;
+}
+/* Protocol page: tighter two columns of dense lists. */
+.ref-content.protocol .ref-cols {
+  column-gap: 2.4cqw;
+}
+.ref-content.protocol .ref-ul > li,
+.ref-content.protocol .ref-ol > li {
+  margin-bottom: 0.34em;
+}
+
+/* ---- Rotary Leaders from Zone 4 — grouped directory table ---- */
+.ref-content.zone4 {
+  justify-content: flex-start;
+}
+/* Centred lead-in line under the red title banner. */
+.ref-subtitle {
+  align-self: center;
+  max-width: 94%;
+  margin: -0.3cqw 0 1.1cqw;
+  text-align: center;
+  color: var(--ref-navy);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.rl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1em; /* match the uniform 1.8014cqw body size (same as the RISO table) */
+  table-layout: fixed;
+}
+.rl-table th,
+.rl-table td {
+  border: 1px solid #c9cdd6;
+  padding: 0.22em 0.55em;
+  vertical-align: middle;
+  line-height: 1.16;
+  overflow-wrap: break-word;
+}
+/* Column header — Rotary royal blue (navy), white text. */
+.rl-table thead th {
+  background: var(--ref-navy);
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.rl-table thead th.rl-dist-h {
+  width: 17%;
+}
+.rl-table thead th.rl-term-h {
+  width: 20%;
+}
+/* Functional-area band — navy with a gold underline accent. */
+.rl-table .rl-area td {
+  background: var(--ref-navy);
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  border-bottom: 0.35cqw solid var(--ref-gold);
+}
+/* Role band — light blue field, blue title, gold abbreviation, centred. */
+.rl-table .rl-role td {
+  background: #dce7f3;
+  color: var(--ref-blue);
+  font-weight: 700;
+  text-align: center;
+}
+.rl-table .rl-role .rl-abbr {
+  color: var(--ref-gold);
+}
+/* Person rows. */
+.rl-table td.rl-dist {
+  text-align: center;
+  font-weight: 700;
+  color: var(--ref-navy);
+  white-space: nowrap;
+}
+.rl-table td.rl-term {
+  text-align: center;
+  white-space: nowrap;
+}
+/* Non-striped person rows take the page's own paper-cream shade (matches RISO). */
+.rl-table tr.rl-person td {
+  background: #f8f5ef; /* light cream — the sheet's paper color */
+}
+.rl-table tr.rl-alt td {
+  background: #f4f1ea; /* cream zebra, echoing the directory card body */
+}
+
+/* ---- Donors page ---- */
+.ref-content.donors .ref-table {
+  font-size: 0.92em;
+}
+.ref-content.donors .ref-table td,
+.ref-content.donors .ref-table th {
+  padding: 0.16em 0.5em;
+  line-height: 1.26;
+}
+.ref-table td.c {
+  text-align: center;
+  white-space: nowrap;
+}
+.ref-content.donors .donor-subtitle {
+  text-align: center;
+  color: var(--ref-navy);
+  font-weight: 700;
+  font-size: 1.1em;
+  margin: -0.6cqw 0 0.9cqw;
+}
+.donor-table {
+  margin-bottom: 0.8em;
+}
+.donor-table + .donor-band {
+  margin-top: 0.2em;
+}
+/* Blue category band introducing the "Endowment & Major Gift" mini-table —
+   centred, matching the Zone 4 role bands and the donor table body size. */
+.donor-band {
+  margin-top: 0.35em;
+  background: #dce7f3;
+  color: var(--ref-blue);
+  font-weight: 700;
+  text-align: center;
+  padding: 0.22em 0.55em;
+  border: 1px solid #c9cdd6;
+  border-bottom: none;
+  font-size: calc(1.8014cqw + 1px);
+}
+.endow-table {
+  margin-bottom: 0.6em;
+}
+
+/* Donor directory table — styled like the Zone 4 leaders table: navy column
+   header, blue centred category bands, cream zebra body, uniform (+2px) body
+   size. Scoped to the Donors page so no other table is affected. */
+.ref-content.donors .donor-dir {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: calc(1.8014cqw + 1px);
+}
+.ref-content.donors .donor-dir th,
+.ref-content.donors .donor-dir td {
+  border: 1px solid #c9cdd6;
+  padding: 0.22em 0.55em;
+  vertical-align: middle;
+  line-height: 1.16;
+  overflow-wrap: break-word;
+}
+.ref-content.donors .donor-dir thead th {
+  background: var(--ref-navy);
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.ref-content.donors .donor-dir .donor-cat td {
+  background: #dce7f3;
+  color: var(--ref-blue);
+  font-weight: 700;
+  text-align: center;
+}
+.ref-content.donors .donor-dir td.donor-c {
+  text-align: center;
+  white-space: nowrap;
+}
+.ref-content.donors .donor-dir tr.donor-row td {
+  background: #f8f5ef;
+}
+.ref-content.donors .donor-dir tr.donor-alt td {
+  background: #f4f1ea;
+}
+.ref-content.donors .donor-dir.endow-dir {
+  margin-bottom: 0.4em;
+}
+/* Donor Recognition prose — body copy in pure black (not the default grey ink)
+   and +2px larger; blue section headings keep their colour but grow to stay above
+   the enlarged body. Scoped to the recognition sheets (.recog) so the donor table
+   is unaffected. */
+.ref-content.recog p,
+.ref-content.recog .donor-sub,
+.ref-content.recog .ref-ul > li {
+  color: #000;
+  font-size: calc(1.8014cqw + 2px);
+}
+.ref-content.recog .donor-h {
+  font-size: calc(1.8014cqw + 4px);
+}
+/* Recognition prose (pages 240-241). */
+.donor-h {
+  margin: 0.4em 0 0.2em;
+  color: var(--ref-blue);
+  font-weight: 700;
+  font-size: 1.05em;
+}
+.donor-sub {
+  margin: 0.24em 0 0.05em !important;
+  color: var(--ref-ink);
+  font-weight: 700;
+  text-align: left !important;
+}
+/* Individual-recognition entry: the insignia photo sits to the LEFT of the whole
+   entry (its subheading + body text/bullets), as one flex row. Explicit image height
+   keeps the entry's measured height stable for the recognition-prose pagination even
+   before the photo finishes loading. */
+.donor-entry {
+  display: flex;
+  align-items: center;
+  gap: 3.2cqw;
+  margin: 0.85em 0 0.55em;
+}
+.donor-entry-body {
+  min-width: 0;
+  flex: 1;
+}
+/* Right-side photo (Major Donor, Arch Klumph Society): image on the RIGHT, vertically
+   centered with its content (inherits align-items:center from .donor-entry). */
+.donor-entry--img-right {
+  flex-direction: row-reverse;
+}
+.donor-entry-body > .donor-entry-h {
+  margin-top: 0 !important;
+}
+.donor-recog-img {
+  height: 15cqw;
+  width: auto;
+  max-width: 30cqw;
+  object-fit: contain;
+  flex: none;
+  border-radius: 1cqw;
+  filter: drop-shadow(0 1cqw 1.4cqw rgba(0, 0, 0, 0.24));
+}
+/* Larger insignia for Benefactor, Major Donor and Arch Klumph Society. */
+.donor-entry--lg .donor-recog-img {
+  height: 22cqw;
+  max-width: 42cqw;
+}
+/* Benefactor: nudge the medallion down so it sits against its body text rather than
+   rising above the heading (relative offset — no effect on the measured block height). */
+.donor-entry--benefactor .donor-recog-img {
+  position: relative;
+  top: 3cqw;
+}
+.ref-content.donors p {
+  margin-bottom: 0.24em;
+  text-align: left;
+}
+.ref-content.donors .donor-h {
+  margin: 0.3em 0 0.12em;
+}
+.ref-content.donors .ref-ul > li {
+  margin-bottom: 0.14em;
+}
+.donor-bullets {
+  margin-top: 0.15em;
+}
+
+/* ---- Rotary Information (timeline / milestones / India / oath) ---- */
+.info-blue {
+  margin: 0.5em 0 0.15em;
+  color: var(--ref-blue);
+  font-weight: 700;
+  font-size: 1.02em;
+}
+.info-blue:first-child {
+  margin-top: 0;
+}
+/* Year-based milestone entry: bold year in a fixed left column, text beside. */
+.info-year-row {
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  column-gap: 0.8em;
+  margin: 0 0 0.5em;
+}
+.info-year-row .yr {
+  font-weight: 700;
+  color: var(--ref-ink);
+}
+.info-year-row .bd > p {
+  margin: 0 0 0.3em;
+  text-align: left;
+}
+.info-year-row .bd > p:last-child {
+  margin-bottom: 0;
+}
+.ref-content.info p {
+  text-align: left;
+  margin-bottom: 0.4em;
+}
+/* Floated photo beside wrapping text (source timeline layout). */
+.info-figure {
+  margin: 0 0 0.4em;
+}
+.info-figure img {
+  display: block;
+  border-radius: 0.4cqw;
+  box-shadow: 0 0.2cqw 0.5cqw rgba(0, 0, 0, 0.14);
+}
+.info-figure.left {
+  float: left;
+  width: 21%;
+  margin: 0.2em 1em 0.35em 0;
+}
+.info-figure.right {
+  float: right;
+  width: 25%;
+  margin: 0.2em 0 0.35em 1em;
+}
+.info-figure.left img,
+.info-figure.right img {
+  width: 100%;
+  max-height: 14cqw;
+  object-fit: contain;
+}
+.info-figure.full {
+  clear: both;
+  width: 100%;
+}
+.info-figure.full img {
+  width: 100%;
+  max-height: 40cqw;
+  object-fit: contain;
+}
+.info-figure figcaption {
+  margin-top: 0.25em;
+  text-align: center;
+  font-weight: 600;
+  color: var(--ref-navy);
+  font-size: 0.92em;
+}
+.info-clear {
+  clear: both;
+}
+/* THE ROTARY FOUNDATION MILESTONES — text and photos side by side. Switching this
+   section to block flow lets the (bigger, frameless) photos float to the RIGHT with
+   the year entries flowing beside them. Years render dark navy, body copy black.
+   Scoped to this section so the rest of Rotary Information is unchanged. */
+.ref-content.milestones {
+  display: block;
+  font-size: calc(1.8014cqw + 1px); /* content +1px */
+}
+/* Year rows flow as normal blocks (not grid/BFC) so their text wraps AROUND the
+   floated photo — filling the space beside and below it instead of leaving a gap.
+   The year sits in the left padding as an absolutely-positioned label. */
+.ref-content.milestones .info-year-row {
+  display: block;
+  position: relative;
+  padding-left: 3.9em;
+  margin: 0 0 0.5em;
+}
+.ref-content.milestones .info-year-row .yr {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3.4em;
+}
+.ref-content.milestones .info-figure {
+  float: right;
+  clear: right;
+  width: auto;
+  margin: 0.15em 0 0.5em 1.3em;
+}
+.ref-content.milestones .info-figure img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 38cqw;
+  max-height: 27cqw;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* The closing "Rotary Foundation" values graphic — sized to help the section pack
+   into two well-filled sheets. */
+.ref-content.milestones .info-figure.full img {
+  max-width: 32cqw;
+  max-height: 26cqw;
+}
+.ref-content.milestones .info-year-row .yr {
+  color: var(--ref-navy); /* years in dark blue */
+}
+.ref-content.milestones .info-year-row .bd > p,
+.ref-content.milestones > p {
+  color: #000; /* body text in black */
+}
+/* Portrait grid (e.g. Rotary in India RI Presidents). */
+.info-portraits {
+  clear: both;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6em 2em;
+  margin-top: 0.4em;
+  justify-items: center;
+}
+.info-portrait {
+  text-align: center;
+}
+.info-portrait img {
+  width: 40%;
+  border-radius: 0.5cqw;
+  box-shadow: 0 0.2cqw 0.5cqw rgba(0, 0, 0, 0.18);
+}
+.info-portrait .nm {
+  margin-top: 0.2em;
+  font-weight: 700;
+  color: #c0392b;
+}
+.info-portrait .rl {
+  color: var(--ref-blue);
+}
+/* ROTARY IN INDIA + WOMEN IN ROTARY — body copy black and +2px; the photo/name/
+   designation portraits are enlarged (the grid already centres them). Scoped to
+   these two pages so nothing else changes. */
+.ref-content.people p,
+.ref-content.people .info-year-row,
+.ref-content.people .info-year-row .bd > p {
+  font-size: calc(1.8014cqw + 2px);
+}
+.ref-content.people p,
+.ref-content.people .info-year-row .bd > p {
+  color: #000;
+}
+.ref-content.people .info-portrait {
+  font-size: calc(1.8014cqw + 2px);
+}
+.ref-content.people .info-portrait img {
+  width: 58%;
+}
+/* ROTARY IN INDIA — the four RI President portraits share ONE uniform, smaller box
+   so all four fit on page 256's first sheet; object-fit: cover crops each source
+   photo to fill the box (excess trimmed). Scoped to page 256 only. Each cell fills
+   its half of the grid (justify-items: stretch) so all four photos are identical in
+   size, and margin-inline: auto centres each block-level photo over its name and
+   designation. */
+.ref-content.india .info-portraits {
+  justify-items: stretch;
+}
+.ref-content.india .info-portrait img {
+  width: 46%;
+  aspect-ratio: 0.85;
+  object-fit: cover;
+  object-position: 50% 20%; /* keep the face (upper part) when cropping */
+  margin-inline: auto; /* centre the block-level photo within its column */
+}
+/* WOMEN IN ROTARY (page 257) — the three portraits sit in a single row of three
+   equal columns; each cell fills its third (justify-items: stretch) and the photo is
+   centred (margin-inline: auto) and sized to fit the narrower column. Scoped to page
+   257 only. */
+.ref-content.women .info-portraits {
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-items: stretch;
+  margin-top: 0.2em; /* sit snug under the timeline text so the row clears the sheet */
+}
+.ref-content.women .info-portrait img {
+  width: 76%;
+  margin-inline: auto;
+}
+/* Oath page: boxed multilingual pledges. */
+.oath-box {
+  background: #eef2f7;
+  border-radius: 0.8cqw;
+  padding: 1em 1.4em;
+  margin: 0 0 0.8em;
+}
+.oath-box.en {
+  line-height: 1.9;
+}
+.oath-img {
+  display: block;
+  width: 100%;
+  border-radius: 0.6cqw;
+  margin: 0 0 0.8em;
+}
+/* Placeholder shown until a cropped source image is dropped in. */
+.info-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 6cqw;
+  padding: 0.6em;
+  background: repeating-linear-gradient(45deg, #eef0f4, #eef0f4 6px, #e6e9ef 6px, #e6e9ef 12px);
+  border: 1px dashed #b9c0cc;
+  border-radius: 0.4cqw;
+  color: #6b7280;
+  font-size: 0.82em;
+  font-style: italic;
+}
+.info-portrait .info-ph {
+  min-height: 10cqw;
+}
+.oath-figure .info-ph {
+  min-height: 14cqw;
+}
+
+/* ROTARY DESIGNATED MONTHS (pages 260-261): one media row per month — the month's
+   promotional graphic on the LEFT, the heading (dark navy) and subtext (black) on
+   the RIGHT. Sized compactly so all six months of a page fill one B5 sheet. */
+.ref-content.months .month-row {
+  display: flex;
+  align-items: center;
+  gap: 1.6cqw;
+  margin-bottom: 0.8em;
+}
+.ref-content.months .month-row:last-child {
+  margin-bottom: 0;
+}
+.ref-content.months .month-row--flip {
+  flex-direction: row-reverse; /* alternate months: photo on the right, text on the left */
+}
+.ref-content.months .month-photo {
+  flex: 0 0 24%;
+  margin: 0;
+}
+.ref-content.months .month-photo img {
+  display: block;
+  width: 100%;
+  border-radius: 0.5cqw;
+  box-shadow: 0 0.15cqw 0.4cqw rgba(0, 0, 0, 0.14);
+}
+.ref-content.months .month-body {
+  flex: 1 1 auto;
+}
+.ref-content.months .month-body h3 {
+  margin: 0 0 0.15em;
+  color: var(--ref-navy); /* dark blue sub-heading, matching the banner */
+  font-weight: 700;
+  font-size: calc(1.8014cqw + 3px); /* heading bumped +2px over the base body size */
+  line-height: 1.2;
+}
+.ref-content.months .month-body p {
+  margin: 0;
+  color: #000; /* body text in black, not the default grey ink */
+  text-align: left;
+  font-size: calc(1.8014cqw + 2px); /* subtext bumped +2px */
+  line-height: 1.4;
+}
+/* Two-column bullet list (Rotary Acronyms). Body copy bumped +1px. */
+.ref-content.twocol .info-bullets {
+  columns: 2;
+  column-gap: 2.4cqw;
+}
+.ref-content.twocol .info-bullets > li {
+  break-inside: avoid;
+  font-size: calc(1.8014cqw + 2px);
+  line-height: 1.32;
+  margin-bottom: 0.28em;
+}
+
+/* ---- Rotary's Timeline — vertical-spine layout (pages 250-252) ------------
+   A year rail on the left, a continuous gold spine with a navy node per entry,
+   then the blue milestone title, its photos as compact thumbnails, and the text.
+   Same content as the source pages; only the placement/style differs. */
+.ref-content.timeline .tl-entry {
+  display: grid;
+  grid-template-columns: 10cqw 1fr;
+  column-gap: 1cqw;
+  align-items: start;
+}
+/* Year — bold navy, right-aligned so it reads straight into the spine node. */
+.ref-content.timeline .tl-year {
+  text-align: right;
+  padding-top: 0.02em;
+  color: var(--ref-navy);
+  font-weight: 700;
+  font-size: 1.08em;
+  line-height: 1.16;
+  white-space: nowrap;
+}
+/* The spine + node ride on the entry body's left border. Using padding-bottom
+   (not margin) keeps the gold line continuous from one node to the next. */
+.ref-content.timeline .tl-main {
+  position: relative;
+  border-left: 0.32cqw solid var(--ref-gold);
+  padding: 0 0 0.3em 1.4em;
+}
+.ref-content.timeline .tl-entry:last-child .tl-main {
+  padding-bottom: 0.1em;
+}
+.ref-content.timeline .tl-main::before {
+  content: '';
+  position: absolute;
+  left: calc(-0.16cqw - 0.21em); /* centre the node on the 0.32cqw gold spine */
+  top: 0.2em;
+  width: 0.42em; /* a touch smaller than before */
+  height: 0.42em;
+  border-radius: 50%;
+  background: var(--ref-navy);
+  box-shadow: 0 0 0 0.13em #f8f5ef; /* cream ring lifts the node off the spine */
+}
+.ref-content.timeline .tl-title {
+  margin: 0 0 0.1em;
+  color: var(--ref-navy);
+  font-weight: 700;
+  font-size: 1.04em;
+  line-height: 1.12;
+}
+.ref-content.timeline p {
+  margin: 0 0 0.18em;
+  line-height: 1.36;
+  color: #000;
+  text-align: left;
+}
+.ref-content.timeline .tl-main p:last-child {
+  margin-bottom: 0;
+}
+/* Entry photos: a wrapping row of uniform-height thumbnails. */
+.ref-content.timeline .tl-imgs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.7cqw;
+  margin: 0 0 0.45em;
+}
+.ref-content.timeline .tl-img {
+  margin: 0;
+  text-align: center;
+}
+.ref-content.timeline .tl-img img {
+  display: block;
+  height: 11cqw;
+  width: auto;
+  max-width: 100%;
+  border-radius: 0.4cqw;
+  box-shadow: 0 0.2cqw 0.5cqw rgba(0, 0, 0, 0.14);
+}
+/* Panorama / full-width source photos span the entry instead of a fixed height. */
+.ref-content.timeline .tl-img.wide {
+  flex: 1 1 100%;
+}
+.ref-content.timeline .tl-img.wide img {
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  max-height: 20cqw; /* keep the wide photo prominent but within the sheet */
+  margin: 0 auto;
+}
+/* "Rotary arrives in Asia": the photo drops below the text and is enlarged to fill
+   the empty tail of the sheet. Selector carries .tl-img too, so it out-specifies
+   the generic .tl-img.wide img rule above (else that 20cqw cap would win and the
+   entry would overflow onto the next sheet). */
+.ref-content.timeline .tl-img.tl-img--asia img {
+  max-height: 22cqw;
+}
+/* Let the enlarged photo spill into the sheet's bottom margin (the faded skyline)
+   without adding to the entry's measured height — otherwise the whole entry would
+   be pushed onto the next sheet. */
+.ref-content.timeline .tl-img.tl-img--asia {
+  margin-bottom: -5cqw;
+}
+/* "The first foundation program": centred below the text and enlarged to fill the
+   space under the entry (out-specifies the generic .tl-img.wide 20cqw cap). */
+.ref-content.timeline .tl-img.tl-img--foundation img {
+  max-height: 40cqw;
+}
+/* "Gates Foundation commits for Polio": big centred portrait below the text,
+   filling the empty tail of the sheet (out-specifies the generic .wide 20cqw cap). */
+.ref-content.timeline .tl-img.tl-img--gates img {
+  max-height: 62cqw;
+}
+.ref-content.timeline .tl-img figcaption {
+  margin-top: 0.18em;
+  max-width: 22cqw;
+  font-size: 0.8em;
+  font-weight: 600;
+  color: var(--ref-navy);
+  line-height: 1.12;
+}
+/* Small photos floated to the RIGHT of the entry, with the description wrapping
+   beside them (the elegant magazine style from the source pages). The clearfix
+   keeps the gold spine tall enough to contain a floated photo. */
+.ref-content.timeline .tl-main::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.ref-content.timeline .tl-side {
+  float: right;
+  width: 34%;
+  margin: 0.1em 0 0.35em 1.1em;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.6cqw;
+}
+/* Per-milestone photo size: tall portraits smaller, wide/paired shots larger. */
+.ref-content.timeline .tl-side--xs {
+  width: 18%;
+}
+.ref-content.timeline .tl-side--lg {
+  width: 46%;
+}
+/* One photo fills the column; a pair (e.g. Founding Years) sits side by side. */
+.ref-content.timeline .tl-side .tl-img {
+  flex: 1 1 46%;
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+}
+.ref-content.timeline .tl-side .tl-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.4cqw;
+  box-shadow: 0 0.2cqw 0.5cqw rgba(0, 0, 0, 0.14);
+}
+.ref-content.timeline .tl-side .tl-img figcaption {
+  margin-top: 0.15em;
+  max-width: 100%;
+  font-size: 0.78em;
+}
+
+/* ---- RI South Asia Office — staff directory table ---- */
+.ref-content.riso {
+  justify-content: flex-start;
+}
+/* Office address / phones / timings block under the red title banner. */
+.riso-info {
+  margin: -0.3cqw 0 1cqw;
+  text-align: center;
+  color: var(--ref-ink);
+  line-height: 1.3;
+}
+.riso-info b {
+  color: var(--ref-navy);
+}
+.riso-info .riso-hours {
+  color: var(--ref-navy);
+  font-weight: 600;
+}
+.riso-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1em; /* match the uniform 1.8014cqw body size */
+  table-layout: fixed;
+}
+.riso-table th,
+.riso-table td {
+  border: 1px solid #c9cdd6;
+  padding: 0.22em 0.55em;
+  vertical-align: middle;
+  line-height: 1.16;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+/* Column header — Rotary royal blue (navy), white text. */
+.riso-table thead th {
+  background: var(--ref-navy);
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.riso-table col.riso-c-name {
+  width: 20%;
+}
+.riso-table col.riso-c-desg {
+  width: 23%;
+}
+.riso-table col.riso-c-tel {
+  width: 16%; /* holds the 8-digit direct numbers + "(Direct)" header without overflow */
+}
+.riso-table col.riso-c-mail {
+  width: 41%; /* wide enough for the longest e-mail on one line */
+}
+/* Department band — navy with a gold underline accent. */
+.riso-table .riso-dept td {
+  background: var(--ref-navy);
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+  border-bottom: 0.35cqw solid var(--ref-gold);
+}
+.riso-table td.riso-name {
+  font-weight: 700;
+  color: var(--ref-navy);
+}
+.riso-table td.riso-tel {
+  text-align: center;
+  white-space: nowrap;
+}
+.riso-table td.riso-mail {
+  color: var(--ref-blue);
+  white-space: nowrap; /* keep every e-mail on a single line */
+  word-break: normal;
+  overflow-wrap: normal;
+}
+/* Non-striped person rows take the page's own paper-cream shade (not transparent),
+   so they read as clean paper instead of letting the border/skyline watermark show
+   through the cells. */
+.riso-table tr.riso-person td {
+  background: #f8f5ef; /* light cream — the sheet's paper color */
+}
+/* Alternate (striped) rows keep their slightly deeper cream zebra. Same specificity
+   as the rule above but listed later, so it wins for rows carrying both classes. */
+.riso-table tr.riso-alt td {
+  background: #f4f1ea; /* cream zebra */
+}
+
+/* ---- District Goals — same font size, banner and table look as the RI South Asia
+   Office page (navy column header, gold-accent bands, cream zebra), with two band
+   levels: the table title and the lettered section. Data from District Goals.xlsx. */
+.ref-content.dg {
+  justify-content: flex-start;
+  font-size: calc(1.8014cqw + 2px); /* matches the RI South Asia Office body size */
+  /* Shift the goals table up by ~3% vs the default .ref-content (top 12% / bottom 8%):
+     a dense continuation sheet (e.g. the AOP / PHF-MPHF page) packed its last row right
+     onto the bottom footer swoosh + page-number disc. top:9%/bottom:11% keeps the SAME
+     80% box height — so the row-pagination (which reserves 1 − 0.12 − 0.08 = 0.80 of the
+     sheet) is unchanged — but lifts the whole table clear of the footer. Scoped to dg. */
+  top: 9%;
+  bottom: 11%;
+}
+.dg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1em;
+  table-layout: fixed;
+}
+.dg-table th,
+.dg-table td {
+  border: 1px solid #c9cdd6;
+  padding: 0.22em 0.55em;
+  vertical-align: middle;
+  line-height: 1.16;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+/* Column header — Rotary royal blue (navy), white text. */
+.dg-table thead th {
+  background: var(--ref-navy);
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.dg-table col.dg-c-sr {
+  width: 10%;
+}
+.dg-table col.dg-c-part {
+  width: 65%;
+}
+.dg-table col.dg-c-goal {
+  width: 25%;
+}
+/* Table title band (the two Excel table headings) — navy with a gold underline. */
+.dg-table .dg-ttitle td {
+  background: var(--ref-navy);
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+  border-bottom: 0.35cqw solid var(--ref-gold);
+}
+/* Lettered section band (A. Events, B. Club Administration, …) — light gold, navy. */
+.dg-table .dg-section td {
+  background: #f3e3c0;
+  color: var(--ref-navy);
+  font-weight: 700;
+  text-align: left;
+}
+.dg-table td.dg-sr {
+  text-align: center;
+  white-space: nowrap;
+}
+.dg-table td.dg-goal {
+  text-align: center;
+  font-weight: 700;
+  color: var(--ref-navy);
+}
+/* Non-striped item rows take the sheet's paper-cream shade (not transparent). */
+.dg-table tr.dg-item td {
+  background: #f8f5ef;
+}
+.dg-table tr.dg-alt td {
+  background: #f4f1ea; /* cream zebra */
+}
+
+/* ---- Message and Theme — body copy at the same size as the Rotary Information
+   body content (+2px over the uniform 1.8014cqw); blue sub-headings keep their size.
+   Pagination re-measures at the larger size via the shared .mt probe. */
+.ref-content.mt p,
+.ref-content.mt .ref-ul > li {
+  font-size: calc(1.8014cqw + 2px);
+  color: #000; /* body copy in pure black, not the default grey ink */
+}
+/* Rotary Club of Ahmedabad Supreme — larger body copy (the sheet has ample room). */
+.ref-content.club p,
+.ref-content.club .ref-ul > li {
+  font-size: calc(1.8014cqw + 4px);
+  color: #000;
+}
+/* Centred section logos (CLI + Team NIRMAN) above the reference prose. Square vs
+   wide logos get their own width so both sit balanced. */
+.ref-content.mt .mt-logo {
+  text-align: center;
+  margin: 0.2cqw auto 1.2cqw;
+}
+.ref-content.mt .mt-logo img {
+  display: inline-block;
+  height: auto;
+  max-width: 100%;
+}
+.ref-content.mt .mt-logo--sq img {
+  width: 48%;
+}
+.ref-content.mt .mt-logo--wide img {
+  width: 46%;
+}
+
+/* ---- My Journey — DG's photo album (Pinterest-style masonry) ---------------
+   Same framed B5 sheet + navy title banner as every reference page; the only new
+   element is a 2-column masonry of photos with minimal framing and slightly
+   rounded corners. Placeholder tiles show until real photos are dropped in. */
+.ref-content.album {
+  overflow: hidden; /* keep the masonry within the framed safe area */
+}
+/* Match the other reference-page banners (which pass uppercase text). */
+.ref-content.album .ref-title {
+  text-transform: uppercase;
+}
+/* Justified-rows gallery: the rows column fills the sheet's remaining height (after
+   the banner); each row fills the width; rows stretch to fill the height together —
+   so the photos always fill the page with no empty space. Tiles crop minimally via
+   object-fit to absorb the fit. Row/tile flex-grow are set inline (per aspect). */
+.album-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw; /* tight gap between rows */
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.4cqw;
+  /* Rows keep their natural height; spread them down the sheet so the small leftover
+     becomes even spacing rather than one empty block at the bottom. */
+  justify-content: space-between;
+}
+/* Uniform grid: equal-size cells filling the sheet (used where even sizing matters
+   more than perfectly-filled rows). grid-auto-rows:1fr keeps every row the same height. */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 2), 1fr);
+  grid-auto-rows: 1fr;
+  gap: 1cqw;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.4cqw;
+}
+.album-grid .album-tile {
+  min-height: 0;
+  min-width: 0;
+}
+.album-row {
+  display: flex;
+  gap: 1cqw; /* tight gap between images */
+  align-items: stretch;
+  min-height: 0;
+  /* Start at the row's natural height (--h, in cqw) and grow proportionally to fill
+     the sheet, but no more than 1.14× natural — so photos enlarge to fill the page
+     with only a small crop rather than leaving empty space. */
+  flex-grow: var(--h, 1);
+  flex-shrink: 1;
+  flex-basis: calc(var(--h, 20) * 1cqw);
+  /* Growth cap = natural height × --fillcap (default 1.14). A section can raise
+     --fillcap to fill the whole sheet with no gaps (at the cost of more crop). */
+  max-height: calc(var(--h, 20) * var(--fillcap, 1.14) * 1cqw);
+}
+.album-tile {
+  /* Width ∝ aspect ratio so the row fills the page width (justified); height comes
+     from the row, so the box is the photo's shape (± the small fill crop above). */
+  flex-grow: var(--ar, 1.5);
+  flex-shrink: 1;
+  flex-basis: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 1cqw; /* slight cornered square */
+  background: #eceef3;
+  box-shadow: 0 0.15cqw 0.55cqw rgba(0, 0, 0, 0.12); /* soft lift, no hard border */
+}
+.album-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* box already matches the photo's aspect, so nothing is cropped */
+  border-radius: inherit;
+}
+/* Placeholder — a soft tile with a muted photo glyph, sized by its aspect-ratio. */
+.album-tile--ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef1f6 0%, #e5e8f0 100%);
+  color: #b6bece;
+}
+.album-ph-glyph {
+  width: 22%;
+  height: auto;
+}
+
+/* ============================================================
+   Print — pixel-perfect B5 PDF (mirrors LeaderPage.css).
+   ============================================================ */
+@media print {
+  @page {
+    size: 186mm 246mm;
+    margin: 0;
+  }
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  .ref-detail-wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+  .ref-page {
+    width: 186mm;
+    height: 246mm;
+    margin: 0;
+    box-shadow: none;
+    break-inside: avoid;
+    break-after: page;
+    page-break-after: always;
+  }
+  .ref-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

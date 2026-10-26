@@ -1,9 +1,20 @@
 import { Fragment, useLayoutEffect, useRef } from 'react'
 import { DirectorySheet } from './DirectorySheet'
+import { resolveImg } from '../api/districtDirectory'
 import type { DgPerson, OtherDistrict } from '../types/directory'
 import type { ViewMode } from '../hooks/useViewMode'
 import { firstName } from '../utils/firstName'
+import { titleCase } from '../utils/titleCase'
+import { NoPhoto } from './NoPhoto'
 import './DgOtherDistricts.css'
+
+// Free-text fields shown in Title Case; contact/e-mail/dates are left verbatim.
+const CASE_FIELDS = new Set<keyof DgPerson>(['name', 'club', 'classification'])
+
+// Date fields; an all-zero placeholder date (e.g. "00/00", "00/00/0000") means the
+// date is unknown — show it blank rather than a meaningless "00/00".
+const DATE_FIELDS = new Set<keyof DgPerson>(['dob', 'spouseDob', 'doa'])
+const isBlankDate = (s: string) => /0/.test(s) && /^[\s0/.-]*$/.test(s)
 
 const FIELDS: Array<{ key: keyof DgPerson; label: string }> = [
   { key: 'name', label: 'Name' },
@@ -59,14 +70,10 @@ function FitText({ text }: { text: string }) {
   )
 }
 
-// Grey person-silhouette placeholder (DG data carries no photos).
+// "No photograph" placeholder (DG data carries no photos) — the Rotary wheel, shared across
+// the whole directory. See NoPhoto.
 function Silhouette() {
-  return (
-    <svg className="dg-silhouette" viewBox="0 0 64 64" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-      <circle cx="32" cy="22" r="15" />
-      <path d="M3 64 a29 29 0 0 1 58 0 Z" />
-    </svg>
-  )
+  return <NoPhoto />
 }
 
 /**
@@ -98,9 +105,13 @@ function HeadArt({ districtNo }: { districtNo: string }) {
         fill={`url(#${lid})`}
         d="M10,0h120.5v0.1c-5.3-0.4-8.5,1.1-10.3,2.7c-4.8,4-4.1,10.2-9.3,15.2c-2.9,2.8-6.3,3.8-8.6,4.2H0v-11C0,5.1,4.5,0,10,0z"
       />
-      <text className="dg-h-txt" x="13.67" y="17.12">2026-27</text>
-      <text className="dg-h-txt" x="394.78" y="17.12">2027-28</text>
-      <text className="dg-h-txt" x="234.9" y="17.12" textAnchor="middle">DISTRICT {districtNo}</text>
+      {/* fill is set as a presentation ATTRIBUTE (not only via the .dg-h-txt class):
+          the html-to-image PDF capture copies HTML `color` but NOT the `fill` CSS
+          property onto SVG <text>, so a class-only white fell back to SVG-default
+          black in print. The attribute survives the capture's node clone. */}
+      <text className="dg-h-txt" fill="#ffffff" x="13.67" y="17.12">2026-27</text>
+      <text className="dg-h-txt" fill="#ffffff" x="394.78" y="17.12">2027-28</text>
+      <text className="dg-h-txt" fill="#ffffff" x="234.9" y="17.12" textAnchor="middle">DISTRICT {districtNo}</text>
     </svg>
   )
 }
@@ -114,15 +125,51 @@ function DistrictCard({ d }: { d: OtherDistrict }) {
         </div>
         <div className="dg-body">
           <div className="dg-strip" />
-          {PHOTO_X.map((x) => (
-            <div key={x} className="dg-pbox" style={{ left: `calc(var(--u) * ${x})` }}>
-              <Silhouette />
-            </div>
-          ))}
+          {/* Left (2026-27): two separate solo boxes — this-year DG, this-year spouse.
+              Right (2027-28): ONE wide holder with the DG+spouse couple photo shown
+              whole (no crop) when the record carries `couplePhoto`; otherwise it falls
+              back to the two separate next-year boxes (DG, spouse). A real photo shows
+              when present (enriched by phone match / PDF crop), else the grey silhouette. */}
+          {[d.dgThisYear.photo, d.dgThisYear.spousePhoto].map((raw, i) => {
+            const src = resolveImg(raw)
+            return (
+              <div key={PHOTO_X[i]} className="dg-pbox" style={{ left: `calc(var(--u) * ${PHOTO_X[i]})` }}>
+                {src ? <img className="dg-photo" src={src} alt="" /> : <Silhouette />}
+              </div>
+            )
+          })}
+          {(() => {
+            const couple = resolveImg(d.dgNextYear.couplePhoto)
+            if (couple) {
+              // Single wide holder (≈5:3) centred across the right pair's space.
+              return (
+                <div className="dg-pbox dg-pbox-couple">
+                  <img className="dg-photo" src={couple} alt="" />
+                </div>
+              )
+            }
+            // Fallback: the original two next-year boxes (DG, spouse).
+            return [d.dgNextYear.photo, d.dgNextYear.spousePhoto].map((raw, i) => {
+              const src = resolveImg(raw)
+              return (
+                <div key={PHOTO_X[i + 2]} className="dg-pbox" style={{ left: `calc(var(--u) * ${PHOTO_X[i + 2]})` }}>
+                  {src ? <img className="dg-photo" src={src} alt="" /> : <Silhouette />}
+                </div>
+              )
+            })
+          })()}
           <div className="dg-rows">
             {FIELDS.map((f) => {
-              // Spouse name shows the first name only (no Rtn./Dr./Mr. etc. prefix).
-              const fmt = (v: string | undefined) => (f.key === 'spouseName' ? firstName(v || '') : v) || ''
+              // Spouse name shows the first name only (no Rtn./Dr./Mr. etc. prefix);
+              // name/club/classification are Title-Cased; an all-zero date is blanked;
+              // the rest stay verbatim.
+              const fmt = (v: string | undefined) => {
+                const s = v || ''
+                if (f.key === 'spouseName') return firstName(s)
+                if (CASE_FIELDS.has(f.key)) return titleCase(s)
+                if (DATE_FIELDS.has(f.key) && isBlankDate(s)) return ''
+                return s
+              }
               return (
                 <Fragment key={f.key}>
                   <div className="dg-lv"><FitText text={fmt(d.dgThisYear[f.key])} /></div>
