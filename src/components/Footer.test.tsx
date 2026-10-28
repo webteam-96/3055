@@ -7,10 +7,9 @@ describe('Footer', () => {
     render(<Footer />)
     expect(screen.getByText(/Kaizen Infotech/i)).toBeInTheDocument()
   })
-  it('renders at least 3 logo images', () => {
+  it('renders no logos — copyright only', () => {
     render(<Footer />)
-    const imgs = screen.getAllByRole('img')
-    expect(imgs.length).toBeGreaterThanOrEqual(3)
+    expect(screen.queryAllByRole('img')).toHaveLength(0)
   })
   it('has link to kaizeninfotech.com', () => {
     render(<Footer />)

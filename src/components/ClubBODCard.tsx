@@ -11,6 +11,9 @@ import { NoPhoto } from './NoPhoto'
 import { IndexMark } from './IndexMark'
 import './ClubBODCard.css'
 
+// Public (deployed) directory site — the QR code and "Know more" link open it.
+const LIVE_SITE = 'https://3055directory.rizones45678.org'
+
 // When a member photo is missing or fails to load, hide the <img> so the Rotary-logo
 // placeholder behind it shows through.
 const onImgError = (e: SyntheticEvent<HTMLImageElement>) => {
@@ -69,12 +72,10 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
   // blends into the page as it did on the original uniform cream — only the navy
   // titlebar and orange officer bands stand out. The header colours are unchanged.
   const sheetBg = useSheetBg()
-  // Points at this site's own club-details page so the QR resolves on whatever
-  // origin the directory is deployed to (and in dev). Scanning opens the club's
-  // full details + members.
-  const detailsPath = `/club-details?groupId=${c.grpID}`
-  const origin = typeof window !== 'undefined' ? window.location.origin : ''
-  const qrLink = `${origin}${detailsPath}`
+  // Always the LIVE directory's club-details page, not this page's origin — a QR
+  // printed from a PDF exported on localhost must still open the club's full
+  // details + members when scanned. "Know more" uses the same link.
+  const detailsUrl = `${LIVE_SITE}/club-details?groupId=${c.grpID}`
 
   // 6 aligned rows: [president value, centre label, secretary value]
   const rows: Array<[string, string, string]> = [
@@ -142,8 +143,8 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
           <Photo src={c.President_Spouse_Profile_Photo} caption={firstName(c.President_Spouse_member_name) || 'Spouse'} alt="Spouse" />
         </div>
         <div className="qr c">
-          <div className="frame"><QRCodeSVG value={qrLink} size={62} /></div>
-          <a className="know-more no-print" href={detailsPath}>Know more</a>
+          <div className="frame"><QRCodeSVG value={detailsUrl} size={62} /></div>
+          <a className="know-more no-print" href={detailsUrl}>Know more</a>
         </div>
         <div className="photos sec">
           <Photo src={c.Secreatary_Profile_Photo} caption={firstName(c.Secreatary_member_name)} alt={c.Secreatary_member_name} />

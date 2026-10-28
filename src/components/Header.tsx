@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import logo1 from '../assets/images/rotary-3055.png'
 import nirman from '../assets/images/theme/team-nirman.jpg'
 
-export function Header() {
+export function Header({ centered = false }: { centered?: boolean }) {
   const [sticky, setSticky] = useState(false)
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function Header() {
       }`}
     >
       <div className="auto-container py-3">
-        <div className="flex items-center gap-3">
+        <div className={`flex items-center gap-3${centered ? ' justify-center' : ''}`}>
           <Link to="/directory">
             <img src={logo1} alt="District 3055" className="h-14 object-contain" />
           </Link>

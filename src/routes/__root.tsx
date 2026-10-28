@@ -18,7 +18,8 @@ function RootLayout() {
 
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
-      <Header />
+      {/* Club details is the club QR code's landing page — logos centred there. */}
+      <Header centered={location.pathname === '/club-details'} />
       <main className="flex-1">
         <SheetBg color={sheetBg}>
           <Outlet />

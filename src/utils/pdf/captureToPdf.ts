@@ -5,12 +5,13 @@ import { jsPDF } from 'jspdf'
 export const PAGE_W_MM = 186
 export const PAGE_H_MM = 246
 
-// Photo hosts send no CORS headers, so the capture can't fetch them cross-origin.
-// Route them through a same-origin dev proxy so they can be fetched + inlined as
-// base64: the API's own image host via /rzapi (where photos now live), and the
-// legacy rotaryindia.org mirror via /imgproxy (kept as a fallback).
+// Dev only: route photo hosts through the same-origin Vite proxies so they can be
+// fetched + inlined as base64: the API's own image host via /rzapi (where photos
+// now live), and the legacy rotaryindia.org mirror via /imgproxy (kept as a
+// fallback). Those proxies don't exist on the live site, where the API's image
+// host sends CORS headers for the live origin, so the original URL is fetched.
 function toProxied(url: string): string {
-  if (!url || url.startsWith('data:')) return url
+  if (!import.meta.env.DEV || !url || url.startsWith('data:')) return url
   return url
     .replace(/^https?:\/\/rizones45678\.org\/API/i, '/rzapi')
     .replace(/^https?:\/\/rotaryindia\.org/i, '/imgproxy')
@@ -35,7 +36,12 @@ function isSafeSrc(src: string): boolean {
 
 async function fetchAsDataUrl(url: string): Promise<string> {
   try {
-    const res = await fetch(url)
+    // A cross-origin photo the page already shows is in the HTTP cache from its
+    // <img> load, which sent no Origin — so that copy has no CORS header and a CORS
+    // fetch served from it fails (blank photos in the live site's PDFs). Bypass it.
+    // ponytail: re-downloads a photo each time it recurs in an export; give the CORS
+    // fetch its own cache key if bulk exports get slow.
+    const res = await fetch(url, isSafeSrc(url) ? undefined : { cache: 'no-store' })
     if (!res.ok) return ''
     const blob = await res.blob()
     return await new Promise((resolve) => {

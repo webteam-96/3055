@@ -41,12 +41,10 @@ function ClubDetailsPage() {
 
   return (
     <>
-      {/* Header row: club name + Back */}
+      {/* Header row: club name, centred. No Back button — the club QR code lands
+          visitors here directly, so there is no in-app page to go back to. */}
       <div className="auto-container pt-6 pb-2">
-        <div className="flex justify-between items-center flex-wrap gap-4">
-          <h2 className="text-2xl font-bold text-[#3b251a]">{basicInfo.Club_Name}</h2>
-          <button onClick={() => window.history.back()} className="theme-btn">← Back</button>
-        </div>
+        <h2 className="text-2xl font-bold text-[#3b251a] text-center">{basicInfo.Club_Name}</h2>
       </div>
 
       {/* Starting details — Club details.svg design (reuses ClubBODCard). */}
