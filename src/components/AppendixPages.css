@@ -1,0 +1,73 @@
+/* Shared styling for the master export's back-matter appendix sheets — the DOBs
+   (birthday) list and the Bibliography (name index). Both are simple two-column text
+   lists on a framed B5 sheet, tinted by the DirectorySheet section background. */
+.apx {
+  --ink: #20242c;
+  padding: 2.5cqw 4cqw 10cqw; /* bottom clears the footer swoosh */
+  color: var(--ink);
+  font-family: 'Petrona', Georgia, serif;
+}
+.apx-title {
+  text-align: center;
+  font-size: 4.4cqw;
+  font-weight: 800;
+  letter-spacing: 0.15cqw;
+  color: #1a2b5e;
+  margin: 0 0 1.4cqw;
+  text-transform: uppercase;
+}
+.apx-sub {
+  text-align: center;
+  font-size: 1.9cqw;
+  color: #5b5346;
+  margin: -0.8cqw 0 1.8cqw;
+}
+
+/* TWO EXPLICIT columns (not CSS column-count, which spills a clipped 3rd overflow column
+   inside a fixed-height captured sheet). The component splits the entries in half itself. */
+.apx-cols {
+  display: flex;
+  align-items: flex-start;
+}
+.apx-col {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 2.2cqw;
+}
+.apx-col + .apx-col {
+  border-left: 1px solid #e0d5c6;
+}
+
+/* One entry per row, JUSTIFIED: name on the left, value (pages / birthday) pushed to the
+   right edge of the column. A long name wraps; the value stays on the first line's right. */
+.apx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.4cqw;
+  font-size: 1.72cqw;
+  line-height: 1.5;
+  margin-bottom: 0.1cqw;
+}
+.apx-name {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+.apx-pages {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-weight: 700;
+  color: #1a2b5e;
+  text-align: right;
+}
+
+/* Month heading inside the DOBs flow — bold, a little space above. */
+.apx-month {
+  font-size: 2.1cqw;
+  font-weight: 800;
+  color: #c8752f;
+  margin: 1.1cqw 0 0.3cqw;
+}
+.apx-col > .apx-month:first-child {
+  margin-top: 0;
+}

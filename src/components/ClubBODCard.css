@@ -91,6 +91,13 @@
   line-clamp: 3;
   overflow: hidden;
 }
+/* Visnagar Round Town (pk_club_id 32413) has an over-long venue address — cap ITS venue
+   at 2 lines (ending the 2nd with "…" on overflow) per the client, leaving every other
+   club on the shared 3-line clamp above. Keyed on the immutable pk_club_id, not the name. */
+.club-bod-card[data-club-id='32413'] .info-grid .row.venue-row {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
 .club-bod-card .info .lbl {
   color: var(--ink);
   font-style: normal;

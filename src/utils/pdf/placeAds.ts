@@ -360,13 +360,21 @@ export function drawAdInBox(pdf: jsPDF, box: GapBox, ad: LoadedAd): void {
 
 /** Split a half-page gap into a left half (for a quarter ad) and a right half (for a filler),
  *  separated by a small gutter — so quarter ad + filler together fill the half-page band
- *  (two "quarter page" columns = one half page; see the client's size reference). */
-export function splitGapForQuarter(box: GapBox): { adBox: GapBox; fillerBox: GapBox } {
+ *  (two "quarter page" columns = one half page; see the client's size reference).
+ *
+ *  When the ad is given, the filler column is sized to the ad's ACTUAL rendered rectangle
+ *  (an aspect-fit portrait ad is shorter than the full gap and sits centered via {@link fitBox}),
+ *  so the two columns end up the SAME height and vertically aligned — instead of a box-filling
+ *  filler towering over a letterboxed ad (the pg-297 "filler too long" case). */
+export function splitGapForQuarter(box: GapBox, ad?: LoadedAd): { adBox: GapBox; fillerBox: GapBox } {
   const colW = (box.w - QUARTER_GUTTER) / 2
-  return {
-    adBox: { x: box.x, y: box.y, w: colW, h: box.h },
-    fillerBox: { x: box.x + colW + QUARTER_GUTTER, y: box.y, w: colW, h: box.h },
+  const adBox: GapBox = { x: box.x, y: box.y, w: colW, h: box.h }
+  const fillerX = box.x + colW + QUARTER_GUTTER
+  if (ad) {
+    const b = fitBox(adBox.x, adBox.y, adBox.w, adBox.h, ad.aspect) // the ad's fitted rect
+    return { adBox, fillerBox: { x: fillerX, y: b.y, w: colW, h: b.h } }
   }
+  return { adBox, fillerBox: { x: fillerX, y: box.y, w: colW, h: box.h } }
 }
 
 /**

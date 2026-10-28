@@ -123,6 +123,19 @@ export function isoToDMY(iso?: string | null): string {
   return m ? `${m[3]}/${m[2]}/${m[1]}` : ''
 }
 
+// The "fullest available" birthday: DD/MM/YYYY when the year is a PLAUSIBLE real birth year,
+// otherwise just DD/MM. The API stores 1900 (and occasionally a current/future year) as a
+// "no year" placeholder for most members — so a complete DD/MM/YYYY is only shown for the
+// minority whose real year is present; everyone else keeps the day/month the cards already show.
+export function isoToBirthday(iso?: string | null): string {
+  const dmy = isoToDMY(iso)
+  const m = /\/(\d{4})$/.exec(dmy)
+  if (!m) return isoToDayMonth(iso)
+  const y = Number(m[1])
+  const maxYear = new Date().getFullYear() - 5 // a member born in the last few years is bogus
+  return y >= 1920 && y <= maxYear ? dmy : isoToDayMonth(iso)
+}
+
 // "13:30:00" / "13:30" → "01:30 PM". Empty for missing/unparseable input.
 export function to12Hour(t?: string | null): string {
   if (!t) return ''
@@ -280,6 +293,7 @@ function mapCommitteeMember(m: RawMember, idx?: ProfileIndex): DistrictCommittee
     MailID: pick(m.committeeEmail, m.email, m.EmailId),
     Address: '',
     DOB: isoToDayMonth(pick(m.BirthDate, p?.BirthDate)),
+    DOBFull: isoToBirthday(pick(m.BirthDate, p?.BirthDate)),
     DOA: isoToDayMonth(pick(m.AnniversaryDate, p?.AnniversaryDate)),
     RotaryID: pick(m.RotaryId),
     img: resolveImg(pick(m.ProfilePhotoPath, m.committeePhoto, m.profile_photo, p?.ProfilePhotoPath)),
@@ -292,6 +306,8 @@ function mapCommitteeMember(m: RawMember, idx?: ProfileIndex): DistrictCommittee
     SpouseMobile: '',
     Keywords: pick(m.classification, m.MemberIntroduction, p?.classification),
     classification: pick(m.classification, m.MemberIntroduction, p?.classification),
+    // Carried through for the master export's appendix dedup (merge the same person across cards).
+    pk_member_master_profile_id: m.pk_member_master_profile_id ?? undefined,
   }
 }
 
@@ -452,6 +468,7 @@ export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[
         President_member_mobile_no: pres?.PrimaryMobileNumber ?? '',
         President_Classification: pick(pres?.classification, pres?.MemberIntroduction),
         President_DOB: isoToDayMonth(pres?.BirthDate),
+        President_DOB_full: isoToBirthday(pres?.BirthDate),
         President_DOA: isoToDayMonth(pres?.AnniversaryDate),
         President_Profile_Photo: resolveImg(pres?.ProfilePhotoPath),
         President_Spouse_member_name: pick(pres?.spouseName),
@@ -462,6 +479,7 @@ export function selectClubsBOD(data: DistrictDirectoryResponse): ClubBODSummary[
         Secreatary_mobile_no: sec?.PrimaryMobileNumber ?? '',
         Secreatary_Classification: pick(sec?.classification, sec?.MemberIntroduction),
         Secreatary_DOB: isoToDayMonth(sec?.BirthDate),
+        Secreatary_DOB_full: isoToBirthday(sec?.BirthDate),
         Secreatary_DOA: isoToDayMonth(sec?.AnniversaryDate),
         Secreatary_Profile_Photo: resolveImg(sec?.ProfilePhotoPath),
         Secreatary_Spouse_member_name: pick(sec?.spouseName),

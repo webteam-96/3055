@@ -1323,12 +1323,13 @@
 .ref-content.dg {
   justify-content: flex-start;
   font-size: calc(1.8014cqw + 2px); /* matches the RI South Asia Office body size */
-  /* Shift the goals table up by ~3% vs the default .ref-content (top 12% / bottom 8%):
-     a dense continuation sheet (e.g. the AOP / PHF-MPHF page) packed its last row right
-     onto the bottom footer swoosh + page-number disc. top:9%/bottom:11% keeps the SAME
-     80% box height — so the row-pagination (which reserves 1 − 0.12 − 0.08 = 0.80 of the
-     sheet) is unchanged — but lifts the whole table clear of the footer. Scoped to dg. */
-  top: 9%;
+  /* Vertical clearance for the goals table within the frame's safe area. An earlier fix
+     used top:9%/bottom:11% (lifted the table to clear the BOTTOM footer swoosh), but 9% put
+     the header's top-right corner UNDER the top-right frame swoosh (pg 295-297 collision).
+     Restore the default 12% top (which clears the top swoosh) and KEEP the 11% bottom
+     clearance fix → a 77% box. Dense pages (295/296) just repaginate slightly; their bottom
+     stays at 89% (unchanged), so they don't overflow the footer. Scoped to dg. */
+  top: 12%;
   bottom: 11%;
 }
 .dg-table {

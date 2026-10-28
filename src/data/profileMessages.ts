@@ -34,6 +34,10 @@ import naimishMessage from '../assets/images/leader/leader-naimish.jpg'
 import venkyCouple from '../assets/images/leader/leader-venky-couple.jpg'
 import venky from '../assets/images/leader/leader-venky.jpg'
 import jpVyas from '../assets/images/leader/leader-jp-vyas.jpg'
+import gurjeetSekhon from '../assets/images/leader/leader-gurjeet-sekhon.jpg'
+import gurjeetSekhonMsg from '../assets/images/leader/gurjeet-singh-msg.jpg'
+import basuGolyan from '../assets/images/leader/leader-basu-golyan.jpg'
+import basuGolyanMsg from '../assets/images/leader/leader-basu-golyan-msg.jpg'
 
 export interface Person {
   name: string
@@ -387,7 +391,7 @@ A true embodiment of passion, precision, leadership, and powerful creativity, PH
     // Profile fitted onto a SINGLE sheet at Babalola's fixed body size (1.8014cqw)
     // with the same tightened leading, instead of paginating across two pages.
     profileBodyFontCqw: 1.8014,
-    profileBodyLineHeight: 1.14,
+    profileBodyLineHeight: 1.2,
     profile: `Rtn. Vikram Thakkar began his Rotary journey in 1998 as a young participant in the Rotary Youth Leadership Awards (RYLA) program. Inspired by the values of Rotary, he became a member of the Rotary Club of Deesa in 2001 and has remained an active and dedicated Rotarian for more than two decades.
 
 He has served the Rotary Club of Deesa as Club Secretary (2003–04) and Club President (2007–08), and later as Assistant Governor of Rotary International District 3054 during 2018–19. A passionate advocate for youth development, he has been actively associated with the club's flagship RYLA program and played a key role in making the Rotary Club of Deesa a 100% Paul Harris Fellow Club during its Golden Jubilee year.
@@ -498,5 +502,73 @@ As Club President (2020–21), she led her club to win eight District Awards, in
 Her distinguished Inner Wheel journey includes serving as District ISO (2022), District Editor (2023), District Secretary (2024), and District Vice Chairman (2025). During her tenure as District ISO, her club successfully hosted the District Conference "Hosala" and donated 14 Pink Autorickshaws to empower women.
 
 Beyond Inner Wheel, Varsha actively serves through the Karunakare Foundation, is a member of the Executive Committee of FICCI FLO, and an active member of the Femina Club. Guided by compassion and inspired by service, she continues to make a meaningful impact through her dedication to empowering communities and uplifting lives.`,
+  },
+  {
+    // RIDE Zone 4 & 7 — profile from the client's Gurjeet-S-Sekhon.pdf biodata; message from
+    // "A Message to Rotary District 3055 from RIDE.pdf".
+    name: 'Gurjeet S. Sekhon',
+    designation: 'Rotary International Director Elect\n2027-29 (Zone 4 & 7)',
+    photo: gurjeetSekhon, // Profile: Gurjeet & Amandeep couple portrait
+    profilePhotoVariant: 'lp-photo--uniform', // landscape couple → cover-crop to the box
+    messagePhoto: gurjeetSekhonMsg, // Message: Gurjeet solo headshot (rizones gurjeet-singh.jpg)
+    profileBodyFontDeltaPx: 1.5, // client bumped profile body text +2px then back down 0.5px
+    messageBodyFontDeltaPx: 1.5, // message body text +2px then back down 0.5px
+    profile: `RIDE Gurjeet S. Sekhon is a distinguished business leader, Marshall Goldsmith Certified Executive and Leadership Coach, and Rotary International Director (2027–29). With over three decades of professional experience spanning agriculture, marketing, information technology, and the travel industry, he has built successful enterprises, pioneered initiatives in IT education and entrepreneurship, and earned recognition from the Government of Punjab for his outstanding contributions.
+
+A Charter Member of the Rotary Club of Amritsar Civil Lines since 1994, RIDE Gurjeet has devoted more than three decades to Rotary. As District Governor of Rotary District 3070 (2014–15), he strengthened clubs, developed leaders, enhanced Rotary's public image, and expanded the organisation's humanitarian impact.
+
+At the international level, RIDE Gurjeet has served in virtually every major global membership leadership role in Rotary. Beginning as Assistant Rotary Membership Coordinator (2017–19), he went on to serve as Rotary Membership Coordinator for Zone 4 and Rotary India (2019–23), as a Member of the Rotary International Membership Growth Committee (2025–28), and as its Chair (2026–28). Through these leadership roles, he championed sustainable membership growth, member engagement, leadership development, and club excellence worldwide.
+
+He has also played a pivotal role in Rotary's global learning and leadership development initiatives as Learning Facilitator at the Rotary International Assembly (2024 and 2025), Chair of the Governors-Nominee Learning Seminar (GNLS), Chair of the Governors-Elect Learning Seminar (GELS), Facilitator at the Regional Leaders Global Institute, and Action Plan Champion for Zone 4.
+
+Rotary has honoured his exemplary service with two of its highest recognitions—the Service Above Self Award and the Rotary Foundation Citation for Meritorious Service.
+
+As Rotary International Director for 2027–29, representing Zones 4 and 7 on the Rotary International Board of Directors, RIDE Gurjeet continues to strengthen clubs, develop inspired leaders, advance membership growth, and expand Rotary's humanitarian reach worldwide.
+
+Throughout his remarkable journey, his wife, Rtn. Past President Amandeep Sekhon, an accomplished educator and Rotarian, and their daughter, Mannat, have remained his constant source of encouragement and support.`,
+    message: `Dear DG Naimish and the Wonderful Rotarians of District 3055,
+
+Rotary brings together people who believe they can make the world better through service. Every day, we have the opportunity to transform lives, strengthen communities, and inspire hope.
+
+Every great Rotary journey begins with a simple question: Whose life can we make better today?
+
+We build Rotary's strength not merely by increasing membership, raising funds, or completing projects, but by touching lives, restoring hope, and creating lasting change. When we combine compassion with commitment and turn our intentions into action, we transform ordinary acts of service into extraordinary impact.
+
+Let us build clubs that inspire, undertake projects that create lasting change, and develop leaders who multiply the spirit of service. Let us welcome new generations into Rotary, value every member, and help every Rotarian discover the joy and purpose of making a meaningful difference.
+
+Our greatest achievement lies not in what we accomplish for Rotary, but in what we make possible for humanity through Rotary.
+
+I encourage every Rotarian in District 3055 to dream boldly, lead courageously, and serve passionately. Let us strengthen our clubs, expand our impact, and inspire more people to join our mission. Together, we can make Rotary not just an organisation we belong to, but a movement we proudly advance.
+
+My warm wishes to DG Naimish and the entire Rotary family of District 3055 for a year of purposeful leadership, meaningful growth, and extraordinary impact.
+
+Let us not merely celebrate Rotary's legacy. Let us shape its future through our actions, inspire others through our leadership, and change lives through our service.
+
+With warm Rotary greetings and best wishes,
+RIDE Gurjeet S. Sekhon
+Rotary International Director-Elect`,
+  },
+  {
+    // RIDE Zone 5 & 6 — profile from the client's Basu_Dev_Golyan_Biodata.pdf. Photo and
+    // Message to follow. NOTE: the biodata text describes him as "Director Nominee"; the
+    // designation here follows the client's "RIDE Zone 5&6" label — confirm which is correct.
+    name: 'Basu Dev Golyan',
+    designation: 'Rotary International Director Elect\n2027-29 (Zone 5 & 6)',
+    photo: basuGolyan, // Profile: Basu Dev & spouse couple portrait
+    profilePhotoVariant: 'lp-photo--uniform', // landscape couple → cover-crop to the box
+    messagePhoto: basuGolyanMsg, // Message: Basu Dev solo headshot
+    // Dense ~450-word bio — fit it onto ONE sheet (auto-shrink) instead of spilling to a
+    // half-empty second page, matching the other one-page profiles.
+    profileMaxPages: 1,
+    profileBodyFontDeltaPx: 0.3, // profile body text +0.5px then back down 0.2px
+    profile: `Mr. Basu Dev Golyan is a distinguished industrialist, visionary humanitarian, and globally respected Rotary leader whose life journey reflects an unwavering commitment to service, leadership, and nation-building. Born into a values-driven family rooted in integrity, compassion, and entrepreneurship, he developed strong leadership qualities and a deep sense of social responsibility from an early age. These formative values shaped his lifelong dedication to ethical business practices, community upliftment, and humanitarian service.
+
+As the Chairman of the Golyan Group of Industries, Mr. Golyan has played a pivotal role in expanding and strengthening one of Nepal's leading business conglomerates. Under his dynamic leadership, the group has diversified across banking, insurance, manufacturing, hydropower, renewable energy, hospitality, exports, and sustainable agriculture. His leadership philosophy emphasizes innovation, responsible governance, long-term sustainability, and inclusive economic growth. Through his strategic vision and entrepreneurial excellence, he has significantly contributed to Nepal's industrial development and employment generation while promoting sustainable and socially responsible initiatives.
+
+Mr. Golyan's Rotary journey began in the late 1980s and has since evolved into decades of dedicated and impactful service. Rising through various leadership roles, he served as District Governor of RI District 3292 in 2011-2012, where he strengthened the district's global presence and expanded Rotary's reach to Bhutan. During his governorship, he successfully organized the first Rotary International Literacy Summit in Nepal, reinforcing his enduring commitment to literacy, education, and peace-building. His leadership during times of crisis has included large-scale disaster relief initiatives, distribution of shelters for flood and earthquake victims, and numerous humanitarian and health camps that have benefited thousands of underserved families.
+
+At the international level, Mr. Golyan has served with distinction as Regional Rotary Foundation Coordinator (2020-2023), Trustee Special Advisor, and Rotary International President's Representative to several districts across the world. A passionate advocate of The Rotary Foundation, he has consistently strengthened grant culture, inspired philanthropic contributions, and promoted impactful humanitarian projects globally. As a Rotary International Director Nominee, he represents experience, credibility, and a powerful strategic vision focused on membership growth, youth engagement, enhanced public image, literacy promotion, and sustainable global impact.
+
+Recognized nationally and internationally for his contributions to business leadership, disaster relief, and humanitarian service, Mr. Basu Dev Golyan is widely respected for his humility, integrity, inclusive leadership style, and forward-looking vision. Supported by a service-oriented family, he continues to balance professional excellence with deep humanitarian dedication. He firmly believes that education, ethical leadership, and compassion are the pillars of lasting peace and meaningful global transformation.`,
   },
 ]

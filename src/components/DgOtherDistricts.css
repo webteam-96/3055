@@ -91,6 +91,12 @@
   left: calc(var(--u) * 324.85);
   width: calc(var(--u) * 106.6);
 }
+/* Same wide holder on the 2026-27 (left) side: centred across the left pair's span
+   (boxes span x 16.7→158.8, centre 87.75 → left = 87.75 − 106.6/2 = 34.45). Defined
+   after .dg-pbox-couple so it overrides the right-side `left`. */
+.dg-pbox-couple--left {
+  left: calc(var(--u) * 34.45);
+}
 /* An enriched DG / spouse photo fills its box (cover-crop, like every other
    directory photo). Same <img> path as the club/committee cards, so the PDF
    capture inlines it via /imgproxy just like theirs. */

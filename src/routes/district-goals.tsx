@@ -11,7 +11,11 @@ export const Route = createFileRoute('/district-goals')({
 // goals table can be split by ROW and fill every sheet continuously — the column
 // header repeats on each sheet.
 const SHEET_ASPECT = 697.32 / 527.24
-const CONTENT_FRACTION = 1 - 0.12 - 0.08
+// Must match the `.ref-content.dg` box (top 12% / bottom 11%) in ReferencePage.css — the row
+// paginator reserves this fraction of the sheet, so the table starts where the box starts and
+// ends above the box bottom. 12% top clears the top-right frame swoosh (the pg 295-297 header
+// collision); 11% bottom keeps the last row clear of the footer swoosh + page-number disc.
+const CONTENT_FRACTION = 1 - 0.12 - 0.11
 const FILL = 0.98
 
 type Row =

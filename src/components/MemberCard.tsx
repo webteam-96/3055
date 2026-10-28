@@ -1,5 +1,6 @@
 import type { SyntheticEvent } from 'react'
 import { rotaryLogo } from './NoPhoto'
+import { IndexMark } from './IndexMark'
 import { titleCase } from '../utils/titleCase'
 
 // The Rotary-logo "no photograph" placeholder shown when a member/spouse photo is missing
@@ -47,6 +48,7 @@ export function MemberCard({
 
   return (
     <div className="executive-card" style={{ backgroundColor: bodyColor }}>
+      <IndexMark name={name} dob={dob} />
       <div className="card-header" style={{ backgroundColor: headerColor }}>
         {designation}
       </div>

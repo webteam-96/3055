@@ -3,6 +3,7 @@ import type { DistrictCommitteeMember } from '../types/api'
 import { firstName } from '../utils/firstName'
 import { titleCase } from '../utils/titleCase'
 import { NoPhoto } from './NoPhoto'
+import { IndexMark } from './IndexMark'
 
 // Hide a missing/broken photo so the Rotary-logo placeholder shows through.
 const onImgError = (e: SyntheticEvent<HTMLImageElement>) => {
@@ -25,6 +26,14 @@ function F({ label, value, multiline }: { label: string; value: string; multilin
 export function CommitteeMemberRow({ m }: { m: DistrictCommitteeMember }) {
   return (
     <div className="cm-card">
+      {/* mid = stable API profile id so the appendix merges this person across cards. For a
+          College-of-Governors card it rides as `memberId`; for an API committee member as
+          `pk_member_master_profile_id` — the SAME id, so a past DG's two spellings collapse. */}
+      <IndexMark
+        name={m.name}
+        dob={m.DOBFull || m.DOB}
+        mid={(m as { memberId?: number }).memberId ?? m.pk_member_master_profile_id}
+      />
       <div className="cm-head">
         <span className="cm-name">{titleCase(m.name)}</span>
         {m.DistrictDesignation && (

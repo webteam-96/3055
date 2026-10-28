@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useLayoutEffect, useRef } from 'react'
 import type { SyntheticEvent, CSSProperties } from 'react'
 // QRCodeSVG (not QRCodeCanvas): the bulk PDF rasterizer (html-to-image) hangs
 // when it tries to serialize a <canvas>; an inline <svg> QR rasterizes fine.
@@ -8,12 +8,48 @@ import { firstName } from '../utils/firstName'
 import { titleCase } from '../utils/titleCase'
 import { useSheetBg } from './SheetBg'
 import { NoPhoto } from './NoPhoto'
+import { IndexMark } from './IndexMark'
 import './ClubBODCard.css'
 
 // When a member photo is missing or fails to load, hide the <img> so the Rotary-logo
 // placeholder behind it shows through.
 const onImgError = (e: SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.style.display = 'none'
+}
+
+/**
+ * Keeps an officer name on ONE line at its design font size, shrinking the font only
+ * when it would overflow the name box. Without this, a boundary-width name wraps to a
+ * second line — and the html-to-image PDF capture then bakes a 2-line box height while
+ * rendering the text on one line, leaving a blank line between the name and its role.
+ */
+function FitName({ text }: { text: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  useLayoutEffect(() => {
+    const el = ref.current
+    const parent = el?.parentElement
+    if (!el || !parent) return
+    const fit = () => {
+      el.style.fontSize = ''
+      const cs = getComputedStyle(parent)
+      const avail = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+      const w = el.getBoundingClientRect().width
+      if (w > avail && avail > 0) {
+        const base = parseFloat(getComputedStyle(el).fontSize)
+        el.style.fontSize = `${(base * avail) / w}px`
+      }
+    }
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(parent)
+    document.fonts?.ready.then(fit).catch(() => {})
+    return () => ro.disconnect()
+  }, [text])
+  return (
+    <span ref={ref} style={{ display: 'inline-block', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+      {text}
+    </span>
+  )
 }
 
 function Photo({ src, caption, alt }: { src: string; caption: string; alt: string }) {
@@ -51,7 +87,10 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
   ]
 
   return (
-    <article className="club-bod-card" style={{ '--cream': sheetBg } as CSSProperties}>
+    <article className="club-bod-card" data-club-id={c.clubId} style={{ '--cream': sheetBg } as CSSProperties}>
+      {/* Index markers (President + Secretary) for the master export's DOBs/Bibliography. */}
+      <IndexMark name={c.President_member_name} dob={c.President_DOB_full || c.President_DOB} />
+      <IndexMark name={c.Secreatary_member_name} dob={c.Secreatary_DOB_full || c.Secreatary_DOB} />
       {/* S-curve clip for the Club ID tab's left edge — transcribed from
           Card Design/Club cards.svg (orange tab path st2) into objectBoundingBox
           units (0–1) so it scales with the responsive card. */}
@@ -89,12 +128,12 @@ export function ClubBODCard({ club: c }: { club: ClubBODSummary }) {
             names (light → dark → light), matching Club cards.svg. */}
         <div className="off-band" aria-hidden="true" />
         <div className="off-head pres">
-          <div className="nm">{titleCase(c.President_member_name)}</div>
+          <div className="nm"><FitName text={titleCase(c.President_member_name)} /></div>
           <div className="role">President</div>
         </div>
         <div className="scan c">Scan to<br />know more</div>
         <div className="off-head sec">
-          <div className="nm">{titleCase(c.Secreatary_member_name)}</div>
+          <div className="nm"><FitName text={titleCase(c.Secreatary_member_name)} /></div>
           <div className="role">Secretary</div>
         </div>
 

@@ -2,7 +2,7 @@ import { PEOPLE } from '../../data/profileMessages'
 import { ReferenceTitlePage } from '../../components/ReferencePage'
 import { PersonalProfilePage } from '../../components/PersonalProfilePage'
 import { PersonDoc } from '../../components/PersonDoc'
-import { IndexPage } from '../../routes/contents'
+import { IndexPage, tocKey, type PageMap } from '../../routes/contents'
 import { FounderPage } from '../../routes/founder'
 import { ZonesDistrictsPage } from '../../routes/zones-districts'
 import { RotaryLeadersZone4Page } from '../../routes/rotary-leaders-zone4'
@@ -11,7 +11,7 @@ import { ClubExcellenceAwardPage } from '../../routes/club-excellence-award'
 import { RotaryProtocolPage } from '../../routes/rotary-protocol'
 import { DonorsPage } from '../../routes/donors'
 import { RotaryInformationPage } from '../../routes/rotary-information'
-import { MessageAndThemePage } from '../../routes/message-and-theme'
+import { PresidentialMessagePage, NirmanThemePage } from '../../routes/message-and-theme'
 import { MyJourneyPage } from '../../routes/my-journey'
 import { RotaryClubSupremePage } from '../../routes/rotary-club-supreme'
 import { DistrictGoalsPage } from '../../routes/district-goals'
@@ -31,6 +31,9 @@ import { DirectorySheet } from '../../components/DirectorySheet'
 import { ClubBODCard } from '../../components/ClubBODCard'
 import { orderClubsByZone } from '../../data/zoneClubOrder'
 import { DgOtherDistricts } from '../../components/DgOtherDistricts'
+import { BirthdayPages } from '../../components/BirthdayPages'
+import { BibliographyPages } from '../../components/BibliographyPages'
+import type { PeopleCollector } from './collectPeople'
 import { COUNCIL_OF_GOVERNORS, cogWithApiPhotos } from '../../data/councilOfGovernors'
 import type { DistrictCommitteeMember } from '../../types/api'
 import { SheetBg } from '../../components/SheetBg'
@@ -293,14 +296,43 @@ export async function buildMasterDocuments(): Promise<CombinedDoc[]> {
 
   // --- Front matter (section 1; My Journey is section 2; each opens recto) ---
   docs.push(recto(withBg(SECTION_BG[1], { label: 'Founder of Rotary', element: <FounderPage />, settleMs: REF_SETTLE })))
-  docs.push(recto(withBg(SECTION_BG[1], { label: 'RI President Message & District Theme', element: <MessageAndThemePage />, settleMs: REF_SETTLE })))
+  // The RI Presidential Message and the District Theme (NIRMAN) are pushed as TWO
+  // separate recto documents (not one combined doc) so NIRMAN opens on a right-hand
+  // page: the recto flag forces a padding page before it, which the ad pipeline fills
+  // with a full-page advertisement on the facing left page.
+  docs.push(recto(withBg(SECTION_BG[1], { label: 'RI Presidential Message', element: <PresidentialMessagePage />, settleMs: REF_SETTLE })))
+  docs.push(recto(withBg(SECTION_BG[1], { label: 'District Theme — NIRMAN', element: <NirmanThemePage />, settleMs: REF_SETTLE })))
   docs.push(recto(withBg(SECTION_BG[1], { label: 'Rotary Zones & Districts', element: <ZonesDistrictsPage />, settleMs: REF_SETTLE })))
   docs.push(recto(withBg(SECTION_BG[1], { label: 'Index', element: <IndexPage />, settleMs: REF_SETTLE })))
   docs.push(recto(withBg(SECTION_BG[2], { label: 'My Journey — DG Naimish N. Ravani', element: <MyJourneyPage />, settleMs: REF_SETTLE })))
 
   // --- Our Leaders: Profiles & Messages (section 3) ---
   docs.push(recto(withBg(SECTION_BG[3], { label: 'Profile & Message', element: <ReferenceTitlePage title="PROFILE & MESSAGE" pageIndex={0} />, settleMs: COVER_SETTLE, isTitlePage: true })))
-  for (const person of PEOPLE) {
+  // Protocol order for the leaders' profiles/messages (the client's "Download all" order).
+  // People are matched by name; anyone in PEOPLE not listed here is appended after (safety).
+  // The two RIDE (RI Director ELECT, Zone 4&7 / 5&6) slots have no profile data yet, so they
+  // are simply absent here (and show a dash in the Index until their data is added).
+  const PROFILE_ORDER = [
+    'Olayinka Hakeem Babalola', // RI President
+    'Naimish N. Ravani', // District Governor
+    'Rtn. Dr. Geetika Saluja', // Editorial (District Directory Committee Chair)
+    'Rtn. A.S. Venkatesh (Venky)', // Trustee, The Rotary Foundation 2026-30
+    'K. P. Nagesh', // RI Director, Zone 4 & 7
+    'Muruganandam M', // RI Director, Zone 5 & 6
+    'Gurjeet S. Sekhon', // RIDE Zone 4 & 7
+    'Basu Dev Golyan', // RIDE Zone 5 & 6
+    'Rtn. Dr. J. P. Vyas', // DLF
+    'Rtn. K.A. Shyam Kumar', // DGE
+    'Rtn. Vikram Thakkar', // DGN
+    'PHF Rtr. Aneri Bhatt', // DRR
+    'Varsha Bhavesh Shah', // IWSC
+  ]
+  const rank = (name: string) => {
+    const i = PROFILE_ORDER.indexOf(name)
+    return i < 0 ? PROFILE_ORDER.length : i
+  }
+  const orderedPeople = [...PEOPLE].sort((a, b) => rank(a.name) - rank(b.name))
+  for (const person of orderedPeople) {
     if (person.profile || person.message) docs.push(withBg(SECTION_BG[3], { label: person.name, element: <PersonDoc person={person} />, settleMs: REF_SETTLE }))
   }
   docs.push(withBg(SECTION_BG[3], { label: 'Rotary Leaders from Zone 4', element: <RotaryLeadersZone4Page />, settleMs: REF_SETTLE }))
@@ -335,4 +367,41 @@ export async function buildMasterDocuments(): Promise<CombinedDoc[]> {
   docs.push(...(await buildDgZoneDocuments()))
 
   return docs
+}
+
+/**
+ * The back-matter appendix — the LAST two sections in the client's "Download all" order:
+ * "DOBs" (everyone's birthday, month-wise) then "Bibliography" (every person A → Z with the
+ * page numbers they appear on). Built from the people collected while the content pages were
+ * rasterized (see downloadCombinedPdf / collectPeople), so it can't be a pre-built document —
+ * `downloadCombinedPdf` calls this AFTER the content + ads, once every page number is final.
+ */
+/** Build the {tocKey → page} lookup from the collected {documentLabel → startPage} map, then
+ *  render the Index with REAL page numbers (master export TOC overdraw — see downloadCombinedPdf).
+ *  A committee's section opener is its "Title — <name>" doc, so that name is keyed too. */
+export function renderTocElement(sectionPages: Record<string, number>) {
+  const map: PageMap = {}
+  const add = (k: string, page: number) => {
+    if (k && !(k in map)) map[k] = page
+  }
+  for (const [label, page] of Object.entries(sectionPages)) {
+    add(tocKey(label), page)
+    if (label.startsWith('Title — ')) add(tocKey(label.slice('Title — '.length)), page)
+  }
+  return (
+    <SheetBg color={SECTION_BG[1]}>
+      <IndexPage pageMap={map} />
+    </SheetBg>
+  )
+}
+
+export function buildAppendixDocuments(collector: PeopleCollector): CombinedDoc[] {
+  const people = collector.list()
+  if (!people.length) return []
+  return [
+    { label: 'DOBs', element: <BirthdayPages months={collector.byMonth()} />, settleMs: DIR_SETTLE },
+    // Bibliography follows the ads directly (no recto padding): it starts on whatever page
+    // comes next — left (verso) or right (recto) — so there's no filler page before it.
+    { label: 'Bibliography', element: <BibliographyPages entries={people} />, settleMs: DIR_SETTLE },
+  ].map((d) => withBg(SECTION_BG[1], d))
 }

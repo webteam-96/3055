@@ -7,8 +7,11 @@ import {
   waitForImages,
   newSheetPdf,
   appendSheetsToPdf,
+  captureSheetImages,
   addBlankPage,
   buildFontEmbedCSS,
+  PAGE_W_MM,
+  PAGE_H_MM,
 } from './captureToPdf'
 import {
   loadAdBundle,
@@ -26,6 +29,7 @@ import {
   type GapBox,
 } from './placeAds'
 import { loadFillerQueue, drawFillerInBox, drawFullPageFiller, FILLER_MIN_MM } from './placeFillers'
+import { PeopleCollector } from './collectPeople'
 
 export interface CombinedDoc {
   /** Section label shown in the progress overlay. */
@@ -84,9 +88,31 @@ export async function downloadCombinedPdf(
   fontFamilies?: string[],
   includeAds?: boolean,
   numberPages?: boolean,
+  buildAppendix?: (collector: PeopleCollector) => CombinedDoc[],
+  toc?: {
+    /** Label of the Index/TOC document in `docs` (its pages are overdrawn with real numbers). */
+    docLabel: string
+    /** Re-render the Index from the collected {sectionLabel → startPage} map. */
+    render: (sectionPages: Record<string, number>) => ReactElement
+    settleMs?: number
+  },
 ): Promise<void> {
   const pdf = newSheetPdf()
   const state = { drawn: 0 }
+
+  // Collect WHO appears on each page (master export only) for the back-matter DOBs +
+  // Bibliography appendix. Populated from each content sheet's hidden person markers; the
+  // appendix docs are built and appended after the content + ads (so page numbers are final).
+  const collector = buildAppendix ? new PeopleCollector() : null
+  const collectFromSheet = collector
+    ? (sheet: HTMLElement, pageNo: number) => {
+        sheet.querySelectorAll('[data-iname]').forEach((el) => {
+          const midAttr = el.getAttribute('data-imid')
+          const mid = midAttr != null && midAttr !== '' ? Number(midAttr) : undefined
+          collector.add(el.getAttribute('data-iname'), el.getAttribute('data-idob'), pageNo, Number.isFinite(mid) ? mid : undefined)
+        })
+      }
+    : undefined
 
   // Build the minimal font embed ONCE for the whole export (see buildFontEmbedCSS):
   // every sheet reuses it instead of html-to-image re-embedding all ~10 Google
@@ -131,6 +157,12 @@ export async function downloadCombinedPdf(
     loneAdFiller = (box: GapBox) => drawFillerInBox(pdf, box, fq, true).then(() => {})
   }
 
+  // Index/TOC real page numbers: record the first page each document starts on (section →
+  // page), and the Index doc's own page positions. After the whole run we re-render the Index
+  // with the real numbers and paint it over its original pages (see after the loop).
+  const sectionPages: Record<string, number> = {}
+  const tocPositions: number[] = []
+
   for (let i = 0; i < docs.length; i++) {
     onProgress(docs[i].label, i, docs.length)
     // Never tuck an ad onto a section TITLE page (ReferenceTitlePage) — its big centered
@@ -141,7 +173,7 @@ export async function downloadCombinedPdf(
     // Book-style recto opener: if this doc must start on a right-hand page and the next
     // page would be a verso (state.drawn odd ⇒ next page even), that verso page would be
     // blank — fill it with the next full-page ad when ads are enabled, else leave it blank.
-    if (docs[i].startOnRight && state.drawn % 2 === 1) {
+    if ((docs[i].startOnRight || isTitlePage) && state.drawn % 2 === 1) {
       if (ads && adIdx < ads.blankPool.length) {
         drawFullAdPage(pdf, state, ads.blankPool[adIdx++])
       } else if (ads && pairIdx < ads.pair.length) {
@@ -159,6 +191,10 @@ export async function downloadCombinedPdf(
         if (fillerQ) await drawFullPageFiller(pdf, fillerQ)
       }
     }
+    // Section → start page (the page this doc's first sheet lands on); remember the Index
+    // doc's own page range so it can be overdrawn with real numbers after the run.
+    if (toc && !(docs[i].label in sectionPages)) sectionPages[docs[i].label] = state.drawn + 1
+    const tocBefore = toc && docs[i].label === toc.docLabel ? state.drawn : -1
     await withOffscreen(
       docs[i].element,
       async (root) => {
@@ -208,7 +244,9 @@ export async function downloadCombinedPdf(
                   if (idx >= adTarget(adsPlaced)) {
                     const unit = adUnits[adsPlaced++]
                     if (unit.kind === 'quarter') {
-                      const { adBox, fillerBox } = splitGapForQuarter(box)
+                      // Pass the ad so the filler column matches the ad's rendered height
+                      // (equal, aligned columns) instead of towering over a letterboxed ad.
+                      const { adBox, fillerBox } = splitGapForQuarter(box, unit.ad)
                       drawAdInBox(pdf, adBox, unit.ad)
                       // allowRepeat: this filler COMPANIONS the quarter ad (quarter + filler =
                       // half page), so it must appear even after the fresh quote pool is spent —
@@ -232,27 +270,115 @@ export async function downloadCombinedPdf(
                 // Otherwise fill the gap with a size-matched filler (its own content once).
                 if (fillerQ && box.h >= FILLER_MIN_MM) await drawFillerInBox(pdf, box, fillerQ)
               },
+          // Collect the page's person markers for the DOBs/Bibliography appendix (master only).
+          collectFromSheet,
+          // Alternate the book frame recto/verso by each sheet's true page number.
+          true,
         )
       },
       { settleMs: docs[i].settleMs },
     )
+    if (tocBefore >= 0) for (let pg = tocBefore + 1; pg <= state.drawn; pg++) tocPositions.push(pg)
   }
 
   // Append the remaining ads: any full ads that didn't land on a blank page get their own
   // page, then any tuck-in ads that didn't find a half-page gap go two-up, the half+half
-  // pairs stacked, and the back cover last.
-  if (ads) {
+  // pairs stacked. A lone trailing ad (odd count) is bottom-aligned with a filler above
+  // (loneAdFiller). The back cover is held aside per the client's request (kept in the
+  // manifest as ads.back so it can be re-enabled). Called BETWEEN the appendix sections below.
+  const appendRemainingAds = async () => {
+    if (!ads) return
     for (; adIdx < ads.blankPool.length; adIdx++) drawFullAdPage(pdf, state, ads.blankPool[adIdx])
-    // Tuck-in ad UNITS that were never placed inline (book had fewer half-page gaps than
-    // the spread schedule expected) — append them two-up so no ad is dropped. A lone trailing
-    // ad (odd count) is bottom-aligned with a filler above (loneAdFiller) rather than left
-    // alone with an empty half — this is the page-349 "single ad" fix.
     await appendTwoUp(pdf, state, adUnits.slice(adsPlaced).map((u) => u.ad), loneAdFiller)
-    // Pairs not already placed on a padding page (see pairIdx) — stacked two-up at the end.
     await appendTwoUp(pdf, state, ads.pair.slice(pairIdx), loneAdFiller)
-    // Back cover (VR Ventures / Vijaysinh Vaghela): held aside per the client's request —
-    // NOT placed in the PDF. The asset stays in the manifest (ads.back) so it can be
-    // re-enabled later by restoring: if (ads.back) drawFullAdPage(pdf, state, ads.back)
+  }
+
+  // Render one back-matter appendix doc (DOBs / Bibliography): recto padding if it must open on
+  // a right-hand page, record its start page for the Index, then its framed sheets with corner
+  // page numbers (no ad/filler tuck, not re-collected).
+  const renderAppendixDoc = async (doc: CombinedDoc) => {
+    onProgress(doc.label, docs.length, docs.length)
+    if (doc.startOnRight && state.drawn % 2 === 1) {
+      addBlankPage(pdf, state)
+      if (fillerQ) await drawFullPageFiller(pdf, fillerQ)
+    }
+    if (toc && !(doc.label in sectionPages)) sectionPages[doc.label] = state.drawn + 1
+    await withOffscreen(
+      doc.element,
+      async (root) => {
+        await inlineImages(root)
+        await rasterizeBackgrounds(root)
+        await waitForImages(root)
+        await appendSheetsToPdf(
+          root,
+          pdf,
+          state,
+          fontEmbedCSS,
+          (done, total) => onProgress(total > 1 ? `${doc.label} — sheet ${Math.min(done + 1, total)} of ${total}` : doc.label, docs.length, docs.length),
+          numberPages ? async (canvas) => drawPageNumber(pdf, canvas, state.drawn) : undefined,
+          undefined,
+          // Alternate the book frame recto/verso by each appendix sheet's true page number.
+          true,
+        )
+      },
+      { settleMs: doc.settleMs },
+    )
+  }
+
+  // Back-matter order (master export): DOBs → the appended advertisement pages → Bibliography.
+  // The client wants the ads placed BETWEEN the two appendix sections, so the ads go right
+  // before the LAST appendix doc (Bibliography) and everything before it (DOBs) comes first.
+  // The Bibliography's page numbers are cited by the Index via sectionPages, recorded above —
+  // and are already final here since the whole book + ads precede it.
+  const appendixDocs = collector && buildAppendix ? buildAppendix(collector) : []
+  if (appendixDocs.length) {
+    for (let k = 0; k < appendixDocs.length - 1; k++) await renderAppendixDoc(appendixDocs[k])
+    await appendRemainingAds()
+    await renderAppendixDoc(appendixDocs[appendixDocs.length - 1])
+  } else {
+    await appendRemainingAds()
+  }
+
+  // Overdraw the Index/TOC pages with the REAL page numbers now that every section's start
+  // page is known. The Index was rendered once with placeholders; re-render it with the
+  // collected section→page map and paint each sheet over its original page (same entries ⇒
+  // same sheet count ⇒ exact alignment). Skipped safely on any mismatch/failure.
+  if (toc && tocPositions.length) {
+    try {
+      await withOffscreen(
+        toc.render(sectionPages),
+        async (root) => {
+          await inlineImages(root)
+          await rasterizeBackgrounds(root)
+          await waitForImages(root)
+          // Pass the Index's real first page so the re-rendered frames alternate to match
+          // the actual pages they paint over (tocPositions is the contiguous Index range).
+          const imgs = await captureSheetImages(root, fontEmbedCSS, tocPositions[0])
+          if (imgs.length === tocPositions.length) {
+            for (let j = 0; j < imgs.length; j++) {
+              pdf.setPage(tocPositions[j])
+              pdf.addImage(imgs[j].dataUrl, 'JPEG', 0, 0, PAGE_W_MM, PAGE_H_MM)
+              if (numberPages) drawPageNumber(pdf, imgs[j].canvas, tocPositions[j])
+            }
+            pdf.setPage(pdf.getNumberOfPages())
+          } else {
+            console.warn('[pdf] TOC overdraw skipped — sheet count mismatch', imgs.length, tocPositions.length)
+          }
+        },
+        { settleMs: toc.settleMs },
+      )
+    } catch (e) {
+      console.warn('[pdf] TOC overdraw failed — placeholder numbers kept', e)
+    }
+  }
+
+  // Close the book on an EVEN page. A bound booklet whose last printed page is a recto (an ODD
+  // total) leaves a BLANK verso on the back of that final leaf; fill it with a full-page filler
+  // so the book never ends on a blank page (currently page 378, after the Bibliography on 377).
+  // No printed number — like every ad/filler page. Only when fillers are loaded (master export).
+  if (fillerQ && state.drawn % 2 === 1) {
+    addBlankPage(pdf, state)
+    await drawFullPageFiller(pdf, fillerQ)
   }
 
   if (!state.drawn) throw new Error('No pages were produced for the PDF.')

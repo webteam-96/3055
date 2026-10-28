@@ -6,6 +6,7 @@ import type { ViewMode } from '../hooks/useViewMode'
 import { firstName } from '../utils/firstName'
 import { titleCase } from '../utils/titleCase'
 import { NoPhoto } from './NoPhoto'
+import { IndexMark } from './IndexMark'
 import './DgOtherDistricts.css'
 
 // Free-text fields shown in Title Case; contact/e-mail/dates are left verbatim.
@@ -31,6 +32,10 @@ const FIELDS: Array<{ key: keyof DgPerson; label: string }> = [
 // x-offsets of the four photo boxes, in units of the 469.8-wide card artwork
 // ("Card Design/Other DG Cards.svg", card origin at its top-left corner).
 const PHOTO_X = [16.7, 100.2, 307.1, 390.6]
+// When a side shows a LONE DG photo (no spouse — hideSpouse), the box is centred across
+// its pair's span instead of sitting in the left slot. Box width 58.6; this-year pair spans
+// 16.7→158.8 (centre 87.75 → left 58.45), next-year pair 307.1→449.2 (centre 378.15 → left 348.85).
+const SOLO_CENTER_X = [58.45, 348.85] // [2026-27 pair, 2027-28 pair]
 
 /**
  * Keeps a value on one line at the design's font size, shrinking it only when
@@ -82,7 +87,18 @@ function Silhouette() {
  * with their S-curved inner edges, plus the year / district texts at the
  * artwork's exact positions.
  */
-function HeadArt({ districtNo }: { districtNo: string }) {
+// showThis / showNext: a split district (3170→3171/3172) has one year with no DG.
+// That empty year shows NO copper tab and NO year label (kept entirely blank), per
+// the client's reference (DG 2026-27 & 2027-28.pdf, p.7).
+function HeadArt({
+  districtNo,
+  showThis = true,
+  showNext = true,
+}: {
+  districtNo: string
+  showThis?: boolean
+  showNext?: boolean
+}) {
   const rid = `dg-tab-r-${districtNo}`
   const lid = `dg-tab-l-${districtNo}`
   return (
@@ -97,31 +113,53 @@ function HeadArt({ districtNo }: { districtNo: string }) {
           <stop offset="0.8134" stopColor="#F89C5C" />
         </linearGradient>
       </defs>
-      <path
-        fill={`url(#${rid})`}
-        d="M459.9,0H339.4v0.1c5.3-0.4,8.5,1.1,10.3,2.7c4.8,4,4.1,10.2,9.3,15.2c2.9,2.8,6.3,3.8,8.6,4.2h102.1v-11C469.8,5.1,465.4,0,459.9,0z"
-      />
-      <path
-        fill={`url(#${lid})`}
-        d="M10,0h120.5v0.1c-5.3-0.4-8.5,1.1-10.3,2.7c-4.8,4-4.1,10.2-9.3,15.2c-2.9,2.8-6.3,3.8-8.6,4.2H0v-11C0,5.1,4.5,0,10,0z"
-      />
+      {showNext && (
+        <path
+          fill={`url(#${rid})`}
+          d="M459.9,0H339.4v0.1c5.3-0.4,8.5,1.1,10.3,2.7c4.8,4,4.1,10.2,9.3,15.2c2.9,2.8,6.3,3.8,8.6,4.2h102.1v-11C469.8,5.1,465.4,0,459.9,0z"
+        />
+      )}
+      {showThis && (
+        <path
+          fill={`url(#${lid})`}
+          d="M10,0h120.5v0.1c-5.3-0.4-8.5,1.1-10.3,2.7c-4.8,4-4.1,10.2-9.3,15.2c-2.9,2.8-6.3,3.8-8.6,4.2H0v-11C0,5.1,4.5,0,10,0z"
+        />
+      )}
       {/* fill is set as a presentation ATTRIBUTE (not only via the .dg-h-txt class):
           the html-to-image PDF capture copies HTML `color` but NOT the `fill` CSS
           property onto SVG <text>, so a class-only white fell back to SVG-default
           black in print. The attribute survives the capture's node clone. */}
-      <text className="dg-h-txt" fill="#ffffff" x="13.67" y="17.12">2026-27</text>
-      <text className="dg-h-txt" fill="#ffffff" x="394.78" y="17.12">2027-28</text>
+      {showThis && (
+        <text className="dg-h-txt" fill="#ffffff" x="13.67" y="17.12">2026-27</text>
+      )}
+      {showNext && (
+        <text className="dg-h-txt" fill="#ffffff" x="394.78" y="17.12">2027-28</text>
+      )}
       <text className="dg-h-txt" fill="#ffffff" x="234.9" y="17.12" textAnchor="middle">DISTRICT {districtNo}</text>
     </svg>
   )
 }
 
 function DistrictCard({ d }: { d: OtherDistrict }) {
+  // When a district has NO spouse data in either year (no spouse name, spouse photo
+  // or couple photo), hide the spouse photo boxes and drop the Spouse / Spouse's DOB
+  // rows entirely instead of showing empty placeholders. (Currently only 3234.)
+  const noSpouse = (p: DgPerson) =>
+    !(p.spouseName && p.spouseName.trim()) && !p.spousePhoto && !p.couplePhoto
+  const hideSpouse = noSpouse(d.dgThisYear) && noSpouse(d.dgNextYear)
+  const rows = hideSpouse ? FIELDS.filter((f) => f.key !== 'spouseName' && f.key !== 'spouseDob') : FIELDS
+  // A split district (e.g. 3170 → 3171/3172) has no DG for one of the two years. That
+  // empty year is kept entirely blank: no year tab, no photos, no values.
+  const hasThis = !!(d.dgThisYear.name && d.dgThisYear.name.trim())
+  const hasNext = !!(d.dgNextYear.name && d.dgNextYear.name.trim())
   return (
     <div className="dg-card">
+      {/* Index markers (both years' DGs, not spouses) for the master export appendix. */}
+      {hasThis && <IndexMark name={d.dgThisYear.name} dob={d.dgThisYear.dob} />}
+      {hasNext && <IndexMark name={d.dgNextYear.name} dob={d.dgNextYear.dob} />}
       <div className="dg-in">
         <div className="dg-head">
-          <HeadArt districtNo={d.districtNo} />
+          <HeadArt districtNo={d.districtNo} showThis={hasThis} showNext={hasNext} />
         </div>
         <div className="dg-body">
           <div className="dg-strip" />
@@ -130,15 +168,30 @@ function DistrictCard({ d }: { d: OtherDistrict }) {
               whole (no crop) when the record carries `couplePhoto`; otherwise it falls
               back to the two separate next-year boxes (DG, spouse). A real photo shows
               when present (enriched by phone match / PDF crop), else the grey silhouette. */}
-          {[d.dgThisYear.photo, d.dgThisYear.spousePhoto].map((raw, i) => {
-            const src = resolveImg(raw)
-            return (
-              <div key={PHOTO_X[i]} className="dg-pbox" style={{ left: `calc(var(--u) * ${PHOTO_X[i]})` }}>
-                {src ? <img className="dg-photo" src={src} alt="" /> : <Silhouette />}
-              </div>
-            )
-          })}
-          {(() => {
+          {hasThis && (() => {
+            // Left (2026-27): a single wide couple holder when the record carries a
+            // this-year couplePhoto (same treatment as the 2027-28 side), otherwise the
+            // two separate solo boxes (DG, spouse).
+            const coupleThis = resolveImg(d.dgThisYear.couplePhoto)
+            if (coupleThis) {
+              return (
+                <div className="dg-pbox dg-pbox-couple dg-pbox-couple--left">
+                  <img className="dg-photo" src={coupleThis} alt="" />
+                </div>
+              )
+            }
+            return [d.dgThisYear.photo, d.dgThisYear.spousePhoto].map((raw, i) => {
+              if (i === 1 && hideSpouse) return null // no spouse box when there's no spouse
+              const src = resolveImg(raw)
+              const left = hideSpouse ? SOLO_CENTER_X[0] : PHOTO_X[i] // centre the lone DG photo
+              return (
+                <div key={PHOTO_X[i]} className="dg-pbox" style={{ left: `calc(var(--u) * ${left})` }}>
+                  {src ? <img className="dg-photo" src={src} alt="" /> : <Silhouette />}
+                </div>
+              )
+            })
+          })()}
+          {hasNext && (() => {
             const couple = resolveImg(d.dgNextYear.couplePhoto)
             if (couple) {
               // Single wide holder (≈5:3) centred across the right pair's space.
@@ -150,16 +203,18 @@ function DistrictCard({ d }: { d: OtherDistrict }) {
             }
             // Fallback: the original two next-year boxes (DG, spouse).
             return [d.dgNextYear.photo, d.dgNextYear.spousePhoto].map((raw, i) => {
+              if (i === 1 && hideSpouse) return null // no spouse box when there's no spouse
               const src = resolveImg(raw)
+              const left = hideSpouse ? SOLO_CENTER_X[1] : PHOTO_X[i + 2] // centre the lone DG photo
               return (
-                <div key={PHOTO_X[i + 2]} className="dg-pbox" style={{ left: `calc(var(--u) * ${PHOTO_X[i + 2]})` }}>
+                <div key={PHOTO_X[i + 2]} className="dg-pbox" style={{ left: `calc(var(--u) * ${left})` }}>
                   {src ? <img className="dg-photo" src={src} alt="" /> : <Silhouette />}
                 </div>
               )
             })
           })()}
           <div className="dg-rows">
-            {FIELDS.map((f) => {
+            {rows.map((f) => {
               // Spouse name shows the first name only (no Rtn./Dr./Mr. etc. prefix);
               // name/club/classification are Title-Cased; an all-zero date is blanked;
               // the rest stay verbatim.

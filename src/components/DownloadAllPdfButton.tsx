@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, type ReactElement } from 'react'
 import { downloadCombinedPdf, type CombinedDoc } from '../utils/pdf/downloadCombinedPdf'
-import { buildStaticDocuments, buildDynamicDocuments, buildMasterDocuments } from '../utils/pdf/exportDocuments'
+import { buildStaticDocuments, buildDynamicDocuments, buildMasterDocuments, buildAppendixDocuments, renderTocElement } from '../utils/pdf/exportDocuments'
+import type { PeopleCollector } from '../utils/pdf/collectPeople'
 
 /** Which slice of the directory a button bundles into one combined PDF. */
 export type DownloadScope = 'static' | 'dynamic' | 'master'
@@ -22,6 +23,11 @@ const CONFIG: Record<
     /** Print the running page number (white, in the frame's navy corner disc) on every
      *  framed sheet. Ad / blank pages consume a number slot but aren't printed. Master only. */
     number?: boolean
+    /** Build the back-matter appendix (DOBs + Bibliography) from the people collected across
+     *  the content pages, appended after everything else. Master only. */
+    appendix?: (collector: PeopleCollector) => CombinedDoc[]
+    /** Overdraw the front Index/TOC pages with real page numbers. Master only. */
+    toc?: { docLabel: string; render: (sectionPages: Record<string, number>) => ReactElement; settleMs?: number }
   }
 > = {
   static: {
@@ -48,6 +54,11 @@ const CONFIG: Record<
     // …and prints running page numbers in the frame's navy corner disc (ads count toward
     // the numbering but carry no printed number).
     number: true,
+    // …and ends with the DOBs (birthday) + Bibliography (name index) appendix, built from
+    // everyone who appears across the book.
+    appendix: buildAppendixDocuments,
+    // …and overdraws the front Index/TOC with the real page numbers once the run is done.
+    toc: { docLabel: 'Index', render: renderTocElement, settleMs: 900 },
     // Every sheet in the whole book — static leader/reference pages AND the directory
     // committee/club sheets — renders in only Petrona + Geist. Pass them so the capture
     // reuses one minimal font embed instead of html-to-image's auto-embed, which scans
@@ -79,6 +90,8 @@ export function DownloadAllPdfButton({ scope, className = 'theme-btn' }: { scope
         cfg.fonts,
         cfg.ads,
         cfg.number,
+        cfg.appendix,
+        cfg.toc,
       )
     } catch (err) {
       console.error('[DownloadAllPdf] export failed', err)

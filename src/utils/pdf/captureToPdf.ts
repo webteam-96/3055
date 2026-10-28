@@ -197,6 +197,47 @@ export async function rasterizeBackgrounds(root: HTMLElement): Promise<void> {
   )
 }
 
+// Book-frame sides. The two frames are recto (right-hand) and verso (left-hand), as in a
+// bound book: page 1 is a recto, then they alternate right → left → right…
+const BOOK_FRAME_SVG = { right: '/border-right.svg', left: '/border-left.svg' } as const
+
+/** The rasterized PNG for a book-frame side, from the SAME per-URL cache
+ *  {@link rasterizeBackgrounds} uses (so no extra rasterization when the side is already
+ *  on the page). */
+export function bookFramePng(side: 'left' | 'right'): Promise<string> {
+  return svgUrlToPng(BOOK_FRAME_SVG[side])
+}
+
+/** Correct a captured sheet's page-frame to the recto/verso side its TRUE book page number
+ *  demands (odd = recto/right, even = verso/left), overriding the per-document frame choice.
+ *
+ *  Each sheet component (DirectorySheet / LeaderPage / ReferencePage) picks its frame from
+ *  its OWN local sheet index, always restarting at recto — which is wrong the moment a
+ *  document lands on an unexpected parity (ads, fillers, recto padding and multi-sheet
+ *  spill all shift where a doc begins). Swapping the frame here, just before capture, makes
+ *  the borders alternate consistently across the whole combined book regardless. Only the
+ *  frame image differs between the two sides; the sheet content is symmetric, so this never
+ *  disturbs the layout. No-op (keeps the existing frame) on any failure. */
+async function applyBookSide(sheet: HTMLElement, pageNo: number): Promise<void> {
+  const frame = sheet.querySelector('.dir-bg, .lp-bg, .ref-bg') as HTMLImageElement | null
+  if (!frame) return
+  const side = pageNo % 2 === 1 ? 'right' : 'left'
+  try {
+    const png = await bookFramePng(side)
+    if (frame.src === png) return
+    frame.src = png
+    if (!(frame.complete && frame.naturalWidth > 0)) {
+      try {
+        await frame.decode()
+      } catch {
+        /* decode can reject on some browsers for data URLs; the img still rasterizes */
+      }
+    }
+  } catch {
+    /* keep the existing frame on any failure */
+  }
+}
+
 /** Resolve once every <img> in the subtree has finished loading (or errored). */
 export async function waitForImages(root: HTMLElement): Promise<void> {
   const imgs = Array.from(root.querySelectorAll('img'))
@@ -257,6 +298,11 @@ export async function appendSheetsToPdf(
   fontEmbedCSS?: string,
   onSheet?: (done: number, total: number) => void,
   onSheetDrawn?: (canvas: HTMLCanvasElement) => void | Promise<void>,
+  onSheetDom?: (sheet: HTMLElement, pageNo: number) => void,
+  // Master combined export: force each sheet's book frame to its true page parity (odd =
+  // recto/right, even = verso/left) so borders alternate consistently across the whole book.
+  // Left undefined by the per-section ZIP export, which isn't a single bound sequence.
+  enforceBookSides?: boolean,
 ): Promise<void> {
   // Capture only the real, visible sheets — never the hidden measurement probes that
   // share the sheet class (ReferencePage's `.ref-page.ref-probe`, and LeaderPage's
@@ -281,6 +327,10 @@ export async function appendSheetsToPdf(
     // sheet is somehow transparent (never the case for a framed B5 sheet, which is opaque).
     let sheetBg = getComputedStyle(sheet).backgroundColor
     if (!sheetBg || sheetBg === 'transparent' || sheetBg === 'rgba(0, 0, 0, 0)') sheetBg = '#ffffff'
+    // Correct the book frame to THIS sheet's true page parity before capture (the page it
+    // is about to land on is state.drawn + 1). Keeps borders alternating recto/verso across
+    // the whole combined book, independent of each document's own frame choice.
+    if (enforceBookSides) await applyBookSide(sheet, state.drawn + 1)
     let canvas: HTMLCanvasElement
     try {
       canvas = await toCanvas(sheet, {
@@ -299,12 +349,47 @@ export async function appendSheetsToPdf(
     if (state.drawn > 0) pdf.addPage([PAGE_W_MM, PAGE_H_MM], 'portrait')
     pdf.addImage(img, 'JPEG', 0, 0, PAGE_W_MM, PAGE_H_MM)
     state.drawn++
+    // Report this sheet's DOM + printed page number so the caller can collect the hidden
+    // person markers (master export's DOBs/Bibliography appendix). Read from the DOM, not
+    // the rasterized image — the markers are display:none and never reach the canvas.
+    onSheetDom?.(sheet, state.drawn)
     // Let the caller overlay something onto the page just drawn (the master export tucks
     // a half/quarter ad OR a filler into a content page's empty bottom, measured from this
     // canvas). Awaited: the filler overlay rasterizes an SVG asynchronously, and it must
     // finish drawing onto THIS page before the loop adds the next one.
     await onSheetDrawn?.(canvas)
   }
+}
+
+/** Rasterize every B5 sheet in `root` to a JPEG data URL + its canvas, WITHOUT touching any
+ *  PDF. Used to OVERDRAW already-placed pages (the Index/TOC is rendered once with placeholder
+ *  page numbers, then re-rendered with the real numbers collected during the run and painted
+ *  over its original pages — see downloadCombinedPdf). Returns one entry per visible sheet. */
+export async function captureSheetImages(
+  root: HTMLElement,
+  fontEmbedCSS?: string,
+  // Page number the first captured sheet lands on. When given, each sheet's book frame is
+  // corrected to its true parity (firstPageNo + i) before capture — used by the Index/TOC
+  // overdraw so the re-rendered Index frames match the real book pages they paint over.
+  firstPageNo?: number,
+): Promise<{ canvas: HTMLCanvasElement; dataUrl: string }[]> {
+  const sheets = (Array.from(root.querySelectorAll(SHEET_SELECTOR)) as HTMLElement[]).filter(
+    (el) => !el.closest('.ref-probe, .no-print, [aria-hidden="true"]'),
+  )
+  const out: { canvas: HTMLCanvasElement; dataUrl: string }[] = []
+  for (let i = 0; i < sheets.length; i++) {
+    const sheet = sheets[i]
+    if (firstPageNo != null) await applyBookSide(sheet, firstPageNo + i)
+    let sheetBg = getComputedStyle(sheet).backgroundColor
+    if (!sheetBg || sheetBg === 'transparent' || sheetBg === 'rgba(0, 0, 0, 0)') sheetBg = '#ffffff'
+    try {
+      const canvas = await toCanvas(sheet, { pixelRatio: 2, backgroundColor: sheetBg, ...(fontEmbedCSS ? { fontEmbedCSS } : {}) })
+      out.push({ canvas, dataUrl: canvas.toDataURL('image/jpeg', 0.92) })
+    } catch (e) {
+      console.warn('[pdf] TOC sheet capture failed', e)
+    }
+  }
+  return out
 }
 
 /** Rasterize every B5 sheet in the subtree into a single multi-page PDF Blob.

@@ -6,6 +6,7 @@ import { firstName } from '../utils/firstName'
 import { titleCase } from '../utils/titleCase'
 import { assignedClubsForZone } from '../data/assignedClubs'
 import { NoPhoto } from './NoPhoto'
+import { IndexMark } from './IndexMark'
 // Reuse the Assistant Governors (Zone wise) card design verbatim — same classes,
 // same colours, same layout — so a Zonal Team zone renders exactly like an AG zone.
 import './AgZoneDirectory.css'
@@ -50,6 +51,7 @@ function ZoneAgCard({ zoneName, m }: { zoneName: string; m: DistrictCommitteeMem
   const assigned = assignedClubsForZone(zoneName).map((c) => titleCase(c))
   return (
     <div className="ag-card">
+      <IndexMark name={m.name} dob={m.DOBFull || m.DOB} mid={m.pk_member_master_profile_id} />
       <div className="ag-head">
         <span className="ag-head-title">AG : {titleCase(m.name)}</span>
         <div className="ag-zone">
@@ -109,6 +111,7 @@ function ZoneAgCard({ zoneName, m }: { zoneName: string; m: DistrictCommitteeMem
 function ZoneMemberCard({ m, navy }: { m: DistrictCommitteeMember; navy: boolean }) {
   return (
     <div className="agc">
+      <IndexMark name={m.name} dob={m.DOBFull || m.DOB} mid={m.pk_member_master_profile_id} />
       <div className={`agc-head ${navy ? 'navy' : 'orange'}`}>{titleCase(m.DistrictDesignation)}</div>
       <div className="agc-body">
         <div className="agc-info">

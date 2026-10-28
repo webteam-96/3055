@@ -9,6 +9,8 @@ export interface DistrictCommitteeMember {
   MailID: string
   Address: string
   DOB: string
+  /** Full birthday DD/MM/YYYY (card shows DOB = DD/MM; the export's DOBs list wants the year). */
+  DOBFull?: string
   DOA: string
   RotaryID: string
   img: string
@@ -22,6 +24,10 @@ export interface DistrictCommitteeMember {
   Keywords: string
   classification: string
   fk_District_sub_Committee_id?: string
+  /** Stable API profile id, carried through for the master export's appendix dedup (so the same
+   *  person on two cards — including a College-of-Governors card — merges into one index entry).
+   *  Optional: absent on hand-authored records (e.g. a CoG entry carries its id as `memberId`). */
+  pk_member_master_profile_id?: number | null
 }
 
 export interface CommitteeCategory {
@@ -165,6 +171,7 @@ export interface ClubBODSummary {
   President_member_mobile_no: string
   President_Classification: string
   President_DOB: string         // DD/MM
+  President_DOB_full?: string   // DD/MM/YYYY (for the export's DOBs list)
   President_DOA: string         // DD/MM
   President_Profile_Photo: string
   President_Spouse_member_name: string
@@ -175,6 +182,7 @@ export interface ClubBODSummary {
   Secreatary_mobile_no: string
   Secreatary_Classification: string
   Secreatary_DOB: string        // DD/MM
+  Secreatary_DOB_full?: string  // DD/MM/YYYY (for the export's DOBs list)
   Secreatary_DOA: string        // DD/MM
   Secreatary_Profile_Photo: string
   Secreatary_Spouse_member_name: string
